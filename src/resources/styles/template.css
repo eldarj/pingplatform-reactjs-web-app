@@ -1,0 +1,80 @@
+/*        GENERAL       */
+.container {
+  max-width: 960px;
+}
+
+/*        CUSTOM TRANSPARENT HEADER      */
+.site-header {
+  background-color: rgba(0, 0, 0, .85);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+.site-header a {
+  color: #999;
+  transition: ease-in-out color .15s;
+}
+.site-header a:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+
+/*        EXTRA UTILS       */
+
+.z-index-1 {
+  z-index: 1;
+}
+
+.box-shadow { 
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); 
+}
+
+.overflow-hidden { 
+  overflow: hidden; 
+}
+
+.flex-equal > * {
+  -ms-flex: 1;
+  -webkit-box-flex: 1;
+  flex: 1;
+}
+
+@media (min-width: 768px) {
+  .flex-md-equal > * {
+    -ms-flex: 1;
+    -webkit-box-flex: 1;
+    flex: 1;
+  }
+}
+
+/*        DUMMY DEVICES       */
+
+.product-device {
+  position: absolute;
+  right: 5%;
+  bottom: 5%;
+  width: 350px;
+  height: 540px;
+  background-color: #333;
+  border-radius: 21px;
+  -webkit-transform: rotate(30deg);
+  transform: matrix3d(.617678,.139478,0,-.000589,-.220175,.905113,0,-.000005,0,0,1,0,0,0,0,1);
+}
+
+.product-device::before {
+  position: absolute;
+  top: 10%;
+  right: 10px;
+  bottom: 10%;
+  left: 10px;
+  content: "";
+  background-color: rgba(255, 255, 255, .1);
+  border-radius: 5px;
+}
+
+.product-device-2 {
+  right: 0%;
+  bottom: 10%;
+  background-color: #aaa;
+  transform: matrix3d(.617678,.139478,0,-.000589,-.220175,.905113,0,-.000005,0,0,1,0,0,0,0,1);
+}

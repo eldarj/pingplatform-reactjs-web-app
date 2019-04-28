@@ -1,25 +1,17 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Route } from 'react-router';
+import { Layout } from './components/Layout';
+import { IndexView } from './components/IndexView/IndexView';
+import { LoginView } from './components/AuthView/LoginView';
+import { RegisterView } from './components/AuthView/RegisterView';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Layout>
+      <Route exact path='/' component={IndexView} />
+      <Route exact path='/login' component={LoginView} />
+      <Route exact path='/register' component={RegisterView} />
+    </Layout>
   );
 }
 

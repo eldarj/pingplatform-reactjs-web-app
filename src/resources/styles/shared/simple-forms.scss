@@ -1,0 +1,29 @@
+@import './color-vars';
+
+/* FORMS */
+.minimalistic-form {
+    background: $primary-blue;
+    
+    label {
+        color: white;
+        font-weight: 200;
+    }
+    h3 {
+        text-align: center;
+        color: #fff;
+    }
+    .btnSubmit {
+        width: 50%;
+        padding: 1.5%;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        color: $primary-blue;
+        background-color: #fff;
+    }
+    .ForgetPwd {
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+    }
+}
