@@ -8,7 +8,11 @@ import rootReducer from './reducers'
  
 const persistConfig = {
   key: 'root',
-  storage: new CookieStorage(Cookies/*, options */)
+  storage: new CookieStorage(Cookies, {
+      expiration: {
+          'default': 604800 // 7days
+      }
+  })
 }
  
 const persistedReducer = persistReducer(persistConfig, rootReducer)
