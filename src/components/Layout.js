@@ -8,7 +8,7 @@ export class Layout extends Component {
   render () {
     return (
     <div className="root-inner-wrap">
-      <div className="bg-white position-relative z-index-11">
+      <div className="bg-white position-relative z-index-1">
         <NavMenu />
       </div>
       <div className="root-main-content">

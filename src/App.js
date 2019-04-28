@@ -1,9 +1,12 @@
+// React
 import React from 'react';
 import { Route } from 'react-router';
-import { Layout } from './components/Layout';
 
+// Custom libs
 import { Scrollbars } from 'react-custom-scrollbars';
 
+// View components
+import { Layout } from './components/Layout';
 import { IndexView } from './components/IndexView/IndexView';
 import { LoginView } from './components/AuthView/LoginView';
 import { RegisterView } from './components/AuthView/RegisterView';

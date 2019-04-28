@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 
 export class ChatOverview extends Component {
+    
     constructor(props) {
         super(props);
+        
     }
 
     render() {
