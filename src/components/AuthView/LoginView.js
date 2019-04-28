@@ -32,11 +32,16 @@ export class LoginView extends Component {
             console.log("nick: " + nick);
             console.log("message: ");
             console.log(receivedMessage);
+            window.setTimeout(() => {
+                this.setState({ redirect: true, redirectUrl: 'profile' });
+            }, 1000);
         });
 
         this.hubConnection.on('AuthenticationFailed', (receivedMessage) => {
             console.warn("message: " + receivedMessage);
-            this.setState({ redirect: true });
+            window.setTimeout(() => {
+                this.setState({ redirect: true, redirectUrl: 'register' });
+            }, 1000);
         });
     }
 
@@ -67,11 +72,11 @@ export class LoginView extends Component {
             });
 
         // if we don't receive a 'callback' on our hub-client, we should handle it here
-        window.setInterval(() => {
+        window.setTimeout(() => {
             this.setState({ 
                 redirect: true, 
                 redirectUrl: 'error' });
-          }, 2500);
+          }, 5000);
     }
 
     handlePhoneNumberChange = (e) => {

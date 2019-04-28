@@ -87,21 +87,21 @@ export class RegisterView extends Component {
                                             placeholder="387 62 005 152" value={this.state.phoneNumber}
                                             onChange={this.handlePhoneNumberChange} />
                                     </div>
-                                    <div class="form-group">
+                                    <div className="form-group">
                                         <label htmlFor="email">Email</label>
                                         <input id="email" type="text" className="form-control" 
                                             placeholder="Your email adress" value={this.state.email}
                                             onChange={this.handleEmailChange} />
                                     </div>
-                                    <div class="form-group">
+                                    <div className="form-group">
                                         <label htmlFor="firstname">Firstname</label>
-                                        <input id="firstname" type="text" class="form-control" 
+                                        <input id="firstname" type="text" className="form-control" 
                                             placeholder="Firstname" value={this.state.firstname}
                                             onChange={this.handleFirstnameChange} />
                                     </div>
-                                    <div class="form-group">
+                                    <div className="form-group">
                                         <label htmlFor="lastname">Lastname</label>
-                                        <input id="lastname" type="text" class="form-control" 
+                                        <input id="lastname" type="text" className="form-control" 
                                             placeholder="Lastname" value={this.state.lastname}
                                             onChange={this.handleLastnameChange} />
                                     </div>
