@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom'
 import * as signalr from '@aspnet/signalr';
 import './LoginView.scss';
 
@@ -10,7 +11,10 @@ export class LoginView extends Component {
 
         this.state = {
             phoneNumber: '',
-            createSession: false
+            createSession: false,
+            redirect: false,
+            redirectUrl: 'register',
+            loading: false
         };
     }
 
@@ -31,11 +35,25 @@ export class LoginView extends Component {
         });
 
         this.hubConnection.on('AuthenticationFailed', (receivedMessage) => {
-            console.log("message: " + receivedMessage);
+            console.warn("message: " + receivedMessage);
+            this.setState({ redirect: true });
         });
     }
 
+    renderRedirect = () => {
+        if (this.state.redirect) {
+            return <Redirect to={{
+                pathname: `/${this.state.redirectUrl}`,
+                state: { msg: 'erol' } // for future ref
+            }}/>
+        }
+    }
+
     doLogin = () => {
+        this.setState({
+            loading: true
+        });
+
         let requestObj = {
             phoneNumber: this.state.phoneNumber,
             createSession: this.state.createSession
@@ -47,6 +65,13 @@ export class LoginView extends Component {
                 console.error("Error on: RequestAuthentication('loginTest', requestobj)");
                 console.error(err);
             });
+
+        // if we don't receive a 'callback' on our hub-client, we should handle it here
+        window.setInterval(() => {
+            this.setState({ 
+                redirect: true, 
+                redirectUrl: 'error' });
+          }, 2500);
     }
 
     handlePhoneNumberChange = (e) => {
@@ -58,8 +83,19 @@ export class LoginView extends Component {
     }
 
     render() {
+        let loading = this.state.loading;
+        let submit;
+        if (loading) {
+            submit = <button className="btn btn-light w-50 rounded-0 pointer-events-none">
+                <i className="fas fa-circle-notch rotate anim-speed-slow"></i>
+            </button>;
+        } else {
+            submit = <button onClick={this.doLogin} className="btn btn-light w-50 rounded-0">Submit</button>;
+        }
+
         return (
             <div className="my-5">
+                { this.renderRedirect() }
                 <div className="container">
                     <div className="row">
                         <div className="mx-auto col-md-6">
@@ -67,7 +103,7 @@ export class LoginView extends Component {
                                 <h3>Get started</h3>
                                 <div>
                                     <div className="form-group">
-                                        <label htmlFor="phoneNumber">Unesite broj telefona</label>
+                                        <label htmlFor="phoneNumber">Phone number</label>
                                         <input id="phoneNumber" type="number" className="form-control"
                                             placeholder="387 62 005 152" value={this.state.phoneNumber}
                                             onChange={this.handlePhoneNumberChange} />
@@ -76,12 +112,12 @@ export class LoginView extends Component {
                                                 value={this.state.createSession}
                                                 onChange={this.handleCreateSessionChange} />
                                             <label htmlFor="createSession">
-                                                Ostani prijavljen
+                                                Stay logged in
                                             </label>
                                         </div>
                                     </div>
                                     <div className="form-group sublte-box-shadow">
-                                        <button onClick={this.doLogin} type="submit" className="btnSubmit">Submit</button>
+                                        {submit}
                                     </div>
                                 </div>
                             </div>

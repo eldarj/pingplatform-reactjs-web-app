@@ -77,8 +77,9 @@ export class RegisterView extends Component {
                 <div className="container">
                     <div className="row">
                         <div className="mx-auto col-md-6">
+                            <p className="h5 mb-3">Don't have an account yet?</p>
                             <div className="minimalistic-form p-4 subtle-box-shadow disperse-shadow">
-                                <h3>Get started</h3>
+                                <h3>Register</h3>
                                 <div> 
                                     <div className="form-group">
                                         <label htmlFor="phoneNumber">Phone number</label>

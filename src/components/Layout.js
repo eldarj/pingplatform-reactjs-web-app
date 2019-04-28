@@ -7,11 +7,11 @@ export class Layout extends Component {
   
   render () {
     return (
-    <div>
+    <div className="root-inner-wrap">
       <div className="bg-white position-relative z-index-1">
         <NavMenu />
       </div>
-      <div>
+      <div className="root-main-content">
         {this.props.children}
       </div>
       <Footer />

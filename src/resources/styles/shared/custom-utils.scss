@@ -1,4 +1,9 @@
 /*        CUSTOM UTILS       */
+
+.pointer-events-none {
+    pointer-events: none;
+}
+
 .bg-secondary-light {
     background-color: $secondary-light-color;
 }
@@ -15,4 +20,9 @@
     &.disperse-shadow {
         box-shadow:1px 1px 5px 1px rgba(0,0,0,.25);
     }
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+      monospace;
 }

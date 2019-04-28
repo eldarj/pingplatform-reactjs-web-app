@@ -8,9 +8,16 @@ body {
   font-family: Segoe UI,SegoeUI,"Helvetica Neue",Helvetica,Arial,sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  #root {
+    .root-inner-wrap {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .root-main-content {
+      flex-grow: 1;
+    }
+  }
 }
