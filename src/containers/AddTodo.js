@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { addTodo } from '../actions'
-import { setAccount } from '../actions'
+import { addTodo } from '../redux/actions'
+import { setAccountAction } from '../redux/actions'
 
 const AddTodo = ({ dispatch }) => {
     let input
@@ -16,7 +16,7 @@ const AddTodo = ({ dispatch }) => {
             }
             console.log('dispatch');
             dispatch(addTodo(input.value));
-            dispatch(setAccount(5, '38762001111'));
+            dispatch(setAccountAction(5, '38762001111'));
             input.value = ''
           }}
         >

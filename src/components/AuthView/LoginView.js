@@ -1,15 +1,20 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+
+import { setAccountAction } from '../../redux/actions';
 
 import * as signalr from '@aspnet/signalr';
 import './LoginView.scss';
 
-export class LoginView extends Component {
+class LoginView extends Component {
     hubConnection = null;
-
+    reduxDispatch = null;
     constructor(props) {
         super(props);
+
+        this.reduxDispatch = props.dispatch; // set the redux dispatch for handling redux-state
 
         this.state = {
             phoneNumber: '',
@@ -33,6 +38,16 @@ export class LoginView extends Component {
         this.hubConnection.on(`AuthenticationDone${window.randomGen}`, (receivedMessage) => {
             console.log("message: ");
             console.log(receivedMessage);
+
+            this.reduxDispatch(setAccountAction(
+                receivedMessage.createSession,
+                receivedMessage.dateRegistered,
+                receivedMessage.email,
+                receivedMessage.firstname,
+                receivedMessage.lastname,
+                receivedMessage.phoneNumber,
+                receivedMessage.token));
+
             window.setTimeout(() => {
                 this.setState({ redirect: true, redirectUrl: 'profile' });
             }, 1000);
@@ -77,7 +92,7 @@ export class LoginView extends Component {
             this.setState({ 
                 redirect: true, 
                 redirectUrl: 'error' });
-          }, 5000);
+          }, 10000);
     }
 
     handlePhoneNumberChange = (e) => {
@@ -142,3 +157,6 @@ export class LoginView extends Component {
         );
     }
 }
+
+
+export default connect()(LoginView)

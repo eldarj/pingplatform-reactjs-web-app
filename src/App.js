@@ -8,11 +8,11 @@ import { Scrollbars } from 'react-custom-scrollbars';
 // View components
 import { Layout } from './components/Layout';
 import { IndexView } from './components/IndexView/IndexView';
-import { LoginView } from './components/AuthView/LoginView';
+import LoginView from './components/AuthView/LoginView';
 import { RegisterView } from './components/AuthView/RegisterView';
 import { ErrorView } from './components/ErrorView/ErrorView';
-import { ProfileView } from './components/ChatView/ProfileView';
-import { ChatOverview } from './components/ChatView/ChatOverview';
+import ProfileView from './components/ChatView/ProfileView';
+import ChatOverview from './components/ChatView/ChatOverview';
 
 window.randomGen = '_' + Math.random().toString(36).substr(2, 16);;
 

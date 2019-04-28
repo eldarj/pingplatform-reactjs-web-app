@@ -1,10 +1,11 @@
+import AccountModel from '../models/AccountModel';
+
+// Reducer
 const account = (state = [], actionModel) => {
   switch (actionModel.type) {
     case 'ACCOUNT_AUTHED':
-      return {
-        id: actionModel.id,
-        phoneNumber: actionModel.phoneNumber
-      }
+      return AccountModel.getInstance(actionModel.accountModel);
+
     default:
       return state
   }

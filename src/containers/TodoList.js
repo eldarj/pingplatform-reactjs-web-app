@@ -14,12 +14,8 @@ const TodoList = ({ todos, account }) => {
     )
 }
 
-const getVisibleTodos = (todos) => {
-    return todos
-};
-
 const mapStateToProps = state => ({
-    todos: getVisibleTodos(state.todos),
+    todos: state.todos,
     account: state.account
 });
 

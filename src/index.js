@@ -7,7 +7,7 @@ import * as serviceWorker from './serviceWorker';
 // Redux
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
-import rootReducer from './reducers';
+import rootReducer from './redux/reducers';
 
 // Styles
 import './resources/styles/index.css';

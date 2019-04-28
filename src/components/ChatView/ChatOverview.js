@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-export class ChatOverview extends Component {
+class ChatOverview extends Component {
     
     constructor(props) {
         super(props);
-        
+        console.log(props.account);
     }
 
     render() {
@@ -23,3 +24,9 @@ export class ChatOverview extends Component {
         );
     }
 }
+
+const mapStateToProps = state => ({
+    account: state.account
+});
+
+export default connect(mapStateToProps)(ChatOverview)

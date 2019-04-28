@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux'
-import AddTodo from '../../containers/AddTodo';
-import TodoList from '../../containers/TodoList';
+import { connect } from 'react-redux';
 
-export class ProfileView extends Component {
+class ProfileView extends Component {
     
     constructor(props) {
         super(props);
-        
+        console.log("PROPS:");
+        console.log(props.account);
     }
 
     render() {
@@ -19,8 +18,6 @@ export class ProfileView extends Component {
                             <h1>
                                Profile
                             </h1>
-                            <AddTodo />
-                            <TodoList />
                         </div>
                     </div>
                 </div>
@@ -28,3 +25,12 @@ export class ProfileView extends Component {
         );
     }
 }
+
+const mapStateToProps = state => {
+    console.log(state);
+    return {
+        account: state.account
+    }
+};
+
+export default connect(mapStateToProps)(ProfileView)
