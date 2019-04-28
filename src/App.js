@@ -11,6 +11,8 @@ import { ErrorView } from './components/ErrorView/ErrorView';
 import { ProfileView } from './components/ChatView/ProfileView';
 import { ChatOverview } from './components/ChatView/ChatOverview';
 
+window.randomGen = '_' + Math.random().toString(36).substr(2, 16);;
+
 function App() {
   return (
     <Scrollbars className="full-window">

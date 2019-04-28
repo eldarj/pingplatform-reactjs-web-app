@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as signalr from '@aspnet/signalr';
+import { Link } from 'react-router-dom';
 
 export class RegisterView extends Component {
     hubConnection = null;
@@ -123,7 +124,9 @@ export class RegisterView extends Component {
                             <div className="mt-3">
                                 <p className="small">
                                     Already have an account?
-                                    <a href="/login" className="ml-2">Login</a>
+                                    <Link to='/login' className="ml-2">
+                                        Login
+                                    </Link>
                                 </p>
                             </div>
                         </div>

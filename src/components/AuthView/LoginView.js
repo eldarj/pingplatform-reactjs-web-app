@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
 import * as signalr from '@aspnet/signalr';
 import './LoginView.scss';
 
@@ -22,14 +24,13 @@ export class LoginView extends Component {
         this.hubConnection = new signalr.HubConnectionBuilder()
             .withUrl('https://localhost:44380/accountshub')
             .build();
-
+            
         this.hubConnection
             .start()
             .then(() => console.log('Connection started.'))
             .catch(() => console.log('Error establishing connection.'));
 
-        this.hubConnection.on('AuthenticationDone', (nick, receivedMessage) => {
-            console.log("nick: " + nick);
+        this.hubConnection.on(`AuthenticationDone${window.randomGen}`, (receivedMessage) => {
             console.log("message: ");
             console.log(receivedMessage);
             window.setTimeout(() => {
@@ -37,7 +38,7 @@ export class LoginView extends Component {
             }, 1000);
         });
 
-        this.hubConnection.on('AuthenticationFailed', (receivedMessage) => {
+        this.hubConnection.on(`AuthenticationFailed${window.randomGen}`, (receivedMessage) => {
             console.warn("message: " + receivedMessage);
             window.setTimeout(() => {
                 this.setState({ redirect: true, redirectUrl: 'register' });
@@ -65,9 +66,9 @@ export class LoginView extends Component {
         }
 
         this.hubConnection
-            .invoke("RequestAuthentication", "loginTest", requestObj)
+            .invoke("RequestAuthentication", window.randomGen, requestObj)
             .catch(err => {
-                console.error("Error on: RequestAuthentication('loginTest', requestobj)");
+                console.error(`Error on: RequestAuthentication(${window.randomGen}, requestobj)`);
                 console.error(err);
             });
 
@@ -129,7 +130,9 @@ export class LoginView extends Component {
                             <div className="mt-3">
                                 <p className="small">
                                     Don't have an account yet?
-                                    <a href="/register" className="ml-2">Join now</a>
+                                    <Link to='/register' className="ml-2">
+                                        Join now
+                                    </Link>
                                 </p>
                             </div>
                         </div>
