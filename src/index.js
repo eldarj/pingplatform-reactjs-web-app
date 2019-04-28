@@ -4,10 +4,10 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
 
-// Redux
-import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import rootReducer from './redux/reducers';
+// Redux and redux-persist
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import getConfiguredStore from './redux/configureStore';
 
 // Styles
 import './resources/styles/index.css';
@@ -18,14 +18,16 @@ import App from './App';
 // const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const baseUrl = "/";
 const rootElement = document.getElementById('root');
-
-const store = createStore(rootReducer);
+const store = getConfiguredStore().store;
+const persistor = getConfiguredStore().persistor;
 
 ReactDOM.render(
     <Provider store={store}>
-        <BrowserRouter basename={baseUrl}>
-            <App />
-        </BrowserRouter>
+        <PersistGate loading={null} persistor={persistor}>
+            <BrowserRouter basename={baseUrl}>
+                <App />
+            </BrowserRouter>
+        </PersistGate>
     </Provider>,
     rootElement
 );
