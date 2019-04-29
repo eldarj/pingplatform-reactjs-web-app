@@ -1,39 +1,65 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 export class HeroSlider extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        
+
         this.state = {
-          activeClass: ''
+            activeClass: ''
         };
     }
 
-    componentDidMount(){
-        window.addEventListener('scroll', (event) => {
+    componentDidMount() {
+        // react-custom-scrollbars scrolling div
+        let scrollingEl = document.getElementById('scrollbars-container').children[0];
+        scrollingEl.addEventListener('scroll', this.handleScroll);
+    }
+
+    handleScroll = () => {
+        // rotate elements if in viewport
+        let rotatingEl = document.getElementsByClassName('product-device')[0];
+        let bounding = rotatingEl.getBoundingClientRect();
+        let elCenterHeight = rotatingEl.clientHeight / 2;
+        let viewportHeight = document.getElementById('root').clientHeight;
+
+        if ((bounding.top + elCenterHeight) <= viewportHeight &&
+            (bounding.top + elCenterHeight) >= 0) 
+        {
             this.setState({
                 activeClass: 'doRotate'
-            })
-        });
+            });
+        } 
+        else {
+            this.setState({
+                activeClass: ''
+            });
+        }
     }
-    
+
     render() {
-    let rotateClass = this.state.activeClass;
+        let rotateClass = this.state.activeClass;
         return (
-        <div className="container">
-            <div className="hero-slider position-relative py-md-5 mb-md-3">
-                <div className="col-md-5 mr-auto px-0">
-                <h2 className="font-weight-bold">Connect with everyone, from anywhere</h2>
-                <p className="lead">
-                    Text, call and chat with all your friends and contacts all over the world. 
-                    Fast, secure and encrypted on the web and your phone, right now.
-                </p>
-                <a className="btn btn-outline-danger" href="/">Get started</a>
+            <div id="hero-container" className="container">
+                <div className="hero-slider py-md-5 px-4 my-md-5">
+                    <div className="row">
+                    <div className="col-md-7 py-md-5 px-0">
+                        <h1 className="display-4 font-weight-bold">Connect with everyone, from anywhere</h1>
+                        <p className="lead">
+                            Text, call and chat with all your friends and contacts all over the world.
+                            Fast, secure and encrypted on the web and your phone, right now.
+                        </p>
+                        <Link to='/login' className="btn btn-outline-danger">
+                            Get started
+                        </Link>
+                    </div>
+                    <div className="col-md-5 py-md-5 px-0 position-relative">
+                        <div className={"product-device d-none d-md-block backdrop " + rotateClass}></div>
+                        <div className={"product-device d-none d-md-block " + rotateClass}></div>
+                    </div>
+                    </div>
                 </div>
-                <div className={"product-device product-device-2 box-shadow d-none d-md-block rotate-left " + rotateClass}></div>
-                <div className={"product-device box-shadow d-none d-md-block rotate-right " + rotateClass}></div>
             </div>
-        </div>
         );
     }
 }

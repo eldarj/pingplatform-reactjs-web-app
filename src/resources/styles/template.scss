@@ -1,0 +1,96 @@
+/*        GENERAL       */
+.container {
+  max-width: 860px;
+}
+
+/*        CUSTOM TRANSPARENT HEADER      */
+.site-header {
+  background-color: rgba(0, 0, 0, .85);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  a {
+    color: #999;
+    transition: ease-in-out color .15s;
+    &:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+  }
+}
+
+
+/*        EXTRA UTILS       */
+.z-index-1 {
+  z-index: 1;
+}
+.box-shadow { 
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); 
+}
+.overflow-hidden { 
+  overflow: hidden; 
+}
+.flex-equal {
+  & > * {
+    -ms-flex: 1;
+    -webkit-box-flex: 1;
+    flex: 1;
+  }
+}
+
+@media (min-width: 768px) {
+  .flex-md-equal {
+    & > * {
+      -ms-flex: 1;
+      -webkit-box-flex: 1;
+      flex: 1;
+    }
+  }
+}
+
+/*        DUMMY DEVICES       */
+
+.product-device {
+  position: absolute;
+  right: 5%;
+  bottom: 5%;
+  width: 210px;
+  height: 390px;
+  background-color: #333;
+  border-radius: 15px;
+  box-shadow: 10px 10px 25px 5px rgba(0,0,0,.05);
+  transition: transform 1s ease-out;
+
+  &:before {
+    width: 98%;
+    position: absolute;
+    top: 2.5%;
+    right: 1%;
+    bottom: 5%;
+    left: 1%;
+    content: "";
+    background-color: rgba(255, 255, 255, .1);
+    border-radius: 3.5px;
+    transition: all 1s ease-out;
+  }
+
+  &.backdrop {
+    right: 3%;
+    bottom: 4%;
+    background-color: #aaa;
+  }
+
+  &.doRotate {
+    -webkit-transform: rotate(30deg);
+    transform: matrix3d(
+      .75,.01,0,-.0007,
+      -0.2,1,0,-0.0002,
+      0,0,1,0,
+      0,0,0,1
+    );
+
+    &:before {
+      width: 95%;
+      left: 0;
+    }
+  }
+}

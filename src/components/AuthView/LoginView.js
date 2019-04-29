@@ -31,9 +31,10 @@ class LoginView extends Component {
             .build();
             
         this.hubConnection
-            .start()
-            .then(() => console.log('Connection started.'))
-            .catch(() => console.log('Error establishing connection.'));
+        .start()
+        .then(() => console.log('Connection started.'))
+        .catch(() => console.log('Error establishing connection.'));
+        
 
         this.hubConnection.on(`AuthenticationDone${window.randomGen}`, (receivedMessage) => {
             console.log("message: ");

@@ -22,6 +22,25 @@
     }
 }
 
+.child-el-blocks {
+    > * {
+        display: block;
+    }    
+}
+
+.kbd {
+    padding: .2rem .4rem;
+    color: #fff;
+    background-color: #212529;
+    border-radius: .2rem;
+
+    & > span, > strong {
+        @extend .kbd;
+    }
+}
+.kbd {
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
       monospace;

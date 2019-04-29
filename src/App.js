@@ -18,7 +18,7 @@ window.randomGen = '_' + Math.random().toString(36).substr(2, 16);;
 
 function App() {
   return (
-    <Scrollbars className="full-window">
+    <Scrollbars id="scrollbars-container" className="full-window">
       <Layout>
         <Route exact path='/' component={IndexView} />
         <Route exact path='/login' component={LoginView} />
