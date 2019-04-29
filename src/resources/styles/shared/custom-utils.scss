@@ -21,13 +21,11 @@
         box-shadow:1px 1px 5px 1px rgba(0,0,0,.25);
     }
 }
-
 .child-el-blocks {
     > * {
         display: block;
     }    
 }
-
 .kbd {
     padding: .2rem .4rem;
     color: #fff;
@@ -44,4 +42,9 @@
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
       monospace;
+}
+
+
+.icon-size-regular {
+    font-size: 20px;
 }

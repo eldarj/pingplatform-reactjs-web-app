@@ -6,14 +6,19 @@ export class HeroSlider extends Component {
         super(props);
 
         this.state = {
-            activeClass: ''
+            activeClass: '',
+            scrollingEl: null
         };
     }
 
     componentDidMount() {
         // react-custom-scrollbars scrolling div
-        let scrollingEl = document.getElementById('scrollbars-container').children[0];
-        scrollingEl.addEventListener('scroll', this.handleScroll);
+        this.state.scrollingEl = document.getElementById('scrollbars-container').children[0];
+        this.state.scrollingEl.addEventListener('scroll', this.handleScroll);
+    }
+
+    componentWillUnmount() {
+        this.state.scrollingEl.removeEventListener('scroll', this.handleScroll);
     }
 
     handleScroll = () => {

@@ -1,5 +1,5 @@
 import React, { Component }  from 'react';
-import { NavMenu } from './NavMenu/NavMenu';
+import NavMenu from './NavMenu/NavMenu';
 import { Footer } from './Footer/Footer';
 
 export class Layout extends Component {

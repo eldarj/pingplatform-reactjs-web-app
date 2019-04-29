@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import DateUtils from '../../helpers/DateUtils'
+import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux'
 
 class ProfileView extends Component {
@@ -7,11 +8,12 @@ class ProfileView extends Component {
     constructor(props) {
         super(props);
 
-        console.log(props.account);
-        props.account.dateRegistered = DateUtils.formatISODate(props.account.dateRegistered);
-        this.state = {
-            accountModel: props.account
-        };
+        this.state = { accountModel: null }
+
+        if(props.account != null) {
+            props.account.dateRegistered = DateUtils.formatISODate(props.account.dateRegistered);
+            this.state.accountModel = props.account;
+        }
     }
 
     renderAccountHtml(account) {

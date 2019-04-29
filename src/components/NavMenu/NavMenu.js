@@ -1,24 +1,101 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import './NavMenu.scss';
+import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import './NavMenu.scss'
 
-export class NavMenu extends Component {
-  static displayName = NavMenu.name;
-
+class NavMenu extends Component {
   constructor(props) {
     super(props);
 
-    this.toggleNavbar = this.toggleNavbar.bind(this);
     this.state = {
-      collapsed: true
-    };
+      loggedName: '',
+      isLogged: false
+    }
+
+    if (props.account != null) {
+      this.state.loggedName = props.account.firstname + " " + props.account.lastname;
+      this.state.isLogged = true;
+    }
   }
 
-  toggleNavbar() {
-    this.setState({
-      collapsed: !this.state.collapsed
-    });
+  renderNavLinks(isLogged) {
+    if (isLogged) {
+      return (
+        <ul className="navbar-nav ml-auto">
+          <li className="nav-item">
+            <Link to='/' className="nav-link">
+              Tour
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to='/Features' className="nav-link">
+              Features
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to='/Enterprise' className="nav-link">
+              Enterprise
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to='/pricing' className="nav-link">
+              Pricing
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to='/support' className="nav-link d-flex">
+              <i class="mr-1 far fa-life-ring icon-size-regular"></i>
+              Support
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to='/profile' className="nav-link d-flex">
+              <i class="mr-1 far fa-user-circle icon-size-regular"></i>
+              Profile
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to='/chat' className="nav-link d-flex">
+              <i class="mr-1 far fa-comment-alt icon-size-regular"></i>
+              Chat
+            </Link>
+          </li>
+        </ul>
+      );
+    }
+    else {
+      return (
+        <ul className="navbar-nav ml-auto">
+          <li className="nav-item">
+            <Link to='/' className="nav-link">
+              Tour
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to='/login' className="nav-link">
+              Get started
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to='/Features' className="nav-link">
+              Features
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to='/Enterprise' className="nav-link">
+              Enterprise
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to='/pricing' className="nav-link">
+              Pricing
+            </Link>
+          </li>
+        </ul>
+      );
+    }
   }
+
   render() {
     return (
       <nav className="navbar navbar-expand-lg navbar-light bg-white container">
@@ -35,45 +112,13 @@ export class NavMenu extends Component {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav ml-auto">
-            <li className="nav-item">
-              <Link to='/' className="nav-link">
-                Tour
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to='/login' className="nav-link">
-                Get started
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to='/Features' className="nav-link">
-                Features
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to='/Enterprise' className="nav-link">
-                Enterprise
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to='/support' className="nav-link">
-                Support
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to='/pricing' className="nav-link">
-                Pricing
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to='/cart' className="nav-link">
-                Cart
-              </Link>
-            </li>
-          </ul>
+          {this.renderNavLinks(this.state.isLogged)}
         </div>
       </nav>
     );
   }
 }
+
+const mapStateToProps = state => ({ account: state.account });
+
+export default connect(mapStateToProps)(NavMenu)
