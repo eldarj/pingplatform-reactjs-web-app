@@ -3,6 +3,27 @@
 @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
 @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
 @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+
+@-moz-keyframes absolute-center-spin { 
+    100% {  
+        -moz-transform: translate(-50%, -50%) rotate(360deg); 
+        transform: translate(-50%, -50%) rotate(360deg); 
+    } 
+}
+@-webkit-keyframes absolute-center-spin { 
+    100% {  
+        -webkit-transform: translate(-50%, -50%) rotate(360deg); 
+        transform: translate(-50%, -50%) rotate(360deg); 
+    } 
+}
+@keyframes absolute-center-spin { 
+    100% {  
+        -webkit-transform: translate(-50%, -50%) rotate(360deg); 
+        transform: translate(-50%, -50%) rotate(360deg); 
+    } 
+}
+
 .rotate {
     -webkit-animation: spin 4s ease-in-out infinite;
     -moz-animation: spin 4s ease-in-out infinite;

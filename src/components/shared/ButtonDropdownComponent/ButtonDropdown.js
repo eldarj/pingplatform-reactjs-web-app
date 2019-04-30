@@ -31,7 +31,9 @@ export class ButtonDropdown extends Component {
             <div id={this.props.id} 
                 className={"button-dropdown-container " + this.props.className}>
                 <button className={"btn " + this.props.btnClassName} 
-                    onClick={this.toggleDropdown}>
+                    onClick={this.toggleDropdown}
+                    onBlur={this.hideDropdown}
+                    >
                     <i className={this.props.btnIconClassName}/>
                 </button>
                 <div className="dropdown-menu">

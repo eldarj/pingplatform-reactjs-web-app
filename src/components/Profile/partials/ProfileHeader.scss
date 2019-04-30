@@ -11,6 +11,18 @@
         width: 200px;
         height: 200px;
 
+        &.loading-div-bg {
+            &:before {
+                font-weight: 900;
+                color: #fff;
+                font-size: 2rem;
+                
+                animation-duration: 1500ms;
+                -webkit-animation-duraion: 1500ms;
+                -moz-animation-duration: 1500ms;
+            }
+        }
+
         &.small {
             height: 100px;
             width: 100px;
