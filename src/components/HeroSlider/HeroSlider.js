@@ -46,7 +46,7 @@ export class HeroSlider extends Component {
 
         let elements = document.querySelectorAll('[data-balls-bg]');
         elements.forEach(function(node){
-          node.append(ballContainer);
+          node.prepend(ballContainer);
         });
     }
 

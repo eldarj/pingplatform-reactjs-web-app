@@ -95,13 +95,8 @@
   }
 }
 
-div[data-balls-bg] *:not(.ball-container) {
-  z-index: 2 !important;
-}
-
 .ball-container {
   position: absolute !important;
-  z-index: 1 !important;
   width: 100%;
   height: 100%;
   top: 0;
@@ -111,7 +106,6 @@ div[data-balls-bg] *:not(.ball-container) {
 
 .ball {
   position: absolute !important;
-  z-index: 1 !important;
   border-radius: 100%;
   opacity: 0.3;
 }

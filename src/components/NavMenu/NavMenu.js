@@ -7,12 +7,11 @@ class NavMenu extends Component {
 
   constructor(props) {
     super(props);
-    console.log("NAVMENU:");
-    console.log(props);
 
     this.state = {
       loggedName: '',
-      isLogged: false
+      isLogged: false,
+      navOpen: false
     }
 
     if (props.account != null) {
@@ -99,10 +98,14 @@ class NavMenu extends Component {
     }
   }
 
+  onToggleNavCollapse = () => {
+    this.setState({ navOpen: !this.state.navOpen })
+  }
+
   render() {
     return (
       <nav className="navbar navbar-expand-lg navbar-light bg-white container">
-        <a className="position-fixed navbar-brand" href="/">
+        <a className="navbar-brand" href="/">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
             className="d-block mx-auto"><circle cx="12" cy="12" r="10"></circle><line x1="14.31" y1="8" x2="20.05" y2="17.94"></line>
@@ -111,10 +114,11 @@ class NavMenu extends Component {
             <line x1="16.62" y1="12" x2="10.88" y2="21.94"></line>
           </svg>
         </a>
-        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button className="navbar-toggler" type="button" data-toggle="offcanvas" onClick={this.onToggleNavCollapse} >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+        <div className={"navbar-collapse offcanvas-collapse " + (this.state.navOpen ? 'open':'')} 
+            id="navbarOffcanvas">
           {this.renderNavLinks(this.state.isLogged)}
         </div>
       </nav>
