@@ -1,42 +1,53 @@
 .navbar {
-    a.nav-link {
-        font-size: 13px;
-        font-weight: 400;
+    &.navbar-link {
+        .navbar-toggler {
+            border: none;
+        }
+    }
+    
+    @media (min-width: 786px) {
+        a.nav-link {
+            font-size: 13px;
+            font-weight: 400;
+        }
     }
 }
 
-.navbar-light .navbar-toggler {
-    border: none;
+.offcanvas-collapse {
+    @media (max-width: 767.98px) {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        padding-right: 1rem;
+        padding-left: 1rem;
+        background-color: #fff;
+        box-shadow: -5px 2.5px 7.5px rgba(0,0,0,.05);
+
+        .nav-link {
+            padding-left: 24px;
+            position: relative;
+
+            i {
+                margin-left: -28px;
+                top: 50%;
+                position: absolute;
+                transform: translateY(-50%);
+            }
+        }
+    }
 }
 
-@media (max-width: 767.98px) {
-    .offcanvas-collapse {
-      position: fixed;
-      top: 56px; /* Height of navbar */
-      bottom: 0;
-      width: 100%;
-      padding-right: 1rem;
-      padding-left: 1rem;
-      overflow-y: auto;
-      background-color: var(--gray-dark);
-      transition: -webkit-transform .3s ease-in-out;
-      transition: transform .3s ease-in-out;
-      transition: transform .3s ease-in-out, -webkit-transform .3s ease-in-out;
-      -webkit-transform: translateX(100%);
-      transform: translateX(100%);
-    }
-    .offcanvas-collapse.open {
-      -webkit-transform: translateX(-1rem);
-      transform: translateX(-1rem); /* Account for horizontal padding on navbar */
-    }
-  }
-  
-  .nav-scroller {
+.nav-scroller {
     position: relative;
     z-index: 2;
     height: 2.75rem;
     overflow-y: hidden;
-    
+
+    @media (max-width: 767.98px) {
+        visibility: hidden;
+    }
+
     .nav {
         display: -webkit-box;
         display: -ms-flexbox;
@@ -50,23 +61,23 @@
         text-align: center;
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
-      }
-  }
-  
-  .nav-underline {
+    }
+}
+
+.nav-underline {
     .nav-link {
         padding-top: .75rem;
         padding-bottom: .75rem;
         font-size: .875rem;
         color: var(--secondary);
-      }
+    }
 
-      .nav-link:hover {
+    .nav-link:hover {
         color: var(--blue);
-      }
+    }
 
-      .active {
+    .active {
         font-weight: 500;
         color: var(--gray-dark);
-      }
-  }
+    }
+}

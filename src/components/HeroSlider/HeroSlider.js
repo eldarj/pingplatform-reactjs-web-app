@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { BallsDiv } from '../shared/BallsDivComponent/BallsDiv';
 
 export class HeroSlider extends Component {
     constructor(props) {
@@ -14,8 +13,9 @@ export class HeroSlider extends Component {
 
     componentDidMount() {
         // react-custom-scrollbars scrolling div
-        this.state.scrollingEl = document.getElementById('scrollbars-container').children[0];
-        this.state.scrollingEl.addEventListener('scroll', this.handleScroll);
+        let el = document.getElementById('scrollbars-container').children[0];
+        el.addEventListener('scroll', this.handleScroll);
+        this.setState({ scrollingEl: el }); 
 
         // balls
         let colors = ["#3CC157", "#2AA7FF", "#1B1B1B", "#FCBC0F", "#F85F36"];
@@ -79,8 +79,8 @@ export class HeroSlider extends Component {
 
         return (
             <div id="hero-container" className="position-relative py-md-5" data-balls-bg>
-                <div className="hero-slider container bg-rgba-white-90 shadow-lg rounded my-md-5 position-relative">
-                    <div className="row">
+                <div className="hero-slider container my-md-5">
+                    <div className="row bg-rgba-white-90 shadow-lg rounded m-0 position-relative">
                         <div className="col-md-8 py-md-5 pl-5 pr-1">
                             <h1 className="display-4 font-weight-bold">Connect with everyone, from anywhere</h1>
                             <p className="lead">

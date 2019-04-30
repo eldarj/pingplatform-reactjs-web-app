@@ -21,9 +21,7 @@ class Layout extends Component {
   render () {
     return (
     <div className="root-inner-wrap">
-      <div className="bg-white position-relative mr-md-2 z-index-1">
-        <NavMenu />
-      </div>
+      <NavMenu />
       <div className="root-main-content d-flex flex-column">
         {this.props.children}
       </div>

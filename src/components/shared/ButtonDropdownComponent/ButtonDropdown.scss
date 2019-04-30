@@ -1,0 +1,22 @@
+.button-dropdown-container {
+    
+    .dropdown-menu {
+        &:focus {
+            display: block;
+        }
+    }
+
+    &.small, &.btn-option-sm {
+        .dropdown-menu {
+            box-shadow: .25px .25px 2px 0.5px rgba(0,0,0,.1);
+            padding: 0px;
+            border: 0;
+    
+            .dropdown-item {
+                border-radius: 5px;
+                font-size: 80%;
+                padding: 4px 14px;
+            }
+        }
+    }
+}

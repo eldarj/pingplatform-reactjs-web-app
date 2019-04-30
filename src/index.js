@@ -9,7 +9,7 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import getConfiguredStore from './redux/configureStore';
 
-// Styles
+// Styles & JS
 import './resources/styles/index.css';
 import './index.scss';
 

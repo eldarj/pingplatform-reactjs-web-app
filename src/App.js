@@ -13,7 +13,7 @@ import { ErrorView } from './components/ErrorView/ErrorView';
 import LoginView from './components/AuthView/LoginView';
 import RegisterView from './components/AuthView/RegisterView';
 
-import ProfileView from './components/ChatView/ProfileView';
+import ProfileView from './components/Profile/ProfileView';
 import ChatOverview from './components/ChatView/ChatOverview';
 
 window.randomGen = '_' + Math.random().toString(36).substr(2, 16);;

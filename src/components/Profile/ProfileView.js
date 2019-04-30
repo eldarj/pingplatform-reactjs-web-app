@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
+import ProfileHeader from './partials/ProfileHeader'
+import ProfileInfo from './partials/ProfileInfo'
 import DateUtils from '../../helpers/DateUtils'
-import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux'
+
+import './ProfileView.scss'
 
 class ProfileView extends Component {
 
@@ -20,83 +23,31 @@ class ProfileView extends Component {
         if (account == null) return (<p>no data</p>); // handle this with an error page or authorize /profile
         return (
             <div>
-                <div className="cover-container">
-                    <div className="cover-wrap">
-                        <div id="cover_photo"
-                            className="cover-img"
-                            style={{ backgroundImage: "url('http://localhost/images/users/profiles/default/covers/default.png')" }}></div>
+                <ProfileHeader/>
+                <div className="settings-container container d-flex mb-2">
+                    <div className="card d-flex flex-row ml-auto">
+                        <a href="/" className="btn btn-light">
+                            Feed
+                        </a>
+                        <a href="{{route('friends')}}" className="btn btn-light">
+                            Prijatelji
+                        </a>
+                        <a href="/" className="btn btn-light">
+                            Aktivnosti
+                        </a>
+                        <a href="/" className="btn btn-light">
+                            Slike
+                        </a>
+                        <a href="/" className="btn btn-light">
+                            Više informacija
+                        </a>
+                        <a href="/" className="btn btn-light">
+                            <i className="fas fa-cog"></i>
+                        </a>
                     </div>
                 </div>
-                <div className="container avatar-container d-flex mb-2">
-                    <div className="avatar-wrap row">
-                        <div className="col-sm">
-                            <div className="avatar-wrap rounded p-2 card border shadow">
-                                <a className="image-popup-vertical-fit" href="/test" title="test">
-                                    <div id="avatar"
-                                        className="avatar-img"
-                                        style={{ backgroundImage: "url('http://localhost/images/users/profiles/default/icon/default.png')" }}></div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="settings-button d-flex flex-row ml-auto">
-                        <div className="friendship-settings-wrap" data-ajax-onload data-ajax-target="friendship-settings" data-ajax-action="testingajaxsomelink" data-ajax-method="get">
-                            <div id="friendship-settings" className="d-flex flex-row align-items-center">
-                                <a href="/" className="btn btn-light">
-                                    Feed
-                                </a>
-                                <a href="{{route('friends')}}" className="btn btn-light">
-                                    Prijatelji
-                                </a>
-                                <a href="/" className="btn btn-light">
-                                    Aktivnosti
-                                </a>
-                                <a href="/" className="btn btn-light">
-                                    Slike
-                                </a>
-                                <a href="/" className="btn btn-light">
-                                    Više informacija
-                                </a>
-                            </div>
-                        </div>
-                        <div id="settings-button">
-                            <button className="btn btn-light">
-                                <i className="fas fa-cog"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div className="container profile-data d-flex flex-column">
-                    <span className="kbd h5 m-1">{account.firstname + " " + account.lastname}</span>
-                    <div className="d-flex">
-                        <div className="m-1 small child-el-blocks kbd flex-grow-1">
-                            <strong>Phone number</strong>
-                            <strong>Email</strong>
-                            <strong>Date joined</strong>
-                        </div>
-                        <div className="m-1 small child-el-blocks kbd flex-grow-1">
-                            <span>{account.phoneNumber}</span>
-                            <span>{account.email}</span>
-                            <span>{account.dateRegistered}</span>
-                        </div>
-                    </div>
-                </div>
-                <div className="container d-flex flex-column profile-body-container">
-                    <div id="profile-preview-side" className="profile-preview-side my-3">
-                        <div className="card p-3">
-                            <h2 id="name">
-                                Testname
-                        </h2>
-                            <p className="lead">
-                                Email: <span>Testmail</span>
-                            </p>
-                            <p className="description ml-1 font-italic"
-                                id="description">
-                                Testdescription
-                        </p>
-                            <p className="small writer ml-1">@testusername</p>
-                        </div>
-                    </div>
+                <ProfileInfo/>
+                <div className="container">
                     <div id="profile-settings-side" className="profile-settings-side my-3">
                         <div className="settings whileHidden">
                             <div className="d-flex">
@@ -109,8 +60,8 @@ class ProfileView extends Component {
                                         </div>
                                     </div>
                                 </div>
-                                <form method="POST" action="/profile/update" enctype="multipart/form-data">
-                                    <input type="text" value="Testuserid" name="user_id" hidden />
+                                <form method="POST" action="/profile/update" encType="multipart/form-data">
+                                    <input type="text" defaultValue="Testuserid" name="user_id" hidden />
                                     <div id="main-scroll-box" className="settings-forms flex-grow">
                                         <div id="general-settings-panel" className="settings-group form-group">
                                             <h3>Your alias</h3>
@@ -124,7 +75,7 @@ class ProfileView extends Component {
                                                     rows="5"
                                                     name="name"
                                                     placeholder="Your alias"
-                                                    value="Testusername" />
+                                                    defaultValue="Testusername" />
                                             </div>
                                             <h3>Your description</h3>
                                             <p>This will appear on your <mark>profile</mark>, and will be visible to all other users who visit.</p>
@@ -136,7 +87,8 @@ class ProfileView extends Component {
                                                     className="form-control"
                                                     placeholder="Write something about yourself..."
                                                     rows="5"
-                                                    name="description">Testdescription</textarea>
+                                                    defaultValue="Testdescription"
+                                                    name="description"></textarea>
                                             </div>
                                         </div>
                                         <div id="avatar-settings-panel" className="settings-group form-group">
@@ -182,13 +134,7 @@ class ProfileView extends Component {
     render() {
         return (
             <div className="my-3">
-                <div>
-                    <div className="container">
-                        <h1>Profile</h1>
-                    </div>
-                    <hr /><br/>
-                    {this.renderAccountHtml(this.state.accountModel)}
-                </div>
+                {this.renderAccountHtml(this.state.accountModel)}
             </div>
         );
     }

@@ -1,3 +1,8 @@
+/*        SCROLLBAR (react-scrollbar)    */
+div#scrollbars-container > div:last-of-type > div {
+  z-index: 1; //make it appear above the navbar
+}
+
 /*        CUSTOM TRANSPARENT HEADER      */
 .site-header {
   background-color: rgba(0, 0, 0, .85);
@@ -20,6 +25,9 @@
 }
 .box-shadow { 
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); 
+}
+.box-shadow-xs { 
+  box-shadow: .25px .25px .5px .5px rgba(0, 0, 0, .1); 
 }
 .overflow-hidden { 
   overflow: hidden; 
@@ -110,44 +118,6 @@
   opacity: 0.3;
 }
 
-body .avatar-img {
-  background-size: cover;
-  background-position: center;
-  width: 200px;
-  height: 200px;
-}
-
-body .avatar-img.small {
-  height: 100px;
-  width: 100px;
-}
-
-body .avatar-img.extra-small {
-  height: 50px;
-  width: 50px;
-}
-
-body .cover-container {
-  width: 100%;
-  position: relative;
-}
-
-body .cover-container .cover-img {
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  height: 500px;
-  width: 100%;
-  top: -24px;
-  position: absolute;
-}
-
-body .avatar-container {
-  padding-top: 310px;
-  -webkit-box-align: end;
-  -ms-flex-align: end;
-  align-items: flex-end;
-}
 
 body .message-time {
   font-size: 10px;
@@ -178,6 +148,7 @@ body .bg-rgba-white-90 {
   min-height: calc(1.5em + .5rem + 7px);
 }
 
+//        ANIMATIONS        //
 @keyframes sail1 { 
   0% { transform: translate(0,0); } 
   50% { transform: translate(-5rem, 3.9rem); }

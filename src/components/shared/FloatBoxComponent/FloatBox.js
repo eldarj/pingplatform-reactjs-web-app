@@ -20,9 +20,9 @@ export class FloatBox extends Component {
     renderFloatBoxHtml() {
         if(!this.state.visible) return null;
         return (
-            <div className="col-sm-2 fixed-bottom m-4 bg-light border rounded shadow-lg">
+            <div className="float-box col-sm-2 fixed-bottom m-4 bg-light border rounded shadow-lg">
                 <div className="small py-3 pl-2 pr-3">
-                    <div className="close btn btn-light" onClick={this.onCloseClick}>
+                    <div className="close close-sm btn btn-light" onClick={this.onCloseClick}>
                         <i className="fas fa-times"></i>
                     </div>
                     <div className="text-secondary mb-3">{this.props.text}</div>

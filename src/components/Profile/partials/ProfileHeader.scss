@@ -1,0 +1,52 @@
+.avatar-container {
+    padding-top: 310px;
+    
+    &.default-avatar {
+        padding-top: 0;
+    }
+
+    .avatar-img {
+        background-size: cover;
+        background-position: center;
+        width: 200px;
+        height: 200px;
+
+        &.small {
+            height: 100px;
+            width: 100px;
+        }
+
+        &.extra-small {
+            height: 50px;
+            width: 50px;
+        }
+    }
+}
+  
+.cover-container {
+    width: 100%;
+    position: relative;
+    
+    &.default-cover {
+        .cover-img {
+            height: 185px;
+            &:before {
+                content: '';
+                display: block;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.6));
+            }
+        }
+    }
+
+    .cover-img {
+        height: 500px;
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        width: 100%;
+        top: -24px;
+        position: absolute;
+    }
+}

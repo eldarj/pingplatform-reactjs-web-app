@@ -55,3 +55,51 @@ code {
 .icon-size-regular {
     font-size: 20px;
 }
+
+
+
+.btn-option {
+    position: absolute;
+
+    top: 5px;
+    right: 5px;
+    padding-bottom: 5px;
+    font-size: 1.2rem;
+
+    &.btn-option-sm {
+        font-size: .8rem;
+
+        button {
+            padding: 2px 6px;
+        }
+    }
+
+    button {
+        transition: all 0s;
+        opacity: .5;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+.close {
+    position: absolute;
+    cursor: pointer;
+    opacity: .5;
+
+    top: 5px;
+    right: 5px;
+    padding: 5px;
+    font-size: 1.2rem;
+    transition: all 0s;
+
+    &.close-sm {
+        font-size: .8rem;
+    }
+}
+
+.btn-opaque {
+    opacity: .4;
+}
