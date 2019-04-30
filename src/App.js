@@ -6,8 +6,8 @@ import { Route } from 'react-router';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 // View components
-import { Layout } from './components/Layout';
-import { IndexView } from './components/IndexView/IndexView';
+import Layout from './components/Layout';
+import IndexView from './components/IndexView/IndexView';
 import { ErrorView } from './components/ErrorView/ErrorView';
 
 import LoginView from './components/AuthView/LoginView';
@@ -23,7 +23,7 @@ function App() {
     <Scrollbars id="scrollbars-container" className="full-window">
       <Layout>
         <Route exact path='/' component={IndexView} />
-        <Route exact path='/login' component={LoginView} />
+        <Route exact path='/getstarted' component={LoginView} />
         <Route exact path='/register' component={RegisterView} />
         <Route exact path='/error' component={ErrorView} />
         <Route exact path='/chat' component={ChatOverview} />

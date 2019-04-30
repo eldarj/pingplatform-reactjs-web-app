@@ -87,7 +87,7 @@ export class HeroSlider extends Component {
                                 Text, call and chat with all your friends and contacts all over the world.
                                 Fast, secure and encrypted on the web and your phone, right now.
                             </p>
-                            <Link to='/login' className="btn btn-danger">Get started</Link>
+                            <Link to='/getstarted' className="btn btn-danger">Get started</Link>
                         </div>
                         <div className="col-md-4 py-md-5 px-0 position-relative">
                             <div className={"product-device shadow-lg d-none d-md-block backdrop " + rotateClass}></div>

@@ -75,7 +75,7 @@ class NavMenu extends Component {
             </Link>
           </li>
           <li className="nav-item">
-            <Link to='/login' className="nav-link">
+            <Link to='/getstarted' className="nav-link">
               Get started
             </Link>
           </li>
