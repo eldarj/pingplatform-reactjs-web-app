@@ -12,8 +12,6 @@ export class HeroSlider extends Component {
         };
     }
 
-    ballsHtml;
-
     componentDidMount() {
         // react-custom-scrollbars scrolling div
         this.state.scrollingEl = document.getElementById('scrollbars-container').children[0];
