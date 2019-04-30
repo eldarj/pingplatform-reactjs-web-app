@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { BallsDiv } from '../shared/BallsDivComponent/BallsDiv';
 
 export class HeroSlider extends Component {
     constructor(props) {
@@ -11,43 +12,44 @@ export class HeroSlider extends Component {
         };
     }
 
+    ballsHtml;
+
     componentDidMount() {
         // react-custom-scrollbars scrolling div
         this.state.scrollingEl = document.getElementById('scrollbars-container').children[0];
         this.state.scrollingEl.addEventListener('scroll', this.handleScroll);
 
-
-        // testing
+        // balls
         let colors = ["#3CC157", "#2AA7FF", "#1B1B1B", "#FCBC0F", "#F85F36"];
         let anims = ["sail1", "sail2", "sail3", "sail4", "sail5", "sail6"];
 
         var ballContainer = document.createElement("div");
         ballContainer.classList.add("ball-container");
+        
+        for(let i = 0; i < 5; i++) {
+            let randSize = Math.floor(Math.random() * (50 - 25)) + 25;
+            let randAnim = { 
+                duration: Math.floor(Math.random() * (15 - 10) + 10),
+                anim: anims[Math.floor(Math.random() * anims.length)]
+            }
 
-        for (let i = 0; i < 5; i++) {
             let ball = document.createElement("div");
-            let randomSize = Math.floor(Math.random() * (50 - 25)) + 25;
-            
             ball.classList.add("ball");
-            ball.style.animation = `${Math.floor(Math.random() * (15 - 10) + 10)}s infinite alternate ease-in-out ${anims[Math.floor(Math.random() * anims.length)]}`;
+            ball.style.animation = `${randAnim.duration}s infinite alternate ease-in-out ${randAnim.anim}`;
             ball.style.background = colors[Math.floor(Math.random() * colors.length)];
-            ball.style.width = `${randomSize}em`;
-            ball.style.height = `${randomSize}em`;
-            ball.style.left = `calc(${Math.floor(Math.random() * 75)}%`;
-            ball.style.top = `calc(${Math.floor(Math.random() * 75)}%`;
+            ball.style.left = `${Math.floor(Math.random() * 75)}%`;
+            ball.style.top = `${Math.floor(Math.random() * 75)}%`;
             ball.style.transform = `scale(${Math.random()})`;
+            ball.style.width = `${randSize}em`;
+            ball.style.height = `${randSize}em`;
 
             ballContainer.append(ball);
         }
 
         let elements = document.querySelectorAll('[data-balls-bg]');
-        elements.forEach(function (node) {
-            node.append(ballContainer.cloneNode(true));
+        elements.forEach(function(node){
+          node.append(ballContainer);
         });
-        colors = null;
-        anims = null;
-        ballContainer = null;
-        elements = null;
     }
 
     componentWillUnmount() {
@@ -76,6 +78,7 @@ export class HeroSlider extends Component {
 
     render() {
         let rotateClass = this.state.activeClass;
+
         return (
             <div id="hero-container" className="position-relative py-md-5" data-balls-bg>
                 <div className="hero-slider container bg-rgba-white-90 shadow-lg rounded my-md-5 position-relative">
