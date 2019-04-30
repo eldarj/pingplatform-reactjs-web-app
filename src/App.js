@@ -8,9 +8,11 @@ import { Scrollbars } from 'react-custom-scrollbars';
 // View components
 import { Layout } from './components/Layout';
 import { IndexView } from './components/IndexView/IndexView';
-import LoginView from './components/AuthView/LoginView';
-import { RegisterView } from './components/AuthView/RegisterView';
 import { ErrorView } from './components/ErrorView/ErrorView';
+
+import LoginView from './components/AuthView/LoginView';
+import RegisterView from './components/AuthView/RegisterView';
+
 import ProfileView from './components/ChatView/ProfileView';
 import ChatOverview from './components/ChatView/ChatOverview';
 

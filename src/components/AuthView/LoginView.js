@@ -4,13 +4,14 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { setAccountAction } from '../../redux/actions';
-
 import * as signalr from '@aspnet/signalr';
+
 import './LoginView.scss';
 
 class LoginView extends Component {
     hubConnection = null;
     reduxDispatch = null;
+
     constructor(props) {
         super(props);
 
@@ -31,10 +32,10 @@ class LoginView extends Component {
             .build();
             
         this.hubConnection
-        .start()
-        .then(() => console.log('Connection started.'))
-        .catch(() => console.log('Error establishing connection.'));
-        
+            .start()
+            .then(() => console.log('Connection started.'))
+            .catch(() => console.log('Error establishing connection.'));
+            
 
         this.hubConnection.on(`AuthenticationDone${window.randomGen}`, (receivedMessage) => {
             console.log("message: ");
@@ -107,6 +108,7 @@ class LoginView extends Component {
     render() {
         let loading = this.state.loading;
         let submit;
+        
         if (loading) {
             submit = <button className="btn btn-light w-50 rounded-0 pointer-events-none">
                 <i className="fas fa-circle-notch rotate anim-speed-slow"></i>
@@ -129,6 +131,8 @@ class LoginView extends Component {
                                         <input id="phoneNumber" type="number" className="form-control"
                                             placeholder="387 62 005 152" value={this.state.phoneNumber}
                                             onChange={this.handlePhoneNumberChange} />
+                                    </div>
+                                    <div className="form-group">
                                         <div className="checkbox mt-2">
                                             <input id="createSession" type="checkbox" className="styled"
                                                 value={this.state.createSession}

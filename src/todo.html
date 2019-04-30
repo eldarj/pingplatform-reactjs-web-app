@@ -1,0 +1,320 @@
+# Add this
+
+# -- Chat box (floated fixed to bottom)
+<div class="float-box col-sm-2 m-4 d-inline-block fixed-bottom rounded bg-light shadow-lg border">
+  <div class="small p-3">
+    <div class="text-secondary">Did you already join the chat?</div>
+    <div class="text-secondary">Check it out and type with your friends!</div>
+    <a href="/chat" class="mt-3 btn btn-sm btn-secondary">Chat</a>
+  </div>
+</div>
+
+# -- Example of working offcanvas nav
+<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+  <a class="navbar-brand mr-auto mr-lg-0" href="/">Offcanvas navbar</a>
+  <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/">Dashboard <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Notifications</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Profile</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Switch account</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="https://example.com" id="dropdown01" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">Settings</a>
+        <div class="dropdown-menu" aria-labelledby="dropdown01">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+
+# -- offcanvas js offcanvas.js
+<script>
+$(function () {
+  'use strict'
+
+  $('[data-toggle="offcanvas"]').on('click', function () {
+    $('.offcanvas-collapse').toggleClass('open')
+  })
+})
+</script>
+
+
+# -- jumbotron
+<div class="container bg-rgba-white-90 shadow-lg rounded py-3">
+  <h1 class="jumbotron-heading">Profile</h1>
+  <p class="lead text-muted">Edit and see how others see your profile.</p>
+  <p>
+    <a href="http://localhost/profile/eldarja" class="btn btn-primary my-2">My profile</a>
+  </p>
+</div>
+
+# -- settings and profile section
+<script>
+/**
+ * Settings.panel.js
+ * 	~ Handles settings and profile side-bars
+ */
+
+ /*jshint esversion: 6*/
+ /* jshint strict: true */
+
+ (function () {
+   'use strict';
+
+	let settingsSidebar = {
+		containerHeight: null,
+		formPanelsParent: document.getElementById('main-scroll-box'),
+		simpleBar: new SimpleBar(document.getElementById('main-scroll-box')),
+		settingsToggle: $('#settings-button'),
+		settingsPanel: $('#profile-settings-side'),
+		profilePanel: $('#profile-preview-side'),
+		get generalPanel() {
+			return $('#general-settings-panel');
+		},
+		get avatarPanel() {
+			return $('#avatar-settings-panel');
+		},
+		get coverPanel() {
+			return $('#cover-settings-panel');
+		},
+		get initialHeight() {
+			return this.generalPanel.height();
+		},
+		get settingsNavBtn() {
+			return $('.settings-nav-btn');
+		},
+		get inputFields() {
+			return $('.form-control');
+		},
+		get settingsGroups() {
+			return $('.settings-group');
+		},
+		/**
+		 * Disabled all other input fields except those passed to the function
+		 * @param  {jQuery HTML El. | Array of HTML El.} exceptElements array of HTMl elements that won't be disabled
+		 */
+		disableInputsExcept($exceptElements) {
+			$("#main-scroll-box").find('.form-control').attr('disabled','disabled');
+			$exceptElements.removeAttr('disabled');
+		},
+		loseActiveExcept($activeBtn) {
+			$('.settings-nav-btn').removeClass('bg-dark text-white');
+			$activeBtn.addClass('bg-dark text-white');
+		},
+		inputChangeHandlers: function(self) {
+			// Initialize input field change listeners
+			self.inputFields.each(function(key, element) {
+				let $i = $(element),
+					$previewElement = $('#'+$i.attr('name')),
+					type = $i.attr('type'),
+					attr = $i.attr('name'),
+					dbValue = $previewElement.attr('data-db-value');
+
+					if (typeof attr !== "undefined") {
+						$i.on('input', function(){
+							if (type === 'file') {
+								let value = $i.val();
+								if (!document.getElementById('clearFileInput')) {
+									var clearBtn = document.createElement('button'),
+										icon = document.createElement('i');
+									icon.classList = "fas fa-times";
+									clearBtn.classList = "btn btn-light d-flex mx-2 my-auto p-1 text-danger";
+									clearBtn.id = 'clearFileInput';
+									clearBtn.appendChild(icon);
+									clearBtn.addEventListener('click', function(e){
+										$i.wrap('<form>').closest('form').get(0).reset();
+										$i.unwrap();
+										clearBtn.remove();
+										e.preventDefault();
+									});
+								}
+
+								$i.after(clearBtn);
+
+								if (!value) {
+									$previewElement.css({
+										backgroundImage: `url('${dbValue}')`
+									});
+									clearBtn.remove();
+								} else {
+									let fileObj = $i.prop('files'),
+										reader = new FileReader();
+
+									reader.onload = function(e) {
+								      $previewElement.css({
+								      	backgroundImage: `url('${e.target.result}')`
+								      });
+								    };
+							    	reader.readAsDataURL($i.prop('files')[0]);
+								}
+							} else {
+								let value = $i.val();
+								if (!value) value = dbValue;
+								$previewElement.html(value);
+							}
+						});
+					}
+			});
+		},
+		navButtonsClickHandlers: function(self) {
+			// Initialize nav button handlers
+			self.settingsNavBtn.each(function(key, element) {
+				let $e = $(element);
+				let $section = $($e.attr('data-section'));
+				let $sectionFormInputs = $section.find('.form-control');
+
+				let offset = $section.position();
+				let sectionHeight = $section.outerHeight(true);
+
+
+				$e.on('click', () => {
+				// disable other inputs, so we don't post everything on saving the changes
+				// self.disableInputsExcept($sectionFormInputs); // we at first were disabling other elements, but no we don't :)
+				self.loseActiveExcept($e);
+					self.formPanelsParent.style.height = sectionHeight + "px";
+					$(self.simpleBar.getScrollElement()).animate({
+					    scrollTop: offset.top
+					  }, {
+					  	duration: 300, 
+					  	easing:'swing'
+					});
+					// self.simpleBar.getScrollElement().scrollTop = offset.top;
+				});
+			});
+		},
+		settingsToggleClickHandler: function(self) {
+			// Initialize and set toggle button
+			self.settingsToggle.on('click', function(){
+				self.settingsToggle.find('button').toggleClass('btn-dark');
+				self.settingsPanel.toggleClass('w-75');
+				self.profilePanel.toggleClass('w-25');
+				self.settingsPanel.find('.whileHidden').removeClass('whileHidden');
+			});
+		},
+		setHeightOnInit: function(self) {
+			// Initialize height
+			self.containerHeight = self.initialHeight;
+			self.formPanelsParent.style.height = self.containerHeight + "px";
+		},
+		disableMouseScroll: function(self) {
+			$(self.formPanelsParent).on('mousewheel wheel', function(event) {
+				let current = self.settingsNavBtn.filter('.bg-dark');
+				if (event.originalEvent.wheelDelta > 0 || event.originalEvent.detail < 0) {
+			        let prev = current.prev('.settings-nav-btn').addClass('bg-dark');
+			        prev.click();
+			    }
+			    else {
+			        let next = current.next('.settings-nav-btn').addClass('bg-dark');
+			        next.click();
+			    }
+			    return false;
+			});
+		},
+		/**
+		 * Main initialize function
+		 * 	~ initialized settings sidebar
+		 */
+		initialize: function() {
+			let self = this;
+
+			// Set the initial height (will be the first section eg. General)
+			self.setHeightOnInit(self);
+			// We'll disable scroll so the user has to click on setting sections
+			self.disableMouseScroll(self);
+
+			// Attach handlers to: 
+			//  - Inputs (onchange)
+			//  - Nav section buttons (click)
+			//  - Settings Toggle button (click) 
+			self.inputChangeHandlers(self);
+			self.navButtonsClickHandlers(self);
+			self.settingsToggleClickHandler(self);
+			
+		}
+	};
+
+	// Run initialize() on document.ready
+	$(document).ready(function(){
+		settingsSidebar.initialize();
+	});
+}()); //Strict
+</script>
+
+
+# -- data balls bg
+<div data-balls-bg></div>
+
+# -- script for data balls: balls-bg.js
+<script>
+// Some random colors
+const colors = ["#3CC157", "#2AA7FF", "#1B1B1B", "#FCBC0F", "#F85F36"];
+
+const numBalls = 15;
+const balls = [];
+
+var ballContainer = document.createElement("div");
+ballContainer.classList.add("ball-container");
+
+for (let i = 0; i < numBalls; i++) {
+  let ball = document.createElement("div");
+  ball.classList.add("ball");
+  ball.style.background = colors[Math.floor(Math.random() * colors.length)];
+  ball.style.left = `${Math.floor(Math.random() * 100)}%`;
+  ball.style.top = `${Math.floor(Math.random() * 100)}%`;
+  ball.style.transform = `scale(${Math.random()})`;
+  ball.style.width = `${Math.random() * 25}em`;
+  ball.style.height = ball.style.width;
+  
+  balls.push(ball);
+  ballContainer.append(ball);
+}
+
+let elements = document.querySelectorAll('[data-balls-bg]');
+elements.forEach(function(node){
+  node.append(ballContainer);
+});
+
+// Keyframes
+balls.forEach((el, i, ra) => {
+  let to = {
+    x: Math.random() * (i % 2 === 0 ? -11 : 11),
+    y: Math.random() * 12
+  };
+
+  let anim = el.animate(
+    [
+      { transform: "translate(0, 0)" },
+      { transform: `translate(${to.x}rem, ${to.y}rem)` }
+    ],
+    {
+      duration: (Math.random() + 1) * 2000, // random duration
+      direction: "alternate",
+      fill: "both",
+      iterations: Infinity,
+      easing: "ease-in-out"
+    }
+  );
+});
+
+
+</script>

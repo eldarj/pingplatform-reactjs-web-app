@@ -15,7 +15,7 @@ export class ErrorView extends Component {
 
     render() {
         return (
-            <div className="my-5 py-5">
+            <div className="align-items-center d-flex flex-grow-1 py-5">
                 <div className="container">
                     <div className="row">
                         <div className="mx-auto col-sm-12 text-center">

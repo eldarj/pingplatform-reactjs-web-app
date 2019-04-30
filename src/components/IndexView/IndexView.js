@@ -14,7 +14,7 @@ export class IndexView extends Component {
                     <div className="container">
                         <div className="row py-4">
                             <div className="col-sm">
-                                <h4 className="display-5 text-center">More than a chat</h4>
+                                <h4 className="display-4 text-center">More than a chat</h4>
                                 <p className="lead text-center">
                                     With a variety of calling and messaging features, you have endless options when it comes to expressing yourself.
                         </p>
@@ -26,7 +26,7 @@ export class IndexView extends Component {
                     <div className="container">
                         <div className="row py-4">
                             <div className="col-sm-12">
-                                <h4 className="display-5 text-center">Security</h4>
+                                <h4 className="display-4 text-center">Security</h4>
                                 <p className="lead text-center mb-5">
                                     With Ping you need zero setup time for fully securing your account, and more importantly all your data.
                         </p>
@@ -80,7 +80,7 @@ export class IndexView extends Component {
                     <div className="container">
                         <div className="row py-4">
                             <div className="col-sm">
-                                <h4 className="display-5 text-center">Your private data space</h4>
+                                <h4 className="display-4 text-center">Your private data space</h4>
                             </div>
                         </div>
                     </div>
@@ -89,7 +89,7 @@ export class IndexView extends Component {
                     <div className="container">
                         <div className="row py-4">
                             <div className="col-sm">
-                                <h4 className="display-5 text-center">Don't have Ping yet?</h4>
+                                <h4 className="display-4 text-center">Don't have Ping yet?</h4>
                             </div>
                         </div>
                     </div>
