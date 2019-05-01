@@ -5,6 +5,7 @@
   "dependencies": {
     "@aspnet/signalr": "^1.1.4",
     "js-cookie": "^2.2.0",
+    "lz-string": "^1.4.4",
     "node-sass": "^4.11.0",
     "react": "^16.8.6",
     "react-custom-scrollbars": "^4.2.1",
