@@ -8,11 +8,11 @@ class ProfileInfo extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {accountModel: null}
+        this.state = {accountVM: null}
 
         if (props.account != null) {
-            props.account.dateRegistered = DateUtils.formatISODate(props.account.dateRegistered);
-            this.state.accountModel = props.account;
+            this.state.accountVM = props.account;
+            this.state.accountVM.dateRegisteredHuman = DateUtils.formatISODate(props.account.dateRegistered);
         }
     }
 
@@ -23,19 +23,19 @@ class ProfileInfo extends Component {
                 <div id="profile-preview-side" className="profile-preview-side">
                     <div className="card p-3">
                         <h2 id="name">
-                            {this.state.accountModel.firstname} {this.state.accountModel.lastname}
+                            {this.state.accountVM.firstname} {this.state.accountVM.lastname}
                         </h2>
                         <div>
                             <p>@eldarjatest</p>
-                            <kbd>{this.state.accountModel.email}</kbd><br/>
-                            <kbd>{this.state.accountModel.phoneNumber}</kbd>
+                            <kbd>{this.state.accountVM.email}</kbd><br/>
+                            <kbd>{this.state.accountVM.phoneNumber}</kbd>
                         </div>
                         <hr/>
                         <p className="m-1">
                             This is my test description.
                         </p>
                         <p className="small m-1">
-                            Date joined {this.state.accountModel.dateRegistered}
+                            Date joined {this.state.accountVM.dateRegisteredHuman}
                         </p>
                     </div>
                 </div>
@@ -44,7 +44,7 @@ class ProfileInfo extends Component {
     }
 
     render() {
-        return this.renderProfileHeaderHtml(this.state.accountModel)
+        return this.renderProfileHeaderHtml(this.state.accountVM)
     }
 }
 

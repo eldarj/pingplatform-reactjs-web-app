@@ -11,11 +11,10 @@ class ProfileView extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { accountModel: null }
+        this.state = { accountVM: null }
 
         if (props.account != null) {
-            props.account.dateRegistered = DateUtils.formatISODate(props.account.dateRegistered);
-            this.state.accountModel = props.account;
+            this.state.accountVM = props.account;
         }
     }
 
@@ -25,7 +24,7 @@ class ProfileView extends Component {
             <div>
                 <ProfileHeader/>
                 <div className="settings-container container d-flex mb-2">
-                    <div className="card d-flex flex-row ml-auto">
+                    <div className="btn-group btn-group-sm ml-auto">
                         <a href="/" className="btn btn-light">
                             Feed
                         </a>
@@ -133,9 +132,7 @@ class ProfileView extends Component {
 
     render() {
         return (
-            <div className="my-3">
-                {this.renderAccountHtml(this.state.accountModel)}
-            </div>
+            this.renderAccountHtml(this.state.accountVM)
         );
     }
 }

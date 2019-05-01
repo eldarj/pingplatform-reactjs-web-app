@@ -1,12 +1,8 @@
 import React, { Component } from 'react'
 import './ButtonDropdown.scss'
 
-export class ButtonDropdown extends Component {
+export default class ButtonDropdown extends Component {
     static dropdownEl = null;
-
-    constructor(props) {
-        super(props);
-    }
 
     toggleDropdown = (e) => {
         if(this.dropdownEl == null) 
@@ -32,11 +28,10 @@ export class ButtonDropdown extends Component {
                 className={"button-dropdown-container " + this.props.className}>
                 <button className={"btn " + this.props.btnClassName} 
                     onClick={this.toggleDropdown}
-                    onBlur={this.hideDropdown}
-                    >
+                    onBlur={this.hideDropdown}>
                     <i className={this.props.btnIconClassName}/>
                 </button>
-                <div className="dropdown-menu">
+                <div className={"dropdown-menu " + this.props.dropdownClassName}>
                     {this.props.children}
                 </div>
             </div>

@@ -31,7 +31,7 @@ class RegisterView extends Component {
 
     componentDidMount = () => {
         this.hubConnection = new signalr.HubConnectionBuilder()
-            .withUrl('https://localhost:44380/accountshub')
+            .withUrl('https://localhost:44380/authhub')
             .build();
 
         this.hubConnection
@@ -50,7 +50,8 @@ class RegisterView extends Component {
                 receivedMessage.firstname,
                 receivedMessage.lastname,
                 receivedMessage.phoneNumber,
-                receivedMessage.token));
+                receivedMessage.token,
+                receivedMessage.avatarImageUrl));
 
             window.setTimeout(() => {
                 this.setState({ redirect: true, redirectUrl: 'profile' });

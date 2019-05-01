@@ -5,7 +5,8 @@ class AccountModel {
         firstname,
         lastname,
         phoneNumber,
-        token) {
+        token,
+        avatarImageUrl) {
             this.createSession = createSession;
             this.dateRegistered = dateRegistered;
             this.email = email;
@@ -13,6 +14,7 @@ class AccountModel {
             this.lastname = lastname;
             this.phoneNumber = phoneNumber;
             this.token = token;
+            this.avatarImageUrl = avatarImageUrl;
     }
 
     static getInstance(obj) {
@@ -23,7 +25,8 @@ class AccountModel {
             obj.firstname,
             obj.lastname,
             obj.phoneNumber,
-            obj.token
+            obj.token,
+            obj.avatarImageUrl
         );
     }
 }

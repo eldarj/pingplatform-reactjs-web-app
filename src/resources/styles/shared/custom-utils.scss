@@ -1,6 +1,6 @@
 /*        CUSTOM UTILS       */
 
-.btn-group-sm>.btn, .btn-xs {
+.btn-group-xs > .btn, .btn-xs {
     padding: .185rem .35rem;
     font-size: .725rem;
     line-height: 1.5;
@@ -72,6 +72,15 @@ code {
         button {
             padding: 2px 6px;
         }
+    }
+
+    &.position-offset-sm {
+        top: 5px;
+        right: 5px;
+    }
+    &.position-offset-md {
+        top: 15px;
+        right: 15px;
     }
 
     button {

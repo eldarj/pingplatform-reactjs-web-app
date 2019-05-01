@@ -4,6 +4,11 @@
         &:focus {
             display: block;
         }
+
+        &.pull-left {
+            right: 0;
+            left: auto;
+        }
     }
 
     &.small, &.btn-option-sm {
