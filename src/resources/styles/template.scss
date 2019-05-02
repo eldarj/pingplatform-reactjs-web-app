@@ -29,6 +29,9 @@ div#scrollbars-container > div:last-of-type > div {
 .box-shadow-xs { 
   box-shadow: .25px .25px .5px .5px rgba(0, 0, 0, .1); 
 }
+.box-shadow-md {
+  box-shadow: 0 1rem 2rem rgba(0,0,0,.5);
+}
 .overflow-hidden { 
   overflow: hidden; 
 }

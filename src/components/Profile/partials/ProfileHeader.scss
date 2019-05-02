@@ -1,12 +1,13 @@
 .avatar-container {
-    padding-top: 310px;
-    
     &.default-avatar {
         padding-top: 0;
     }
 
     .avatar-wrap {
         margin-right: 10rem;
+        padding: 5px;
+        background: #fff;
+        
         &:hover {
             .btn-option {
                 visibility: visible;
@@ -64,23 +65,29 @@
         &.default-cover {
             .cover-img {
                 height: 250px;
-                &:before {
-                    content: '';
-                    display: block;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.6));
-                }
             }
         }
 
         .cover-img {
-            height: 500px;
+            height: 400px;
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             width: 100%;
             position: absolute;
+
+            
+            &.loading-div-bg {
+                &:before {
+                    font-weight: 900;
+                    color: #fff;
+                    font-size: 2rem;
+                    
+                    animation-duration: 1500ms;
+                    -webkit-animation-duraion: 1500ms;
+                    -moz-animation-duration: 1500ms;
+                }
+            }
         }
     }
 }

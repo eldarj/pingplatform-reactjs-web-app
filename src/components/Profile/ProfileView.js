@@ -37,6 +37,9 @@ class ProfileView extends Component {
                         <a href="/" className="btn btn-light">
                             Slike
                         </a>
+                        <a href="/dataspace" className="btn btn-light">
+                            Data Space
+                        </a>
                         <a href="/" className="btn btn-light">
                             Više informacija
                         </a>

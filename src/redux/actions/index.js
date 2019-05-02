@@ -9,7 +9,8 @@ export const setAccountAction = (
       lastname,
       phoneNumber,
       token,
-      avatarImageUrl
+      avatarImageUrl,
+      coverImageUrl
 ) => {
       // Testing goes here :)
       return {
@@ -22,6 +23,7 @@ export const setAccountAction = (
                   lastname,
                   phoneNumber,
                   token,
-                  avatarImageUrl)
+                  avatarImageUrl,
+                  coverImageUrl)
       }
 };

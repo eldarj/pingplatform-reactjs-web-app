@@ -45,6 +45,18 @@ class NavMenu extends Component {
             </Link>
           </li>
           <li className="nav-item">
+            <Link to='/dataspace' className="nav-link d-flex">
+              <i className="mr-1 far fa-save icon-size-regular"></i>
+              Data Space
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to='/chat' className="nav-link d-flex">
+              <i className="mr-1 far fa-comment-alt icon-size-regular"></i>
+              Chat
+            </Link>
+          </li>
+          <li className="nav-item">
             <Link to='/support' className="nav-link d-flex">
               <i className="mr-1 far fa-life-ring icon-size-regular"></i>
               Support
@@ -54,12 +66,6 @@ class NavMenu extends Component {
             <Link to='/profile' className="nav-link d-flex">
               <i className="mr-1 far fa-user-circle icon-size-regular"></i>
               Profile
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to='/chat' className="nav-link d-flex">
-              <i className="mr-1 far fa-comment-alt icon-size-regular"></i>
-              Chat
             </Link>
           </li>
         </ul>

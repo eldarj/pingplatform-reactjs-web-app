@@ -14,6 +14,7 @@ import LoginView from './components/AuthView/LoginView';
 import RegisterView from './components/AuthView/RegisterView';
 
 import ProfileView from './components/Profile/ProfileView';
+import DataSpaceView from './components/DataSpaceView/DataSpaceView';
 import ChatOverview from './components/ChatView/ChatOverview';
 
 window.randomGen = '_' + Math.random().toString(36).substr(2, 16);;
@@ -28,6 +29,7 @@ function App() {
         <Route exact path='/error' component={ErrorView} />
         <Route exact path='/chat' component={ChatOverview} />
         <Route exact path='/profile' component={ProfileView} />
+        <Route exact path='/dataspace' component={DataSpaceView} />
       </Layout>
     </Scrollbars>
   );

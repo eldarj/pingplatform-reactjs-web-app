@@ -49,7 +49,8 @@ class LoginView extends Component {
                 receivedMessage.lastname,
                 receivedMessage.phoneNumber,
                 receivedMessage.token,
-                receivedMessage.avatarImageUrl));
+                receivedMessage.avatarImageUrl,
+                receivedMessage.coverImageUrl));
 
             window.setTimeout(() => {
                 this.setState({ redirect: true, redirectUrl: 'profile' });

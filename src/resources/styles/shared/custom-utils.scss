@@ -68,19 +68,15 @@ code {
 
     &.btn-option-sm {
         font-size: .8rem;
-
-        button {
-            padding: 2px 6px;
-        }
     }
 
     &.position-offset-sm {
-        top: 5px;
-        right: 5px;
+        top: .5rem;
+        right: .5rem;
     }
     &.position-offset-md {
-        top: 15px;
-        right: 15px;
+        top: 1rem;
+        right: 1rem;
     }
 
     button {
@@ -141,4 +137,13 @@ code {
 
 .bottom-0 {
     bottom: 0;
+}
+.top-0 {
+    top: 0;
+}
+.left-0 {
+    left: 0;
+}
+.right-0 {
+    right: 0;
 }
