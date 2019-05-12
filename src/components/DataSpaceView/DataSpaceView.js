@@ -9,7 +9,7 @@ import DataSpaceMainContent from './partials/DataSpaceMainContent/DataSpaceMainC
 import DataSpaceSearch from './partials/DataSpaceSearch/DataSpaceSearch'
 import SidebarNav from './partials/SidebarNav/SidebarNav'
 
-import { CommandBar } from 'office-ui-fabric-react'
+import { CommandBar, IconButton, Spinner } from 'office-ui-fabric-react'
 
 class DataSpaceView extends Component {
   hubConnection = null;
@@ -18,7 +18,10 @@ class DataSpaceView extends Component {
     super(props);
     this.state = {
       accountVM: null,
-      showNotificationsPanel: false
+      showNotificationsPanel: false,
+      rootFiles: [],
+      fileUploading: false,
+      additionalCommandClasses: 'disabled'
     }
 
     if (props.account != null) {
@@ -37,24 +40,51 @@ class DataSpaceView extends Component {
       .catch(() => console.log('Error establishing connection.'));
 
     this.hubConnection.on(`UploadFileSuccess${window.randomGen}`, (receivedMessage) => {
-      console.log("Request success: ");
+      console.log("Upload file success: ");
       console.log(receivedMessage);
+
+      this.state.rootFiles.unshift(receivedMessage);
+      this._allItems = this.state.rootFiles;
+      this.setState(prevState => (
+        { 
+          fileUploading: false, 
+          rootFiles: [...this.state.rootFiles] 
+        }
+      ));
+
     });
 
     this.hubConnection.on(`UploadFileFail${window.randomGen}`, (receivedMessage) => {
-      console.log("Request fail: ");
+      console.log("Upload file fail: ");
+      console.log(receivedMessage);
+    });
+
+    this.hubConnection.on(`RequestFilesMetaDataSuccess${window.randomGen}`, (receivedMessage) => {
+      console.log("Request meta data success:");
+      console.log(receivedMessage);
+      this._allItems = receivedMessage.rootFiles;
+      this.setState({ 
+        loading: false, 
+        rootFiles: receivedMessage.rootFiles,
+        additionalCommandClasses: ''
+      });
+    });
+
+    this.hubConnection.on(`RequestFilesMetaDataFail${window.randomGen}`, (receivedMessage) => {
+      console.log("Request meta data fail:");
       console.log(receivedMessage);
     });
   }
 
-
   signalRHubOnConnected = () => {
-    this.hubConnection
-      .invoke("RequestFilesMetaData", window.randomGen, this.state.accountVM.phoneNumber)
-      .catch(err => {
-        console.error(`Error on: RequestAuthentication(${window.randomGen}, requestobj)`);
-        console.error(err);
-      });
+    setTimeout(() => {
+      this.hubConnection
+        .invoke("RequestFilesMetaData", window.randomGen, this.state.accountVM.phoneNumber)
+        .catch(err => {
+          console.error(`Error on: RequestAuthentication(${window.randomGen}, requestobj)`);
+          console.error(err);
+        });
+    }, 1500);
 
     //this.getStream();
   }
@@ -147,18 +177,6 @@ class DataSpaceView extends Component {
     ];
   };
 
-  _getFarItems = () => {
-    return [
-      {
-        key: 'info',
-        name: 'Info',
-        iconOnly: true,
-        iconProps: { iconName: 'Info' },
-        onClick: () => console.log('Info')
-      }
-    ];
-  };
-
   // TODO: File read and upload ::FileReader()
   onUploadFileSelected = (e) => {
     let reader = new FileReader();
@@ -166,12 +184,13 @@ class DataSpaceView extends Component {
     let formData = new FormData();
     for (var i = 0; i < e.target.files.length; i++) {
       let file = e.target.files[i];
+      console.log("FILE:");
       console.log(file);
       formData.append('files[' + i + ']', file);
     }
-    let endpoint = 'https://localhost:44380/api/dataspace/eldarja/files';
-    console.log(endpoint);
-    axios.post(endpoint,
+    this.setState({ fileUploading: true });
+    setTimeout(() => {
+      axios.post('https://localhost:44380/api/dataspace/eldarja/files',
       formData,
       {
         onUploadProgress: (e) => {
@@ -192,7 +211,6 @@ class DataSpaceView extends Component {
       })
       .finally((e) => {
         console.log(e);
-
         console.log("AXIOS:Finaly");
       })
       .catch((e) => {
@@ -200,7 +218,9 @@ class DataSpaceView extends Component {
         console.log("AXIOS:Catch");
       });
 
-    // FOR LOADING INTO A VIEW OR SMTHNG (EG. Images)
+    }, 1500);
+
+    // // FOR LOADING INTO A VIEW OR SMTHNG (EG. Images)
     // let fileSize;
     // reader.onloadstart = (e) => {
     //     console.log('LOADSTART');
@@ -237,13 +257,14 @@ class DataSpaceView extends Component {
     //       })
     //       .finally(() => {
     //         console.log("AXIOS:Finaly");
+    //         this.setState({ fileUploading: false });
     //       })
     //       .catch(() => {
     //         console.log("AXIOS:Catch");
     //       });
     // }
-    //reader.readAsArrayBuffer(file);
-    //reader.readAsDataURL(file); // triggers on load end
+    // reader.readAsArrayBuffer(file);
+    // reader.readAsDataURL(file); // triggers on load end
   }
 
   _showPanel = () => {
@@ -251,28 +272,33 @@ class DataSpaceView extends Component {
     this.setState({ showNotificationsPanel: true });
   };
 
+  FarCommands = () => (
+      <div className={`d-flex flex-row bg-primary-grey-light px-3 ${this.state.additionalCommandClasses}`}>
+        <Spinner className="px-3" style={{visibility: this.state.fileUploading ? 'visible' : 'hidden'}} />
+        <IconButton className="ms-icon-regular h-auto" iconProps={{iconName: "Info"}} />
+      </div>
+  );
+
   render() {
     return (
       <div className="container-fluid position-relative">
         <div className="row">
-          <div className="col-md-2 bg-light d-flex">
-            <DataSpaceSearch />
-          </div>
-          <div className="col-md-10">
-            <CommandBar
-              items={this._getItems()}
-              overflowItems={this._getOverlflowItems()}
-              farItems={this._getFarItems()}
-            />
-            <input type="file" ref="fileUploadInput" onChange={this.onUploadFileSelected} multiple hidden />
-          </div>
-        </div>
-        <div className="row">
           <div className="col-md-2 bg-light sidebar">
+            <DataSpaceSearch />
             <SidebarNav />
           </div>
           <div className="col-md-10">
-            <DataSpaceMainContent hubConnection={this.hubConnection} />
+            <div className="d-flex flex-row">
+              <CommandBar className={`flex-grow-1 ${this.state.additionalCommandClasses}`}
+                items={this._getItems()}
+                overflowItems={this._getOverlflowItems()}
+              />
+              <this.FarCommands />
+            </div>
+            <input type="file" ref="fileUploadInput" onChange={this.onUploadFileSelected} multiple hidden />
+            <DataSpaceMainContent
+              hubConnection={this.hubConnection}
+              rootFiles={this.state.rootFiles} />
           </div>
         </div>
         <NotificationsPane isOpen={this.state.showNotificationsPanel} />
@@ -280,8 +306,6 @@ class DataSpaceView extends Component {
     );
   }
 }
-
-
 
 const mapStateToProps = state => ({ account: state.account });
 

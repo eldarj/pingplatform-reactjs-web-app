@@ -1,3 +1,5 @@
+@import 'resources/styles/shared/color-vars';
+
 /*        SCROLLBAR (react-scrollbar)    */
 div#scrollbars-container > div:last-of-type > div {
   z-index: 1; //make it appear above the navbar
@@ -121,7 +123,6 @@ div#scrollbars-container > div:last-of-type > div {
   opacity: 0.3;
 }
 
-
 body .message-time {
   font-size: 10px;
 }
@@ -156,11 +157,50 @@ i.font-icon-md {
   font-size: 30px;
 }
 
-//        LIB ADJUSTMENTS   //
+// Library adjustments
 .badge {
-  font-weight: 400;
-  border-radius: 0;
-  padding: .15rem .25rem .25rem .15rem;
+  font-weight: 400 !important;
+  border-radius: 0 !important;
+  padding: .15rem .25rem .25rem .15rem !important;
+}
+.label-primary {
+  color: $primary-blue !important;
+  font-size: 16px !important;
+}
+.bg-primary-blue {
+  background-color: $primary-blue !important;
+}
+.bg-primary-grey-dark {
+  background-color: $primary-grey-dark !important;
+}
+.bg-primary-grey {
+  background-color: $primary-grey !important;
+}
+.bg-primary-grey-light {
+  background-color: $primary-grey-light !important;
+}
+i.ms-icon-regular, button.ms-icon-regular i {
+  -webkit-font-smoothing: antialiased;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  margin-top: 0px;
+  margin-right: 4px;
+  margin-bottom: 0px;
+  margin-left: 4px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  vertical-align: middle;
+  flex-shrink: 0;
+  color: $primary-blue;
+}
+.disabled .ms-Button {
+  color: $primary-grey;
+  pointer-events: none; 
+  i {
+    color: $primary-grey;
+  }
 }
 
 //        ANIMATIONS        //

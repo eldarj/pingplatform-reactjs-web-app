@@ -10,7 +10,6 @@ import getConfiguredStore from './redux/configureStore';
 // Styles & JS
 import './resources/styles/index.css';
 import './index.scss';
-import './resources/styles/extensions/microsoft-fabric-ui.scss';
 
 import { initializeIcons } from '@uifabric/icons';
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
