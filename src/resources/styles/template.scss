@@ -156,6 +156,12 @@ i.font-icon-md {
   font-size: 30px;
 }
 
+//        LIB ADJUSTMENTS   //
+.badge {
+  font-weight: 400;
+  border-radius: 0;
+  padding: .15rem .25rem .25rem .15rem;
+}
 
 //        ANIMATIONS        //
 @keyframes sail1 { 

@@ -9,6 +9,8 @@ import DataSpaceMainContent from './partials/DataSpaceMainContent/DataSpaceMainC
 import DataSpaceSearch from './partials/DataSpaceSearch/DataSpaceSearch'
 import SidebarNav from './partials/SidebarNav/SidebarNav'
 
+import { CommandBar } from 'office-ui-fabric-react'
+
 class DataSpaceView extends Component {
   hubConnection = null;
 
@@ -50,8 +52,8 @@ class DataSpaceView extends Component {
     this.hubConnection
       .invoke("RequestFilesMetaData", window.randomGen, this.state.accountVM.phoneNumber)
       .catch(err => {
-          console.error(`Error on: RequestAuthentication(${window.randomGen}, requestobj)`);
-          console.error(err);
+        console.error(`Error on: RequestAuthentication(${window.randomGen}, requestobj)`);
+        console.error(err);
       });
 
     //this.getStream();
@@ -73,33 +75,24 @@ class DataSpaceView extends Component {
     //   });
   }
 
-
   // Data for CommandBar
-  getItems = () => {
+  _getItems = () => {
     return [
       {
         key: 'newItem',
         name: 'New',
-        cacheKey: 'myCacheKey', // changing this key will invalidate this items cache
-        iconProps: {
-          iconName: 'Add'
-        },
-        ariaLabel: 'New',
+        iconProps: { iconName: 'Add' },
         subMenuProps: {
           items: [
             {
-              key: 'emailMessage',
-              name: 'Email message',
-              iconProps: {
-                iconName: 'Mail'
-              }
+              key: 'directory',
+              name: 'Directory',
+              iconProps: { iconName: 'FabricNewFolder' }
             },
             {
-              key: 'calendarEvent',
-              name: 'Calendar event',
-              iconProps: {
-                iconName: 'Calendar'
-              }
+              key: 'link',
+              name: 'link',
+              iconProps: { iconName: 'Link' }
             }
           ]
         }
@@ -107,31 +100,25 @@ class DataSpaceView extends Component {
       {
         key: 'upload',
         name: 'Upload',
-        iconProps: {
-          iconName: 'Upload'
-        },
+        iconProps: { iconName: 'Upload' },
         onClick: () => this.refs.fileUploadInput.click()
       },
       {
         key: 'share',
         name: 'Share',
-        iconProps: {
-          iconName: 'Share'
-        },
-        href: 'https://dev.office.com/fabric'
+        iconProps: { iconName: 'Share' },
+        onClick: () => console.log('Share')
       },
       {
         key: 'download',
         name: 'Download',
-        iconProps: {
-          iconName: 'Download'
-        },
+        iconProps: { iconName: 'Download' },
         onClick: () => console.log('Download')
       }
     ];
   };
 
-  getOverlflowItems = () => {
+  _getOverlflowItems = () => {
     return [
       {
         key: 'move',
@@ -160,33 +147,14 @@ class DataSpaceView extends Component {
     ];
   };
 
-  getFarItems = () => {
+  _getFarItems = () => {
     return [
-      {
-        key: 'sort',
-        name: 'Sort',
-        iconProps: {
-          iconName: 'SortLines'
-        },
-        onClick: () => console.log('Sort')
-      },
-      {
-        key: 'tile',
-        name: 'Grid view',
-        iconProps: {
-          iconName: 'Tiles'
-        },
-        iconOnly: true,
-        onClick: () => console.log('Tiles')
-      },
       {
         key: 'info',
         name: 'Info',
-        iconProps: {
-          iconName: 'Info'
-        },
         iconOnly: true,
-        onClick: () => this._showPanel()
+        iconProps: { iconName: 'Info' },
+        onClick: () => console.log('Info')
       }
     ];
   };
@@ -282,6 +250,7 @@ class DataSpaceView extends Component {
     console.log('"YES!');
     this.setState({ showNotificationsPanel: true });
   };
+
   render() {
     return (
       <div className="container-fluid position-relative">
@@ -290,12 +259,11 @@ class DataSpaceView extends Component {
             <DataSpaceSearch />
           </div>
           <div className="col-md-10">
-            {/* <CommandBar
-              items={this.getItems()}
-              overflowItems={this.getOverlflowItems()}
-              overflowButtonProps={{ ariaLabel: 'More commands' }}
-              farItems={this.getFarItems()}
-            /> */}
+            <CommandBar
+              items={this._getItems()}
+              overflowItems={this._getOverlflowItems()}
+              farItems={this._getFarItems()}
+            />
             <input type="file" ref="fileUploadInput" onChange={this.onUploadFileSelected} multiple hidden />
           </div>
         </div>

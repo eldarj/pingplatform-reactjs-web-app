@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox'
 import { Icon } from 'office-ui-fabric-react/lib/Icon'
-import { Spinner, SearchBox } from 'office-ui-fabric-react'
+import { Spinner, SearchBox, ContextualMenuItemType, CommandBar, IconButton } from 'office-ui-fabric-react'
 import { getFileTypeIconProps } from '@uifabric/file-type-icons'
 
 import DateUtils from '../../../../helpers/DateUtils'
@@ -58,73 +58,106 @@ class DataSpaceMainContent extends Component {
             rootFiles: text ? this._allItems.filter(i => i.fileName.toLowerCase().indexOf(text) > -1) : this._allItems
         });
     }
-
+    
+    _onCheckboxChange(e, isChecked) {
+        console.log(`The option has been changed to ${isChecked}.`);
+    }
 
     ListHeader = () => {
         return (
-            <div className="list-head d-flex flex-row">
-                <div className="list-col">
-                    <Checkbox className="list-item-select" onChange={this._onCheckboxChange} />
-                </div>
-                <div className="list-col">File name</div>
-                <div className="list-col">More</div>
-                <div className="list-col">Creation name</div>
-                <div className="list-col">Dir name</div>
-                <div className="list-col">Dir path</div>
-                <div className="list-col">Last modified</div>
-                <div className="list-col">Mime type</div>
-                <div className="list-col">Path</div>
-                <div className="list-col">Owner</div>
-            </div>
+            <thead>
+                <tr>
+                    <th className="list-col">
+                        <Checkbox className="list-item-select" onChange={this._onCheckboxChange} />
+                    </th>
+                    <th className="list-col"><Icon iconName="FileTemplate" className="list-item-file" /></th>
+                    <th className="list-col">Name</th>
+                    <th className="list-col">More</th>
+                    <th className="list-col">Upload date</th>
+                    <th className="list-col">Dir name</th>
+                    <th className="list-col">Dir path</th>
+                    <th className="list-col">Last modified</th>
+                    <th className="list-col">Type</th>
+                    <th className="list-col">Owner</th>
+                </tr>
+            </thead>
         );
     }
 
     ListBody() {
-        return(
-            <div className="list-body d-flex flex-column">
-                {this.state.rootFiles.map((item, k) =>
-                    <div key={k} className={`list-col`}>
-                        {this.ListItem(item, k)}
-                    </div>
-                )}
-            </div>
-        );
-    }
-
-    _onCheckboxChange(e, isChecked) {
-        console.log(`The option has been changed to ${isChecked}.`);
-    }
-    ListItem(item, index) {
         return (
-            <div className={`list-row list-row-${index} d-flex flex-row`}>
-                <div className="list-col">
-                    <Checkbox className="list-item-select" onChange={this._onCheckboxChange} />
-                </div>
-                <div className="list-col">
-                    <Icon iconName={getFileTypeIconProps({extension: item.fileName.split('.').pop()}).iconName} 
-                        className="list-item-file" />
-                </div>
-                <div className="list-col">{item.fileName}</div>
-                <div className="list-col">{item.more}</div>
-                <div className="list-col">{item.creationName}</div>
-                <div className="list-col">{item.dirName}</div>
-                <div className="list-col">{item.dirPath}</div>
-                <div className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</div>
-                <div className="list-col">{item.mimeType}</div>
-                <div className="list-col">{item.path}</div>
-                <div className="list-col">{item.ownerFirstname + " " + item.ownerLastname}</div>
-            </div>
+            <tbody>
+                {this.state.rootFiles.map((item, k) =>
+                    <tr key={k} className={`list-row`}>
+                        <td className="list-col">
+                            <Checkbox className="list-item-select" onChange={this._onCheckboxChange} />
+                        </td>
+                        <td className="list-col">
+                            <Icon iconName={getFileTypeIconProps({ extension: item.fileName.split('.').pop() }).iconName}
+                                className="list-item-file" />
+                        </td>
+                        <td className="list-col filename-col">
+                            <a href={item.path} target="_blank" className="ml-2">{item.fileName}</a>
+                        </td>
+                        <td className="list-col">{item.more}</td>
+                        <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
+                        <td className="list-col">{item.dirName}</td>
+                        <td className="list-col">{item.dirPath}</td>
+                        <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
+                        <td className="list-col"><span className="badge badge-info">{item.mimeType.split('.').pop()}</span></td>
+                        <td className="list-col">{item.ownerFirstname + " " + item.ownerLastname}</td>
+                    </tr>
+                )}
+            </tbody>
         );
     }
 
     ListItemContext() {
         return (
             <div>
-                Contextual menu
+                <IconButton
+                    iconProps={{ iconName: "MoreVertical" }} className="file-more-context"
+                    menuProps={{
+                        shouldFocusOnMount: true,
+                        items: [
+                            {
+                                key: 'newItem',
+                                iconProps: { iconName: 'Add' },
+                                text: 'New' 
+                            },
+                            {
+                                key: 'upload',
+                                onClick: () => { this.setState({ showCallout: true }); },
+                                iconProps: { iconName: 'Upload', style: { color: 'salmon' } },
+                                text: 'Upload (Click for popup)',
+                                title: 'Upload a file'
+                            },
+                            {
+                                key: 'divider_1',
+                                itemType: ContextualMenuItemType.Divider
+                            },
+                            {
+                                key: 'share',
+                                iconProps: { iconName: 'Share' },
+                                text: 'Share'
+                            },
+                            {
+                                key: 'print',
+                                iconProps: { iconName: 'Print' },
+                                text: 'Print'
+                            },
+                            {
+                                key: 'music',
+                                iconProps: { iconName: 'MusicInCollectionFill' },
+                                text: 'Music'
+                            }
+                        ]
+                    }}
+                />
             </div>
         );
     }
-    
+
     htmlOnLoad() {
         return (
             <div className="d-flex h-100 justify-content-center align-items-center">
@@ -136,26 +169,28 @@ class DataSpaceMainContent extends Component {
     htmlOnDataReceived() {
         return (
             <div>
-                <SearchBox styles={{ root: { width: 200 } }} placeholder="Search"
-                    onChange={newValue => this._onFilter(newValue)} />
-                <div className="list-root d-flex flex-column small">
-                    {this.ListHeader()}
-                    {this.ListBody()}
+                <SearchBox placeholder="Search by name"
+                    onChange={newValue => this._onFilter(newValue)} underlined={true} />
+                <div className="table-responsive data-space-table ">
+                    <table className="table list-root small">
+                        {this.ListHeader()}
+                        {this.ListBody()}
+                    </table>
                 </div>
             </div>
         );
     }
 
-    render() {
-        let content;
-
-        if (this.state.loading) {
-            content = this.htmlOnLoad();
-        } else {
-            content = this.htmlOnDataReceived();
+    render() 
+    {
+        if (this.state.loading) 
+        {
+            return(this.htmlOnLoad());
+        } 
+        else 
+        {
+            return(this.htmlOnDataReceived());
         }
-
-        return (content);
     }
 }
 

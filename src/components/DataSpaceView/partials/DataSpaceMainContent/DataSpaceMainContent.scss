@@ -1,27 +1,53 @@
-.list-col {
-    .list-item-file {
-        width: 22px;
-        height: 22px;
-    }
-    .list-item-select {
-        &.ms-Checkbox {
-            &:not(.is-checked) {
-                opacity: 0;
-            }
-            .ms-Checkbox-checkbox {
-                width: 17px;
-                height: 17px;
-            }
-        }
-    }
-    
+.ms-SearchBox {
+    width: 250px;
+    padding-left: 0;
 }
 
-.list-head, .list-col {
-    &:hover {
+.table {
+    thead th {
+        font-weight: 400;
+        border: none;
+    }
+    .list-col {
+        vertical-align: middle;        
+        &:hover {
+            .list-item-select {
+                &.ms-Checkbox {
+                    opacity: 1 !important;
+                }
+            }
+        }
+    
+        &.filename-col {
+            a {
+                color: #212529;
+            }
+        }
+    
+        .list-item-file {    
+            min-width: 23px;
+            min-height: 25px;
+            font-size: 16px;
+            text-align: center;
+        }
         .list-item-select {
             &.ms-Checkbox {
-                opacity: 1;
+                &:not(.is-checked) {
+                    opacity: 0;
+                }
+                label {
+                    margin-bottom: 0;
+                    
+                    .ms-Checkbox-checkbox {
+                        width: 17px;
+                        height: 17px;
+                    }
+                }
+            }
+        }
+        .file-more-context {
+            i.ms-Button-menuIcon {
+                display: none;
             }
         }
     }
