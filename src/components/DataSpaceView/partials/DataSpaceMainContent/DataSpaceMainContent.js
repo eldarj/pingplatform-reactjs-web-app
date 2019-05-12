@@ -6,7 +6,7 @@ import { Icon } from 'office-ui-fabric-react/lib/Icon'
 import { Spinner, SearchBox, ContextualMenuItemType, DefaultButton, PrimaryButton, IconButton } from 'office-ui-fabric-react'
 import { getFileTypeIconProps } from '@uifabric/file-type-icons'
 
-import { ListItemContext } from './ListItemContext'
+import ListItemContext from './ListItemContext'
 
 import DateUtils from '../../../../helpers/DateUtils'
 
@@ -67,6 +67,7 @@ class DataSpaceMainContent extends Component {
                     </th>
                     <th className="list-col"><Icon iconName="FileTemplate" className="list-item-file" /></th>
                     <th className="list-col">Name</th>
+                    <th className="list-col">Visibility</th>
                     <th className="list-col">More</th>
                     <th className="list-col">Upload date</th>
                     <th className="list-col">Dir name</th>
@@ -77,6 +78,12 @@ class DataSpaceMainContent extends Component {
                 </tr>
             </thead>
         );
+    }
+
+    deleteItem = (item) => {
+        alert('ONDELETE');
+        console.log("ONDELETE");
+        console.log(item);
     }
 
     ListBody() {
@@ -94,7 +101,10 @@ class DataSpaceMainContent extends Component {
                         <td className="list-col filename-col">
                             <a href={item.path} target="_blank" className="ml-2">{item.fileName}</a>
                         </td>
-                        <td className="list-col"><ListItemContext /></td>
+                        <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
+                        <td className="list-col">
+                            <ListItemContext onDelete={() => this.deleteItem(item)}/>
+                        </td>
                         <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
                         <td className="list-col">{item.dirName}</td>
                         <td className="list-col">{item.dirPath}</td>
@@ -122,7 +132,7 @@ class DataSpaceMainContent extends Component {
 
     htmlOnDataReceived = () => (
         <div>
-            <SearchBox placeholder="Search by name"
+            <SearchBox placeholder="Search by name" className="my-2"
                 onChange={newValue => this._onFilter(newValue)} underlined={true} />
             <div className="table-responsive data-space-table ">
                 <table className="table list-root small">

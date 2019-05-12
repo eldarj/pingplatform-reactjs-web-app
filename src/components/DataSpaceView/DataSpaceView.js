@@ -167,11 +167,11 @@ class DataSpaceView extends Component {
         }
       },
       {
-        key: 'rename',
-        name: 'Rename...',
-        onClick: () => console.log('Rename'),
+        key: 'delete',
+        name: 'Delete...',
+        onClick: () => console.log('Delete'),
         iconProps: {
-          iconName: 'Edit'
+          iconName: 'Delete'
         }
       }
     ];
