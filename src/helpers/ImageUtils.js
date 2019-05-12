@@ -6,12 +6,12 @@ export default class ImageUtils {
         {
             httpClient.open('get', imageUrl, true);
         } 
-        else if (typeof XDomainRequest != "undefined")
+        else if (typeof XDomainRequest !== "undefined")
         {
             httpClient.open('get', imageUrl);
         } 
 
         httpClient.send();
-        return httpClient.status != 200 ? defaultUrl : imageUrl;
+        return httpClient.status !== 200 ? defaultUrl : imageUrl;
     }
 }

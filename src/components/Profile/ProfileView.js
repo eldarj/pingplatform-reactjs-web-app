@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import ProfileHeader from './partials/ProfileHeader'
 import ProfileInfo from './partials/ProfileInfo'
-import DateUtils from '../../helpers/DateUtils'
+//import DateUtils from '../../helpers/DateUtils'
 import { connect } from 'react-redux'
 
 import './ProfileView.scss'

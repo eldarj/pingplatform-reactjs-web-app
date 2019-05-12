@@ -1,0 +1,28 @@
+.list-col {
+    .list-item-file {
+        width: 22px;
+        height: 22px;
+    }
+    .list-item-select {
+        &.ms-Checkbox {
+            &:not(.is-checked) {
+                opacity: 0;
+            }
+            .ms-Checkbox-checkbox {
+                width: 17px;
+                height: 17px;
+            }
+        }
+    }
+    
+}
+
+.list-head, .list-col {
+    &:hover {
+        .list-item-select {
+            &.ms-Checkbox {
+                opacity: 1;
+            }
+        }
+    }
+}

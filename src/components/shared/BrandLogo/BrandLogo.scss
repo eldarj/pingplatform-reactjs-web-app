@@ -1,0 +1,14 @@
+img.logo-src.logo-size-undefined {
+    max-width: 100px;
+}
+
+.logo-src {
+    max-width: 100px;
+
+    &.small {
+        max-width: 50px;
+    }
+    &.x-small {
+        max-width: 35px;
+    }
+}

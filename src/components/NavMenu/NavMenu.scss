@@ -14,13 +14,18 @@
 }
 
 .offcanvas-collapse {
+    display: none;
+
+    &.open {
+        display: block;
+    }
+
     @media (max-width: 767.98px) {
         position: fixed;
         top: 0;
         bottom: 0;
+        left: 0;
         width: 100%;
-        padding-right: 1rem;
-        padding-left: 1rem;
         background-color: #fff;
         box-shadow: -5px 2.5px 7.5px rgba(0,0,0,.05);
 

@@ -147,3 +147,10 @@ code {
 .right-0 {
     right: 0;
 }
+
+
+@media (min-width: 780px) {
+    .d-md-none {
+        display: none;
+    }
+}

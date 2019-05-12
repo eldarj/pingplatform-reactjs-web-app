@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import { setAccountAction } from '../../../redux/actions';
 import * as signalr from '@aspnet/signalr'
 
-import LZString from 'lz-string'
+//import LZString from 'lz-string'
 import ButtonDropdown from '../../shared/ButtonDropdownComponent/ButtonDropdown'
 
 import FileUtils from '../../../helpers/FileUtils'
-import Imageutils from '../../../helpers/ImageUtils'
+//import Imageutils from '../../../helpers/ImageUtils'
 
 import './ProfileHeader.scss'
 
@@ -91,11 +91,11 @@ class ProfileHeader extends Component {
     // TODO
     updateProfile = () => {
         this.hubConnection
-                .invoke("UpdateProfile", window.randomGen, this.state.accountVM)
-                .catch(err => {
-                    console.error(`Error on: UpdateProfile(${window.randomGen}, requestobj)`);
-                    console.error(err);
-                });
+            .invoke("UpdateProfile", window.randomGen, this.state.accountVM)
+            .catch(err => {
+                console.error(`Error on: UpdateProfile(${window.randomGen}, requestobj)`);
+                console.error(err);
+            });
     }
 
     onUploadNewImage = (inputRef) => {

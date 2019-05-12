@@ -151,6 +151,12 @@ body .bg-rgba-white-90 {
   min-height: calc(1.5em + .5rem + 7px);
 }
 
+//        ICONS             //
+i.font-icon-md {
+  font-size: 30px;
+}
+
+
 //        ANIMATIONS        //
 @keyframes sail1 { 
   0% { transform: translate(0,0); } 
