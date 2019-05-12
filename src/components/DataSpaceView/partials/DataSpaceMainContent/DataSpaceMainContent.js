@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import './DataSpaceMainContent.scss'
-
 import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox'
-import { Icon } from 'office-ui-fabric-react/lib/Icon';
-import { getFileTypeIconProps } from '@uifabric/file-type-icons';
+import { Icon } from 'office-ui-fabric-react/lib/Icon'
+import { Spinner, SearchBox } from 'office-ui-fabric-react'
+import { getFileTypeIconProps } from '@uifabric/file-type-icons'
+
+import DateUtils from '../../../../helpers/DateUtils'
+
+import './DataSpaceMainContent.scss'
 
 class DataSpaceMainContent extends Component {
     static loadingMsg = "Please wait while we load your data...";
@@ -49,7 +52,8 @@ class DataSpaceMainContent extends Component {
         });
     }
 
-    _onFilter = (e, text) => {
+    _onFilter = (text) => {
+        console.log(text);
         this.setState({
             rootFiles: text ? this._allItems.filter(i => i.fileName.toLowerCase().indexOf(text) > -1) : this._allItems
         });
@@ -105,7 +109,7 @@ class DataSpaceMainContent extends Component {
                 <div className="list-col">{item.creationName}</div>
                 <div className="list-col">{item.dirName}</div>
                 <div className="list-col">{item.dirPath}</div>
-                <div className="list-col">{item.lastModifiedTime}</div>
+                <div className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</div>
                 <div className="list-col">{item.mimeType}</div>
                 <div className="list-col">{item.path}</div>
                 <div className="list-col">{item.ownerFirstname + " " + item.ownerLastname}</div>
@@ -124,7 +128,7 @@ class DataSpaceMainContent extends Component {
     htmlOnLoad() {
         return (
             <div className="d-flex h-100 justify-content-center align-items-center">
-                <i className="fas fa-circle-notch">{this.loadingMsg}</i>
+                <Spinner label={DataSpaceMainContent.loadingMsg} labelPosition="right" />
             </div>
         );
     }
@@ -132,8 +136,8 @@ class DataSpaceMainContent extends Component {
     htmlOnDataReceived() {
         return (
             <div>
-                <label htmlFor="fitlerInput">Fitler by name:</label>
-                <input id="filterInput" onChange={this._onFilter} style={{ maxWith: 300 }} />
+                <SearchBox styles={{ root: { width: 200 } }} placeholder="Search"
+                    onChange={newValue => this._onFilter(newValue)} />
                 <div className="list-root d-flex flex-column small">
                     {this.ListHeader()}
                     {this.ListBody()}
