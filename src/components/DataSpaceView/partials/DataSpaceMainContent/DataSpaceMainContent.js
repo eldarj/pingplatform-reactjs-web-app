@@ -169,17 +169,17 @@ class DataSpaceMainContent extends Component {
         </tr>
     );
 
-    traverseTo = (item) => {
+    traverseToDir = (dir) => {
         this.setState({
             loading: true,
-            directory: item
+            directory: dir
         });
         setTimeout(() => {
             this.setState({
                 loading: false
             });
-        }, 1000);
-        console.log(this.directory);
+        }, 250);
+        this.props.onTraverseToDir(dir);
     }
 
     ListDirectory = (item, k) => (
@@ -191,7 +191,7 @@ class DataSpaceMainContent extends Component {
                 <Icon iconName="Directory" className="list-item-file" />
             </td>
             <td className="list-col filename-col">
-                <span onClick={() => this.traverseTo(item)} className="filename ml-2">{item.name}</span>
+                <span onClick={() => this.traverseToDir(item)} className="filename ml-2">{item.name}</span>
             </td>
             <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
             <td className="list-col">

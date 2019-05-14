@@ -9,7 +9,7 @@ import DataSpaceMainContent from './partials/DataSpaceMainContent/DataSpaceMainC
 import DataSpaceSearch from './partials/DataSpaceSearch/DataSpaceSearch'
 import SidebarNav from './partials/SidebarNav/SidebarNav'
 
-import { CommandBar, IconButton, Spinner } from 'office-ui-fabric-react'
+import { Breadcrumb, CommandBar, IconButton, Spinner } from 'office-ui-fabric-react'
 
 class DataSpaceView extends Component {
   hubConnection = null;
@@ -19,9 +19,9 @@ class DataSpaceView extends Component {
     this.state = {
       accountVM: null,
       showNotificationsPanel: false,
-      files: [],
       fileUploading: false,
       additionalCommandClasses: 'disabled',
+      breadcrumbs: [],
       rootDir: {
         diskSize: '0',
         nodes: []
@@ -47,12 +47,15 @@ class DataSpaceView extends Component {
       console.log("Upload file success: ");
       console.log(receivedMessage);
 
-      this.state.files.unshift(receivedMessage);
-      this._allItems = this.state.files;
+      this.state.rootDir.nodes.unshift(receivedMessage);
+      this._allItems = this.state.rootDir.nodes;
       this.setState(prevState => (
         { 
-          fileUploading: false, 
-          files: [...this.state.files] 
+          fileUploading: false,
+          rootDir: {
+            ...this.state.rootDir,
+            nodes: [...this.state.rootDir.nodes]
+          }
         }
       ));
 
@@ -69,7 +72,6 @@ class DataSpaceView extends Component {
       this._allItems = receivedMessage.nodes;
       this.setState({ 
         loading: false, 
-        files: receivedMessage.nodes,
         rootDir: receivedMessage,
         additionalCommandClasses: ''
       });
@@ -325,6 +327,24 @@ class DataSpaceView extends Component {
       </div>
   );
 
+  onTraverseToDir = (dir) => {
+    let newBreadcrumb = { text: dir.name, onClick: this._onBreadcrumbItemClicked };
+    this.setState(prevState => (
+      {
+        rootDir: dir,
+        breadcrumbs: [...prevState.breadcrumbs, newBreadcrumb]
+      }
+    ));
+  }
+
+  _onBreadcrumbItemClicked = (ev, item) => {
+    console.log(`Breadcrumb item with key "${item.text}" has been clicked.`);
+  };
+
+  _returnUndefined() {
+    return undefined;
+  }
+
   render() {
     return (
       <div className="container-fluid position-relative">
@@ -339,13 +359,18 @@ class DataSpaceView extends Component {
                 items={this._getItems()}
                 overflowItems={this._getOverlflowItems()}
               />
+              <Breadcrumb
+                items={this.state.breadcrumbs}
+                // Returning undefined to OnReduceData tells the breadcrumb not to shrink
+                maxDisplayedItems={3}
+              />
               <this.FarCommands />
             </div>
             <input type="file" ref="fileUploadInput" onChange={this.onUploadFileSelected} multiple hidden />
             <DataSpaceMainContent
               hubConnection={this.hubConnection}
-              files={this.state.files}
-              directory={this.state.rootDir} />
+              directory={this.state.rootDir}
+              onTraverseToDir={this.onTraverseToDir} />
           </div>
         </div>
         <NotificationsPane isOpen={this.state.showNotificationsPanel} />
