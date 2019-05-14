@@ -7,6 +7,7 @@ export default class ListItemContext extends Component {
         super(props);
         
         this.state = {
+            item: props.item,
             onDelete: props.onDelete
         }
     }
@@ -20,33 +21,57 @@ export default class ListItemContext extends Component {
                         shouldFocusOnMount: true,
                         items: [
                             {
-                                key: 'newItem',
-                                iconProps: { iconName: 'Add' },
-                                text: 'New' 
+                                key: 'preview',
+                                text: 'Preview'
                             },
                             {
-                                key: 'upload',
-                                iconProps: { iconName: 'Upload', style: { color: 'salmon' } },
-                                text: 'Upload (Click for popup)',
-                                title: 'Upload a file'
+                                key: 'download',
+                                text: 'Download'
+                            },
+                            {
+                                key: 'details',
+                                text: 'Details'
                             },
                             {
                                 key: 'divider_1',
                                 itemType: ContextualMenuItemType.Divider
                             },
                             {
+                                key: 'changeVisibility',
+                                text: this.state.item.private ? 
+                                    'Change visibility to Public' : 
+                                    'Change visibility to Private'
+                            },
+                            {
                                 key: 'share',
-                                iconProps: { iconName: 'Share' },
                                 text: 'Share'
                             },
                             {
-                                key: 'print',
-                                iconProps: { iconName: 'Print' },
-                                text: 'Print'
+                                key: 'copyLink',
+                                text: 'Copy link'
+                            },
+                            {
+                                key: 'divider_1',
+                                itemType: ContextualMenuItemType.Divider
+                            },
+                            {
+                                key: 'rename',
+                                text: 'Rename'
+                            },
+                            {
+                              key: 'move',
+                              text: 'Move to',
+                            },
+                            {
+                              key: 'copy',
+                              text: 'Copy to',
+                            },
+                            {
+                                key: 'divider_1',
+                                itemType: ContextualMenuItemType.Divider
                             },
                             {
                                 key: 'delete',
-                                iconProps: { iconName: 'Delete' },
                                 text: 'Delete',
                                 onClick: this.state.onDelete
                             }

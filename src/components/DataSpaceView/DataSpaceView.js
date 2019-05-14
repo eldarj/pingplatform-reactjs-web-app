@@ -19,7 +19,7 @@ class DataSpaceView extends Component {
     this.state = {
       accountVM: null,
       showNotificationsPanel: false,
-      rootFiles: [],
+      files: [],
       fileUploading: false,
       additionalCommandClasses: 'disabled'
     }
@@ -43,12 +43,12 @@ class DataSpaceView extends Component {
       console.log("Upload file success: ");
       console.log(receivedMessage);
 
-      this.state.rootFiles.unshift(receivedMessage);
-      this._allItems = this.state.rootFiles;
+      this.state.files.unshift(receivedMessage);
+      this._allItems = this.state.files;
       this.setState(prevState => (
         { 
           fileUploading: false, 
-          rootFiles: [...this.state.rootFiles] 
+          files: [...this.state.files] 
         }
       ));
 
@@ -62,16 +62,26 @@ class DataSpaceView extends Component {
     this.hubConnection.on(`RequestFilesMetaDataSuccess${window.randomGen}`, (receivedMessage) => {
       console.log("Request meta data success:");
       console.log(receivedMessage);
-      this._allItems = receivedMessage.rootFiles;
+      this._allItems = receivedMessage.allNodes;
       this.setState({ 
         loading: false, 
-        rootFiles: receivedMessage.rootFiles,
+        files: receivedMessage.allNodes,
         additionalCommandClasses: ''
       });
     });
 
     this.hubConnection.on(`RequestFilesMetaDataFail${window.randomGen}`, (receivedMessage) => {
       console.log("Request meta data fail:");
+      console.log(receivedMessage);
+    });
+
+    this.hubConnection.on(`SaveDirectoryMetadataSuccess${window.randomGen}`, (receivedMessage) => {
+      console.log("On - SaveDirectoryMetadataSuccess:");
+      console.log(receivedMessage);
+    });
+
+    this.hubConnection.on(`SaveDirectoryMetadataFail${window.randomGen}`, (receivedMessage) => {
+      console.log("On - SaveDirectoryMetadataFail:");
       console.log(receivedMessage);
     });
   }
@@ -84,7 +94,7 @@ class DataSpaceView extends Component {
           console.error(`Error on: RequestAuthentication(${window.randomGen}, requestobj)`);
           console.error(err);
         });
-    }, 1500);
+    }, 150); // TODO: REMOVE OR ADJUST THIS 
 
     //this.getStream();
   }
@@ -105,6 +115,36 @@ class DataSpaceView extends Component {
     //   });
   }
 
+
+  createNewDirectory = () => {
+    console.log("CREATENEWDIR");
+    this.setState({ fileUploading: true });
+    let newDirDto = { dirName: 'folder1', path: '', parentDirName: '' };
+    console.log(newDirDto);
+    setTimeout(() => {
+      axios.post('https://localhost:44380/api/dataspace/eldarja/directories', newDirDto, {
+          headers: {
+            "AppId": window.randomGen,
+            "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
+          },
+          withCredentials: false
+      })
+      .then((e) => {
+        console.log(e);
+        console.log("AXIOS DIRECTORY:Then");
+      })
+      .finally((e) => {
+        console.log(e);
+        console.log("AXIOS DIRECTORY:Finaly");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("AXIOS DIRECTORY:Catch");
+      });
+
+    }, 1500);
+  }
+
   // Data for CommandBar
   _getItems = () => {
     return [
@@ -117,7 +157,8 @@ class DataSpaceView extends Component {
             {
               key: 'directory',
               name: 'Directory',
-              iconProps: { iconName: 'FabricNewFolder' }
+              iconProps: { iconName: 'FabricNewFolder' },
+              onClick: this.createNewDirectory
             },
             {
               key: 'link',
@@ -180,7 +221,7 @@ class DataSpaceView extends Component {
   // TODO: File read and upload ::FileReader()
   onUploadFileSelected = (e) => {
     let reader = new FileReader();
-    let file = e.target.files[0];
+    let file = e.target.files[0]; // TODO: How to upload a file to a spefici directory? Opt: Change Upload endpoint to represent REST-principles (/directory)
     let formData = new FormData();
     for (var i = 0; i < e.target.files.length; i++) {
       let file = e.target.files[i];
@@ -298,7 +339,7 @@ class DataSpaceView extends Component {
             <input type="file" ref="fileUploadInput" onChange={this.onUploadFileSelected} multiple hidden />
             <DataSpaceMainContent
               hubConnection={this.hubConnection}
-              rootFiles={this.state.rootFiles} />
+              files={this.state.files} />
           </div>
         </div>
         <NotificationsPane isOpen={this.state.showNotificationsPanel} />

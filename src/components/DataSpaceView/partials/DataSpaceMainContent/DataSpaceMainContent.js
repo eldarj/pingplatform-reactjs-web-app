@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import axios from 'axios'
 
 import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox'
 import { Icon } from 'office-ui-fabric-react/lib/Icon'
@@ -13,10 +14,9 @@ import DateUtils from '../../../../helpers/DateUtils'
 import './DataSpaceMainContent.scss'
 
 class DataSpaceMainContent extends Component {
-    static loadingMsg = "Please wait while we load your data...";
+    static loadingMsg = "Loading, please wait...";
 
     hubConnection = null;
-    fileUploadInputRef = null;
     _allItems = [];
 
 
@@ -24,7 +24,7 @@ class DataSpaceMainContent extends Component {
         super(props);
         this.state = {
             loading: true,
-            rootFiles: []
+            files: []
         }
 
         if (props.account != null) {
@@ -35,27 +35,66 @@ class DataSpaceMainContent extends Component {
             this.hubConnection = props.hubConnection;
         }
 
-        this._allItems = props.rootFiles;
-        this.state.rootFiles = props.rootFiles;
+        this._allItems = props.files;
+        this.state.files = props.files;
     }
 
+    componentDidMount() {
+        this.hubConnection.on(`DeleteFileMetadataSuccess${window.randomGen}`, (filename) => {
+            this.setState({
+                loading: false, 
+                files: this.state.files.filter(obj => obj.fileName !== filename) 
+            });
+        });
+        this.hubConnection.on(`DeleteFileMetadataFail${window.randomGen}`, (filename, reasonMsg) => {
+            console.log("Delete file fail: " + filename + reasonMsg);
+        });
+    }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.rootFiles !== this.props.rootFiles) {
-            this._allItems = this.props.rootFiles;
-            this.setState({ loading:false, rootFiles: this.props.rootFiles });
+        if (prevProps.files !== this.props.files) {
+            this._allItems = this.props.files;
+            this.setState({ loading: false, files: this.props.files });
         }
     }
 
     _onFilter = (text) => {
         console.log(text);
         this.setState({
-            rootFiles: text ? this._allItems.filter(i => i.fileName.toLowerCase().indexOf(text) > -1) : this._allItems
+            files: text ? this._allItems.filter(i => i.name.toLowerCase().indexOf(text) > -1) : this._allItems
         });
     }
 
     _onCheckboxChange(e, isChecked) {
         console.log(`The option has been changed to ${isChecked}.`);
+    }
+
+    actionDeleteItem = (items) => {
+        this.setState({ loading: true });
+        //TODO: Axios delete
+        setTimeout(() => {
+            axios.delete('https://localhost:44380/api/dataspace/eldarja/files/' + items[0].name,
+            {
+              headers: {
+                "AppId": window.randomGen,
+                "OwnerPhoneNumber": this.state.accountVM.phoneNumber
+              },
+              withCredentials: false
+            })
+            .then((e) => {
+              console.log(e);
+              console.log("AXIOS:Delete Then");
+            })
+            .finally((e) => {
+              console.log(e);
+              console.log("AXIOS:Delete Finaly");
+            })
+            .catch((e) => {
+              console.log(e);
+              console.log("AXIOS:Delete Catch");
+            });
+      
+          }, 1500);
     }
 
     ListHeader = () => {
@@ -80,42 +119,64 @@ class DataSpaceMainContent extends Component {
         );
     }
 
-    deleteItem = (item) => {
-        alert('ONDELETE');
-        console.log("ONDELETE");
-        console.log(item);
-    }
+    ListBody = () => (
+        <tbody>
+            {this.state.files.map((item, k) => 
+                item.nodeType === "File" ? this.ListFile(item, k) : this.ListDirectory(item, k)
+            )}
+        </tbody>
+    );
 
-    ListBody() {
-        return (
-            <tbody>
-                {this.state.rootFiles.map((item, k) =>
-                    <tr key={k} className={`list-row`}>
-                        <td className="list-col">
-                            <Checkbox className="list-item-select" onChange={this._onCheckboxChange} checked={item.checked} />
-                        </td>
-                        <td className="list-col">
-                            <Icon iconName={getFileTypeIconProps({ extension: item.fileName.split('.').pop() }).iconName}
-                                className="list-item-file" />
-                        </td>
-                        <td className="list-col filename-col">
-                            <a href={item.path} target="_blank" className="ml-2">{item.fileName}</a>
-                        </td>
-                        <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
-                        <td className="list-col">
-                            <ListItemContext onDelete={() => this.deleteItem(item)}/>
-                        </td>
-                        <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
-                        <td className="list-col">{item.dirName}</td>
-                        <td className="list-col">{item.dirPath}</td>
-                        <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
-                        <td className="list-col"><span className="badge badge-info bg-primary-blue">{item.mimeType.split('.').pop()}</span></td>
-                        <td className="list-col">{item.ownerFirstname + " " + item.ownerLastname}</td>
-                    </tr>
-                )}
-            </tbody>
-        );
-    }
+    ListFile = (item, k) => (
+        <tr key={k} className={`list-row`}>
+            <td className="list-col">
+                <Checkbox className="list-item-select" onChange={this._onCheckboxChange} checked={item.checked} />
+            </td>
+            <td className="list-col">
+                <Icon iconName={getFileTypeIconProps({ extension: item.name.split('.').pop() }).iconName}
+                    className="list-item-file" />
+            </td>
+            <td className="list-col filename-col">
+                <a href={item.path} target="_blank" className="ml-2">{item.name}</a>
+            </td>
+            <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
+            <td className="list-col">
+                <ListItemContext item={item} onDelete={() => this.actionDeleteItem([item])}/>
+            </td>
+            <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
+            <td className="list-col">{item.dirName}</td>
+            <td className="list-col">{item.dirPath}</td>
+            <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
+            <td className="list-col"><span className="badge badge-info bg-primary-blue">
+                {item.mimeType && item.mimeType.includes('.') ? item.mimeType.split('.').pop() : item.mimeType}
+            </span></td>
+            <td className="list-col">{item.ownerFirstname + " " + item.ownerLastname}</td>
+        </tr>
+    );
+
+    ListDirectory = (item, k) => (
+        <tr key={k} className={`list-row`}>
+            <td className="list-col">
+                <Checkbox className="list-item-select" onChange={this._onCheckboxChange} checked={item.checked} />
+            </td>
+            <td className="list-col">
+                <Icon iconName="Directory" className="list-item-file" />
+            </td>
+            <td className="list-col filename-col">
+                <a href={item.path} target="_blank" className="ml-2">{item.name}</a>
+            </td>
+            <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
+            <td className="list-col">
+                <ListItemContext item={item} onDelete={() => this.actionDeleteItem([item])}/>
+            </td>
+            <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
+            <td className="list-col">{item.dirName}</td>
+            <td className="list-col">{item.dirPath}</td>
+            <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
+            <td className="list-col"><span className="badge badge-info bg-primary-blue">Directory</span></td>
+            <td className="list-col">{item.ownerFirstname + " " + item.ownerLastname}</td>
+        </tr>
+    );
 
     htmlOnLoad = () => (
         <div className="d-flex h-100 justify-content-center align-items-center">
