@@ -17,6 +17,8 @@ import ProfileView from './components/Profile/ProfileView';
 import DataSpaceView from './components/DataSpaceView/DataSpaceView';
 import ChatOverview from './components/ChatView/ChatOverview';
 
+
+window.lolodash = require('lodash');
 window.randomGen = '_' + Math.random().toString(36).substr(2, 16);;
 
 function App() {

@@ -13,6 +13,8 @@ import DateUtils from '../../../../helpers/DateUtils'
 
 import './DataSpaceMainContent.scss'
 
+// TODO: Try implementing this using routes? So we don't re-render this component based on state holding our directory objection,
+//          --- but instead use routing
 class DataSpaceMainContent extends Component {
     static loadingMsg = "Loading, please wait...";
 
@@ -207,21 +209,21 @@ class DataSpaceMainContent extends Component {
     );
 
     htmlOnLoad = () => (
-        <div className="d-flex h-100 justify-content-center align-items-center">
+        <div className="flex-grow-1 d-flex justify-content-center align-items-center">
             <Spinner label={DataSpaceMainContent.loadingMsg} labelPosition="right" />
         </div>
     );
     
 
     htmlOnNoFiles = () => (
-        <div className="d-flex h-100 justify-content-center align-items-center flex-column">
+        <div className="flex-grow-1 d-flex justify-content-center align-items-center flex-column">
             <span className="label-primary">Drive empty. Please upload some resources first!</span>
         </div>
     );
 
     htmlOnDataReceived = () => (
-        <div>
-            <SearchBox placeholder="Search by name" className="my-2"
+        <div className="flex-grow-1">
+            <SearchBox placeholder="Search by name" className="ml-auto my-2"
                 onChange={newValue => this._onFilter(newValue)} underlined={true} />
             <div className="table-responsive data-space-table ">
                 <table className="table list-root small">

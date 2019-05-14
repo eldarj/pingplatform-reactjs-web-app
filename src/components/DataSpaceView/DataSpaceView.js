@@ -9,10 +9,15 @@ import DataSpaceMainContent from './partials/DataSpaceMainContent/DataSpaceMainC
 import DataSpaceSearch from './partials/DataSpaceSearch/DataSpaceSearch'
 import SidebarNav from './partials/SidebarNav/SidebarNav'
 
-import { Breadcrumb, CommandBar, IconButton, Spinner } from 'office-ui-fabric-react'
+import { ActionButton, Modal, CommandBar, IconButton, Spinner } from 'office-ui-fabric-react'
 
 class DataSpaceView extends Component {
   hubConnection = null;
+  _prevDir = null;
+  _initialRootBase = {
+    diskSize: '0',
+    nodes: []
+  };
 
   constructor(props) {
     super(props);
@@ -20,12 +25,9 @@ class DataSpaceView extends Component {
       accountVM: null,
       showNotificationsPanel: false,
       fileUploading: false,
+      IsUploadModalVisible: false,
       additionalCommandClasses: 'disabled',
-      breadcrumbs: [],
-      rootDir: {
-        diskSize: '0',
-        nodes: []
-      }
+      rootDir: this._initialRootBase
     }
 
     if (props.account != null) {
@@ -46,9 +48,7 @@ class DataSpaceView extends Component {
     this.hubConnection.on(`UploadFileSuccess${window.randomGen}`, (receivedMessage) => {
       console.log("Upload file success: ");
       console.log(receivedMessage);
-
       this.state.rootDir.nodes.unshift(receivedMessage);
-      this._allItems = this.state.rootDir.nodes;
       this.setState(prevState => (
         { 
           fileUploading: false,
@@ -58,7 +58,6 @@ class DataSpaceView extends Component {
           }
         }
       ));
-
     });
 
     this.hubConnection.on(`UploadFileFail${window.randomGen}`, (receivedMessage) => {
@@ -69,7 +68,7 @@ class DataSpaceView extends Component {
     this.hubConnection.on(`RequestFilesMetaDataSuccess${window.randomGen}`, (receivedMessage) => {
       console.log("Request meta data success:");
       console.log(receivedMessage);
-      this._allItems = receivedMessage.nodes;
+      this._initialRootBase = receivedMessage;
       this.setState({ 
         loading: false, 
         rootDir: receivedMessage,
@@ -85,6 +84,17 @@ class DataSpaceView extends Component {
     this.hubConnection.on(`SaveDirectoryMetadataSuccess${window.randomGen}`, (receivedMessage) => {
       console.log("On - SaveDirectoryMetadataSuccess:");
       console.log(receivedMessage);
+      this.state.rootDir.nodes.unshift(receivedMessage);
+      this.setState(prevState => (
+        { 
+          fileUploading: false,
+          rootDir: {
+            ...this.state.rootDir,
+            nodes: [...this.state.rootDir.nodes]
+          }
+        }
+      ));
+      this._initialRootBase = this.state.rootDir;
     });
 
     this.hubConnection.on(`SaveDirectoryMetadataFail${window.randomGen}`, (receivedMessage) => {
@@ -121,37 +131,6 @@ class DataSpaceView extends Component {
     //     },
     //   });
   }
-
-
-  createNewDirectory = () => {
-    console.log("CREATENEWDIR");
-    this.setState({ fileUploading: true });
-    let newDirDto = { dirName: 'folder1', path: '', parentDirName: '' };
-    console.log(newDirDto);
-    setTimeout(() => {
-      axios.post('https://localhost:44380/api/dataspace/eldarja/directories', newDirDto, {
-          headers: {
-            "AppId": window.randomGen,
-            "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
-          },
-          withCredentials: false
-      })
-      .then((e) => {
-        console.log(e);
-        console.log("AXIOS DIRECTORY:Then");
-      })
-      .finally((e) => {
-        console.log(e);
-        console.log("AXIOS DIRECTORY:Finaly");
-      })
-      .catch((e) => {
-        console.log(e);
-        console.log("AXIOS DIRECTORY:Catch");
-      });
-
-    }, 1500);
-  }
-
   // Data for CommandBar
   _getItems = () => {
     return [
@@ -165,7 +144,7 @@ class DataSpaceView extends Component {
               key: 'directory',
               name: 'Directory',
               iconProps: { iconName: 'FabricNewFolder' },
-              onClick: this.createNewDirectory
+              onClick: this._openNewDirModal
             },
             {
               key: 'link',
@@ -234,39 +213,41 @@ class DataSpaceView extends Component {
       let file = e.target.files[i];
       console.log("FILE:");
       console.log(file);
+      file.customheader = "hey";
       formData.append('files[' + i + ']', file);
     }
     this.setState({ fileUploading: true });
-    setTimeout(() => {
-      axios.post('https://localhost:44380/api/dataspace/eldarja/files',
-      formData,
-      {
-        onUploadProgress: (e) => {
-          let percentCompleted = Math.round((e.loaded * 100) / e.total);
-          console.log(percentCompleted);
-        },
-        headers: {
-          "AppId": window.randomGen,
-          "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
-          "OwnerFirstName": this.state.accountVM.firstname,
-          "OwnerLastName": this.state.accountVM.lastname
-        },
-        withCredentials: false
-      })
-      .then((e) => {
-        console.log(e);
-        console.log("AXIOS:Then");
-      })
-      .finally((e) => {
-        console.log(e);
-        console.log("AXIOS:Finaly");
-      })
-      .catch((e) => {
-        console.log(e);
-        console.log("AXIOS:Catch");
-      });
+    console.log(formData);
+    // setTimeout(() => {
+    //   axios.post('https://localhost:44380/api/dataspace/eldarja/files',
+    //   formData,
+    //   {
+    //     onUploadProgress: (e) => {
+    //       let percentCompleted = Math.round((e.loaded * 100) / e.total);
+    //       console.log(percentCompleted);
+    //     },
+    //     headers: {
+    //       "AppId": window.randomGen,
+    //       "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
+    //       "OwnerFirstName": this.state.accountVM.firstname,
+    //       "OwnerLastName": this.state.accountVM.lastname
+    //     },
+    //     withCredentials: false
+    //   })
+    //   .then((e) => {
+    //     console.log(e);
+    //     console.log("AXIOS:Then");
+    //   })
+    //   .finally((e) => {
+    //     console.log(e);
+    //     console.log("AXIOS:Finaly");
+    //   })
+    //   .catch((e) => {
+    //     console.log(e);
+    //     console.log("AXIOS:Catch");
+    //   });
 
-    }, 1500);
+    // }, 1500);
 
     // // FOR LOADING INTO A VIEW OR SMTHNG (EG. Images)
     // let fileSize;
@@ -316,35 +297,71 @@ class DataSpaceView extends Component {
   }
 
   _showPanel = () => {
-    console.log('"YES!');
     this.setState({ showNotificationsPanel: true });
   };
 
   FarCommands = () => (
-      <div className={`d-flex flex-row bg-primary-grey-light px-3 ${this.state.additionalCommandClasses}`}>
+      <div className={`d-flex flex-row ${this.state.additionalCommandClasses}`}>
         <Spinner className="px-3" style={{visibility: this.state.fileUploading ? 'visible' : 'hidden'}} />
         <IconButton className="ms-icon-regular h-auto" iconProps={{iconName: "Info"}} />
       </div>
   );
 
   onTraverseToDir = (dir) => {
-    let newBreadcrumb = { text: dir.name, onClick: this._onBreadcrumbItemClicked };
-    this.setState(prevState => (
-      {
-        rootDir: dir,
-        breadcrumbs: [...prevState.breadcrumbs, newBreadcrumb]
-      }
-    ));
+    this._prevDir = this.state.rootDir;
+    this.setState({ rootDir: dir });
   }
 
-  _onBreadcrumbItemClicked = (ev, item) => {
-    console.log(`Breadcrumb item with key "${item.text}" has been clicked.`);
+  _traverseBack = () => {
+    this.setState({ rootDir: this._prevDir });
+  }
+
+  TraverseBackButton = () => {
+    if (!window.lolodash.isEqual(this.state.rootDir, this._initialRootBase)) {
+      return (
+        <ActionButton iconProps={{iconName: "ChevronLeft"}} onClick={this._traverseBack}>Back</ActionButton>
+      )
+    }
+    return null;
+  }
+
+  _openNewDirModal = () => {
+    this.setState({ IsUploadModalVisible: true });
+  }
+  _closeNewDirModal = () => {
+    this.setState({ IsUploadModalVisible: false });
   };
+  _createNewDirectory = () => {
+    this.setState({ IsUploadModalVisible: false, fileUploading: true });
+    let newDirDto = { 
+      dirName: this.refs.newDirectoryInput.value, 
+      path: this.state.rootDir.name ? this.state.rootDir.name : '', 
+      parentDirName: this.state.rootDir.name ? this.state.rootDir.name : '' 
+    };
+    console.log(newDirDto);
+    setTimeout(() => {
+      axios.post('https://localhost:44380/api/dataspace/eldarja/directories', newDirDto, {
+          headers: {
+            "AppId": window.randomGen,
+            "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
+          },
+          withCredentials: false
+      })
+      .then((e) => {
+        console.log(e);
+        console.log("AXIOS DIRECTORY:Then");
+      })
+      .finally((e) => {
+        console.log(e);
+        console.log("AXIOS DIRECTORY:Finaly");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("AXIOS DIRECTORY:Catch");
+      });
 
-  _returnUndefined() {
-    return undefined;
+    }, 1500);
   }
-
   render() {
     return (
       <div className="container-fluid position-relative">
@@ -353,20 +370,31 @@ class DataSpaceView extends Component {
             <DataSpaceSearch />
             <SidebarNav />
           </div>
-          <div className="col-md-10">
-            <div className="d-flex flex-row">
-              <CommandBar className={`flex-grow-1 ${this.state.additionalCommandClasses}`}
+          <div className="col-md-10 d-flex flex-column">
+            <div className="commandbar-holder d-flex bg-primary-grey-light">
+              <CommandBar className={`left-commands flex-grow-1 ${this.state.additionalCommandClasses}`}
                 items={this._getItems()}
-                overflowItems={this._getOverlflowItems()}
-              />
-              <Breadcrumb
-                items={this.state.breadcrumbs}
-                // Returning undefined to OnReduceData tells the breadcrumb not to shrink
-                maxDisplayedItems={3}
-              />
-              <this.FarCommands />
+                overflowItems={this._getOverlflowItems()} />
+              <div className="right-commands px-3 d-flex">
+                <this.FarCommands />
+              </div>
             </div>
+            <Modal
+              isOpen={this.state.IsUploadModalVisible}
+              className="new-dir-modal"
+              isBlocking={false}>
+                <div className="modal-body d-flex flex-column">
+                  <strong className="modal-title mb-3">New directory</strong>
+                  <input type="text" ref="newDirectoryInput" className="px-1 flex-grow" 
+                    placeholder="Enter your directory name" />
+                </div>
+                <div className="modal-footer pb-1 pt-0">
+                  <ActionButton onClick={this._createNewDirectory} text="Create" />
+                  <ActionButton onClick={this._closeNewDirModal} text="Close" />
+                </div>
+            </Modal>
             <input type="file" ref="fileUploadInput" onChange={this.onUploadFileSelected} multiple hidden />
+            <this.TraverseBackButton />
             <DataSpaceMainContent
               hubConnection={this.hubConnection}
               directory={this.state.rootDir}

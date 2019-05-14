@@ -29,7 +29,6 @@ registerIcons({
     }
 });
 
-
 initializeIcons();
 initializeFileTypeIcons();
 

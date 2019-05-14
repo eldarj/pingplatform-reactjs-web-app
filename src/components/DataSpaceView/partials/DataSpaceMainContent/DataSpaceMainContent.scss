@@ -1,8 +1,35 @@
 @import '../../../../resources/styles/shared/color-vars';
 
 .ms-SearchBox {
-    width: 250px;
+    width: 300px;
     padding-left: 0;
+}
+
+.commandbar-holder {
+    flex-direction: row;
+    @media (max-width: 767.98px) {
+        flex-direction: column;
+    }
+
+    .left-commands, .right-commands, .breadcrumbs-holder button {
+        min-height: 38px;
+    }
+
+    
+}
+
+.breadcrumbs-holder {
+    margin-top: 5px;
+
+    button {
+        font-size: 16px;
+    }
+}
+.new-dir-modal {
+    .ms-Dialog-main {
+        min-width: 300px;
+        max-width: 450px;
+    }
 }
 
 .table {
