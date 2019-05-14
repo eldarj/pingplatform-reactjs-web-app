@@ -24,7 +24,10 @@ class DataSpaceMainContent extends Component {
         super(props);
         this.state = {
             loading: true,
-            files: []
+            directory: {
+                diskSize: '0',
+                nodes: []
+            }
         }
 
         if (props.account != null) {
@@ -35,16 +38,23 @@ class DataSpaceMainContent extends Component {
             this.hubConnection = props.hubConnection;
         }
 
-        this._allItems = props.files;
-        this.state.files = props.files;
+        if (props.directory != null) {
+            this.state.directory = props.directory;
+            this._allItems = props.directory.nodes;
+        }
     }
 
     componentDidMount() {
         this.hubConnection.on(`DeleteFileMetadataSuccess${window.randomGen}`, (filename) => {
-            this.setState({
-                loading: false, 
-                files: this.state.files.filter(obj => obj.fileName !== filename) 
-            });
+            this.setState(prevState => (
+                { 
+                  loading: false, 
+                  directory: {
+                      ...prevState.directory,
+                      nodes: this.state.directory.nodes.filter(obj => obj.fileName !== filename)
+                  } 
+                }
+              ));
         });
         this.hubConnection.on(`DeleteFileMetadataFail${window.randomGen}`, (filename, reasonMsg) => {
             console.log("Delete file fail: " + filename + reasonMsg);
@@ -52,17 +62,22 @@ class DataSpaceMainContent extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.files !== this.props.files) {
-            this._allItems = this.props.files;
-            this.setState({ loading: false, files: this.props.files });
+        if (prevProps.directory.nodes !== this.props.directory.nodes) {
+            this._allItems = this.props.directory.nodes;
+            this.setState({ loading: false, directory: this.props.directory });
         }
     }
 
     _onFilter = (text) => {
         console.log(text);
-        this.setState({
-            files: text ? this._allItems.filter(i => i.name.toLowerCase().indexOf(text) > -1) : this._allItems
-        });
+        this.setState(prevState => (
+            {
+                directory: {
+                    ...prevState.directory,
+                    nodes: text ? this._allItems.filter(i => i.name.toLowerCase().indexOf(text) > -1) : this._allItems
+                }
+            }
+        ));
     }
 
     _onCheckboxChange(e, isChecked) {
@@ -121,7 +136,7 @@ class DataSpaceMainContent extends Component {
 
     ListBody = () => (
         <tbody>
-            {this.state.files.map((item, k) => 
+            {this.state.directory.nodes.map((item, k) => 
                 item.nodeType === "File" ? this.ListFile(item, k) : this.ListDirectory(item, k)
             )}
         </tbody>
@@ -137,7 +152,7 @@ class DataSpaceMainContent extends Component {
                     className="list-item-file" />
             </td>
             <td className="list-col filename-col">
-                <a href={item.path} target="_blank" className="ml-2">{item.name}</a>
+                <a href={item.path} target="_blank" className="filename ml-2">{item.name}</a>
             </td>
             <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
             <td className="list-col">
@@ -154,6 +169,19 @@ class DataSpaceMainContent extends Component {
         </tr>
     );
 
+    traverseTo = (item) => {
+        this.setState({
+            loading: true,
+            directory: item
+        });
+        setTimeout(() => {
+            this.setState({
+                loading: false
+            });
+        }, 1000);
+        console.log(this.directory);
+    }
+
     ListDirectory = (item, k) => (
         <tr key={k} className={`list-row`}>
             <td className="list-col">
@@ -163,7 +191,7 @@ class DataSpaceMainContent extends Component {
                 <Icon iconName="Directory" className="list-item-file" />
             </td>
             <td className="list-col filename-col">
-                <a href={item.path} target="_blank" className="ml-2">{item.name}</a>
+                <span onClick={() => this.traverseTo(item)} className="filename ml-2">{item.name}</span>
             </td>
             <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
             <td className="list-col">

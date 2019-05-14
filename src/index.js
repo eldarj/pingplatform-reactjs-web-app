@@ -21,7 +21,7 @@ import App from './App';
 registerIcons({
     icons: {
       'Directory': (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" enable-background="new 0 0 20 20">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <g><polygon fill="#A6A6A6" points="1,17 1,5 10,5 12,3 19,3 19,17"/>
                 <polygon fill="#666666" points="12,3 10,5 12,7 19,7 19,3"/></g>
         </svg>

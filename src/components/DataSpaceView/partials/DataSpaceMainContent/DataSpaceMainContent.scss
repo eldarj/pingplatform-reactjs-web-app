@@ -46,8 +46,12 @@
                 }
 
                 &.filename-col {
-                    a {
+                    .filename  {
                         color: #212529;
+                        cursor: pointer;
+                        &:hover {
+                            text-decoration: underline;
+                        }
                     }
                 }
                 .file-more-context {

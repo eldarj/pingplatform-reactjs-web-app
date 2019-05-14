@@ -21,7 +21,11 @@ class DataSpaceView extends Component {
       showNotificationsPanel: false,
       files: [],
       fileUploading: false,
-      additionalCommandClasses: 'disabled'
+      additionalCommandClasses: 'disabled',
+      rootDir: {
+        diskSize: '0',
+        nodes: []
+      }
     }
 
     if (props.account != null) {
@@ -62,10 +66,11 @@ class DataSpaceView extends Component {
     this.hubConnection.on(`RequestFilesMetaDataSuccess${window.randomGen}`, (receivedMessage) => {
       console.log("Request meta data success:");
       console.log(receivedMessage);
-      this._allItems = receivedMessage.allNodes;
+      this._allItems = receivedMessage.nodes;
       this.setState({ 
         loading: false, 
-        files: receivedMessage.allNodes,
+        files: receivedMessage.nodes,
+        rootDir: receivedMessage,
         additionalCommandClasses: ''
       });
     });
@@ -339,7 +344,8 @@ class DataSpaceView extends Component {
             <input type="file" ref="fileUploadInput" onChange={this.onUploadFileSelected} multiple hidden />
             <DataSpaceMainContent
               hubConnection={this.hubConnection}
-              files={this.state.files} />
+              files={this.state.files}
+              directory={this.state.rootDir} />
           </div>
         </div>
         <NotificationsPane isOpen={this.state.showNotificationsPanel} />
