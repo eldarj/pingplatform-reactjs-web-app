@@ -14,6 +14,7 @@ import { ActionButton, Modal, CommandBar, IconButton, Spinner } from 'office-ui-
 class DataSpaceView extends Component {
   hubConnection = null;
   _prevDir = null;
+  _prevDirs = [];
   _initialRootBase = {
     diskSize: '0',
     nodes: []
@@ -213,7 +214,6 @@ class DataSpaceView extends Component {
       let file = e.target.files[i];
       console.log("FILE:");
       console.log(file);
-      file.customheader = "hey";
       formData.append('files[' + i + ']', file);
     }
     this.setState({ fileUploading: true });
@@ -309,6 +309,7 @@ class DataSpaceView extends Component {
 
   onTraverseToDir = (dir) => {
     this._prevDir = this.state.rootDir;
+    this._prevDirs.push(this.state.rootDir.name);
     this.setState({ rootDir: dir });
   }
 
@@ -338,27 +339,37 @@ class DataSpaceView extends Component {
       path: this.state.rootDir.name ? this.state.rootDir.name : '', 
       parentDirName: this.state.rootDir.name ? this.state.rootDir.name : '' 
     };
+
     console.log(newDirDto);
     setTimeout(() => {
-      axios.post('https://localhost:44380/api/dataspace/eldarja/directories', newDirDto, {
-          headers: {
-            "AppId": window.randomGen,
-            "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
-          },
-          withCredentials: false
+      // Create URL-endpoint: Splice to remove the first 'root' dir and join all other ones eg. /fodler1/folder1_1/...
+      let dirRoute = this._prevDirs
+        .concat(this.state.rootDir.name ? this.state.rootDir.name : '')
+        .slice(1)
+        .join('/');
+
+      let url = `https://localhost:44380/api/dataspace/eldarja/directories/${dirRoute}`;
+      console.log(url);
+
+      axios.post(url, newDirDto, {
+        headers: {
+          "AppId": window.randomGen,
+          "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
+        },
+        withCredentials: false
       })
-      .then((e) => {
-        console.log(e);
-        console.log("AXIOS DIRECTORY:Then");
-      })
-      .finally((e) => {
-        console.log(e);
-        console.log("AXIOS DIRECTORY:Finaly");
-      })
-      .catch((e) => {
-        console.log(e);
-        console.log("AXIOS DIRECTORY:Catch");
-      });
+        .then((e) => {
+          console.log(e);
+          console.log("AXIOS DIRECTORY:Then");
+        })
+        .finally((e) => {
+          console.log(e);
+          console.log("AXIOS DIRECTORY:Finaly");
+        })
+        .catch((e) => {
+          console.log(e);
+          console.log("AXIOS DIRECTORY:Catch");
+        });
 
     }, 1500);
   }

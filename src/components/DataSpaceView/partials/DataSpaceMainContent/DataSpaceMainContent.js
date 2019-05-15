@@ -61,6 +61,26 @@ class DataSpaceMainContent extends Component {
         this.hubConnection.on(`DeleteFileMetadataFail${window.randomGen}`, (filename, reasonMsg) => {
             console.log("Delete file fail: " + filename + reasonMsg);
         });
+
+        this.hubConnection.on(`DeleteDirectoryMetadataSuccess${window.randomGen}`, (directoryPath) => {
+            let dirName = directoryPath.split('/').pop();
+            console.log(dirName);
+            // TODO: Remove this dir from the current list but check if we are updating all the dir obj references in memory)
+            if (dirName) {
+                this.setState(prevState => (
+                    { 
+                      loading: false, 
+                      directory: {
+                          ...prevState.directory,
+                          nodes: this.state.directory.nodes.filter(obj => obj.name !== directoryPath)
+                      }
+                    }
+                  ));
+            }
+        });
+        this.hubConnection.on(`DeleteDirectoryMetadataFail${window.randomGen}`, (directoryPath, reasonMsg) => {
+            console.log("Delete file fail: " + directoryPath + reasonMsg);
+        });
     }
 
     componentDidUpdate(prevProps) {
@@ -86,11 +106,41 @@ class DataSpaceMainContent extends Component {
         console.log(`The option has been changed to ${isChecked}.`);
     }
 
-    actionDeleteItem = (items) => {
+    actionDeleteFile = (items) => {
         this.setState({ loading: true });
         //TODO: Axios delete
         setTimeout(() => {
             axios.delete('https://localhost:44380/api/dataspace/eldarja/files/' + items[0].name,
+            {
+              headers: {
+                "AppId": window.randomGen,
+                "OwnerPhoneNumber": this.state.accountVM.phoneNumber
+              },
+              withCredentials: false
+            })
+            .then((e) => {
+              console.log(e);
+              console.log("AXIOS:Delete Then");
+            })
+            .finally((e) => {
+              console.log(e);
+              console.log("AXIOS:Delete Finaly");
+            })
+            .catch((e) => {
+              console.log(e);
+              console.log("AXIOS:Delete Catch");
+            });
+      
+          }, 1500);
+    }
+
+    actionDeleteDirectory = (items) => {
+        this.setState({ loading: true });
+        //TODO: Axios delete - check for directory path
+        console.log(items[0].path);
+        let directoryPath = items[0].path.replace('https://localhost:44380/dataspace/eldarja/', '');
+        setTimeout(() => {
+            axios.delete('https://localhost:44380/api/dataspace/eldarja/directories/' + directoryPath,
             {
               headers: {
                 "AppId": window.randomGen,
@@ -158,7 +208,7 @@ class DataSpaceMainContent extends Component {
             </td>
             <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
             <td className="list-col">
-                <ListItemContext item={item} onDelete={() => this.actionDeleteItem([item])}/>
+                <ListItemContext item={item} type="file" onDelete={() => this.actionDeleteFile([item])}/>
             </td>
             <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
             <td className="list-col">{item.dirName}</td>
@@ -167,6 +217,30 @@ class DataSpaceMainContent extends Component {
             <td className="list-col"><span className="badge badge-info bg-primary-blue">
                 {item.mimeType && item.mimeType.includes('.') ? item.mimeType.split('.').pop() : item.mimeType}
             </span></td>
+            <td className="list-col">{item.ownerFirstname + " " + item.ownerLastname}</td>
+        </tr>
+    );
+
+    ListDirectory = (item, k) => (
+        <tr key={k} className={`list-row`}>
+            <td className="list-col">
+                <Checkbox className="list-item-select" onChange={this._onCheckboxChange} checked={item.checked} />
+            </td>
+            <td className="list-col">
+                <Icon iconName="Directory" className="list-item-file" />
+            </td>
+            <td className="list-col filename-col">
+                <span onClick={() => this.traverseToDir(item)} className="filename ml-2">{item.name}</span>
+            </td>
+            <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
+            <td className="list-col">
+                <ListItemContext item={item} type="directory" onDelete={() => this.actionDeleteDirectory([item])}/>
+            </td>
+            <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
+            <td className="list-col">{item.dirName}</td>
+            <td className="list-col">{item.dirPath}</td>
+            <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
+            <td className="list-col"><span className="badge badge-info bg-primary-blue">Directory</span></td>
             <td className="list-col">{item.ownerFirstname + " " + item.ownerLastname}</td>
         </tr>
     );
@@ -183,30 +257,6 @@ class DataSpaceMainContent extends Component {
         }, 250);
         this.props.onTraverseToDir(dir);
     }
-
-    ListDirectory = (item, k) => (
-        <tr key={k} className={`list-row`}>
-            <td className="list-col">
-                <Checkbox className="list-item-select" onChange={this._onCheckboxChange} checked={item.checked} />
-            </td>
-            <td className="list-col">
-                <Icon iconName="Directory" className="list-item-file" />
-            </td>
-            <td className="list-col filename-col">
-                <span onClick={() => this.traverseToDir(item)} className="filename ml-2">{item.name}</span>
-            </td>
-            <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
-            <td className="list-col">
-                <ListItemContext item={item} onDelete={() => this.actionDeleteItem([item])}/>
-            </td>
-            <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
-            <td className="list-col">{item.dirName}</td>
-            <td className="list-col">{item.dirPath}</td>
-            <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
-            <td className="list-col"><span className="badge badge-info bg-primary-blue">Directory</span></td>
-            <td className="list-col">{item.ownerFirstname + " " + item.ownerLastname}</td>
-        </tr>
-    );
 
     htmlOnLoad = () => (
         <div className="flex-grow-1 d-flex justify-content-center align-items-center">
