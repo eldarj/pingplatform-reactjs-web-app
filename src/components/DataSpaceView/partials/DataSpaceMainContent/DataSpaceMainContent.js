@@ -137,10 +137,11 @@ class DataSpaceMainContent extends Component {
     actionDeleteDirectory = (items) => {
         this.setState({ loading: true });
         //TODO: Axios delete - check for directory path
-        console.log(items[0].path);
-        let directoryPath = items[0].path.replace('https://localhost:44380/dataspace/eldarja/', '');
+        let url = 'https://localhost:44380/api/dataspace/eldarja/directories/' + 
+            (items[0].path ? items[0].path + '/' : '') + items[0].name;
+
         setTimeout(() => {
-            axios.delete('https://localhost:44380/api/dataspace/eldarja/directories/' + directoryPath,
+            axios.delete(url,
             {
               headers: {
                 "AppId": window.randomGen,
@@ -161,7 +162,7 @@ class DataSpaceMainContent extends Component {
               console.log("AXIOS:Delete Catch");
             });
       
-          }, 1500);
+        }, 1500);
     }
 
     ListHeader = () => {
