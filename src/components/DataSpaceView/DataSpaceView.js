@@ -332,25 +332,21 @@ class DataSpaceView extends Component {
   _closeNewDirModal = () => {
     this.setState({ IsUploadModalVisible: false });
   };
-  _createNewDirectory = () => {
+  _createNewDirectory = () => { // TODO: Cleanup (backend-side is done) && lookinto using authentication vs eldarja in :url:
     this.setState({ IsUploadModalVisible: false, fileUploading: true });
     let newDirDto = { 
       dirName: this.refs.newDirectoryInput.value, 
-      path: this.state.rootDir.name ? this.state.rootDir.name : '', 
-      parentDirName: this.state.rootDir.name ? this.state.rootDir.name : '' 
+      // path: this.state.rootDir.name ? this.state.rootDir.name : '', 
+      // parentDirName: this.state.rootDir.name ? this.state.rootDir.name : '' 
     };
-
-    console.log(newDirDto);
     setTimeout(() => {
       // Create URL-endpoint: Splice to remove the first 'root' dir and join all other ones eg. /fodler1/folder1_1/...
-      let dirRoute = this._prevDirs
+      let directoryPath = this._prevDirs
         .concat(this.state.rootDir.name ? this.state.rootDir.name : '')
         .slice(1)
         .join('/');
 
-      let url = `https://localhost:44380/api/dataspace/eldarja/directories/${dirRoute}`;
-      console.log(url);
-
+      let url = `https://localhost:44380/api/dataspace/eldarja/directories/${directoryPath}`;
       axios.post(url, newDirDto, {
         headers: {
           "AppId": window.randomGen,
