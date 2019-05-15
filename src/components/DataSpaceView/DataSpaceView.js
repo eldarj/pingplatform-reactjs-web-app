@@ -210,44 +210,52 @@ class DataSpaceView extends Component {
     let reader = new FileReader();
     let file = e.target.files[0]; // TODO: How to upload a file to a spefici directory? Opt: Change Upload endpoint to represent REST-principles (/directory)
     let formData = new FormData();
+
     for (var i = 0; i < e.target.files.length; i++) {
       let file = e.target.files[i];
       console.log("FILE:");
       console.log(file);
       formData.append('files[' + i + ']', file);
     }
-    this.setState({ fileUploading: true });
+    
     console.log(formData);
-    // setTimeout(() => {
-    //   axios.post('https://localhost:44380/api/dataspace/eldarja/files',
-    //   formData,
-    //   {
-    //     onUploadProgress: (e) => {
-    //       let percentCompleted = Math.round((e.loaded * 100) / e.total);
-    //       console.log(percentCompleted);
-    //     },
-    //     headers: {
-    //       "AppId": window.randomGen,
-    //       "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
-    //       "OwnerFirstName": this.state.accountVM.firstname,
-    //       "OwnerLastName": this.state.accountVM.lastname
-    //     },
-    //     withCredentials: false
-    //   })
-    //   .then((e) => {
-    //     console.log(e);
-    //     console.log("AXIOS:Then");
-    //   })
-    //   .finally((e) => {
-    //     console.log(e);
-    //     console.log("AXIOS:Finaly");
-    //   })
-    //   .catch((e) => {
-    //     console.log(e);
-    //     console.log("AXIOS:Catch");
-    //   });
+    this.setState({ fileUploading: true });
+    let directoryPath = this._prevDirs
+        .concat(this.state.rootDir.name ? this.state.rootDir.name : '')
+        .slice(1)
+        .join('/');
 
-    // }, 1500);
+    let url = `https://localhost:44380/api/dataspace/eldarja/files/${directoryPath}`;
+    console.log(url);
+    setTimeout(() => {
+      axios.post(url, formData,
+      {
+        headers: {
+          "AppId": window.randomGen,
+          "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
+          "OwnerFirstName": this.state.accountVM.firstname,
+          "OwnerLastName": this.state.accountVM.lastname
+        },
+        onUploadProgress: (e) => {
+          let percentCompleted = Math.round((e.loaded * 100) / e.total);
+          console.log(percentCompleted);
+        },
+        withCredentials: false
+      })
+      .then((e) => {
+        console.log(e);
+        console.log("AXIOS:Then");
+      })
+      .finally((e) => {
+        console.log(e);
+        console.log("AXIOS:Finaly");
+      })
+      .catch((e) => {
+        console.log(e);
+        console.log("AXIOS:Catch");
+      });
+
+    }, 1500);
 
     // // FOR LOADING INTO A VIEW OR SMTHNG (EG. Images)
     // let fileSize;
