@@ -82,10 +82,10 @@ class DataSpaceView extends Component {
       console.log(receivedMessage);
     });
 
-    this.hubConnection.on(`SaveDirectoryMetadataSuccess${window.randomGen}`, (receivedMessage) => {
+    this.hubConnection.on(`SaveDirectoryMetadataSuccess${window.randomGen}`, (directoryDto) => {
       console.log("On - SaveDirectoryMetadataSuccess:");
-      console.log(receivedMessage);
-      this.state.rootDir.nodes.unshift(receivedMessage);
+      console.log(directoryDto);
+      this.state.rootDir.nodes.unshift(directoryDto);
       this.setState(prevState => (
         { 
           fileUploading: false,
