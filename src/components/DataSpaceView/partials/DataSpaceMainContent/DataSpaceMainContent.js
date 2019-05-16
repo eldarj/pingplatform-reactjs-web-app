@@ -65,6 +65,7 @@ class DataSpaceMainContent extends Component {
         this.hubConnection.on(`DeleteDirectoryMetadataSuccess${window.randomGen}`, (directoryPath) => {
             let dirName = directoryPath.split('/').pop();
             console.log(dirName);
+            console.log(this.state.directory);
             // TODO: Remove this dir from the current list but check if we are updating all the dir obj references in memory)
             if (dirName) {
                 this.setState(prevState => (
@@ -84,6 +85,7 @@ class DataSpaceMainContent extends Component {
     }
 
     componentDidUpdate(prevProps) {
+        console.log("### COMPONENT DID UPDATE ###");
         if (prevProps.directory.nodes !== this.props.directory.nodes) {
             this._allItems = this.props.directory.nodes;
             this.setState({ loading: false, directory: this.props.directory });
@@ -107,10 +109,15 @@ class DataSpaceMainContent extends Component {
     }
 
     actionDeleteFile = (items) => {
-        this.setState({ loading: true });
-        //TODO: Axios delete
+        //this.setState({ loading: true });
+        //Axios delete file
+        let url = 'https://localhost:44380/api/dataspace/eldarja/files/' + 
+            (items[0].path ? items[0].path + '/' : '') + items[0].name;
+        console.log("### DELETE FILE ###");
+        console.log(url);
+
         setTimeout(() => {
-            axios.delete('https://localhost:44380/api/dataspace/eldarja/files/' + items[0].name,
+            axios.delete(url,
             {
               headers: {
                 "AppId": window.randomGen,
@@ -135,10 +142,13 @@ class DataSpaceMainContent extends Component {
     }
 
     actionDeleteDirectory = (items) => {
-        this.setState({ loading: true });
-        //TODO: Axios delete - check for directory path
+        //this.setState({ loading: true });
+        //Axios delete
         let url = 'https://localhost:44380/api/dataspace/eldarja/directories/' + 
             (items[0].path ? items[0].path + '/' : '') + items[0].name;
+
+        console.log("---- DELETE DIRECTRORY -----");
+        console.log(url);
 
         setTimeout(() => {
             axios.delete(url,
@@ -207,7 +217,7 @@ class DataSpaceMainContent extends Component {
             </td>
             <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
             <td className="list-col">
-                <ListItemContext item={item} type="file" onDelete={() => this.actionDeleteFile([item])}/>
+                <ListItemContext item={item} type="file" onDelete={ this.actionDeleteFile.bind(this, [item]) }/>
             </td>
             <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
             <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
@@ -231,7 +241,7 @@ class DataSpaceMainContent extends Component {
             </td>
             <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
             <td className="list-col">
-                <ListItemContext item={item} type="directory" onDelete={() => this.actionDeleteDirectory([item])}/>
+                <ListItemContext key={k} item={item} type="directory" onDelete={ this.actionDeleteDirectory.bind(this, [item]) }/>
             </td>
             <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
             <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
@@ -241,15 +251,6 @@ class DataSpaceMainContent extends Component {
     );
 
     traverseToDir = (dir) => {
-        this.setState({
-            loading: true,
-            directory: dir
-        });
-        setTimeout(() => {
-            this.setState({
-                loading: false
-            });
-        }, 250);
         this.props.onTraverseToDir(dir);
     }
 

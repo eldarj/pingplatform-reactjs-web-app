@@ -65,6 +65,7 @@ export default class ListItemContext extends Component {
     );
 
     render() {
+        console.log("---- LISTITEM -----");
         let type = this.props.type;
         if (type === "directory") 
         {

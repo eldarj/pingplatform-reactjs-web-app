@@ -13,14 +13,8 @@ import { ActionButton, Modal, CommandBar, IconButton, Spinner } from 'office-ui-
 
 class DataSpaceView extends Component {
   hubConnection = null;
-  _prevDir = null;
-  _prevDirs = [];
   _prevDirObjects = [];
   _currentDirName = "My drive";
-  _initialRootBase = {
-    diskSize: '0',
-    nodes: []
-  };
 
   constructor(props) {
     super(props);
@@ -30,7 +24,7 @@ class DataSpaceView extends Component {
       fileUploading: false,
       IsUploadModalVisible: false,
       additionalCommandClasses: 'disabled',
-      rootDir: this._initialRootBase
+      rootDir: { nodes: [] }
     }
 
     if (props.account != null) {
@@ -71,7 +65,6 @@ class DataSpaceView extends Component {
     this.hubConnection.on(`RequestFilesMetaDataSuccess${window.randomGen}`, (receivedMessage) => {
       console.log("Request meta data success:");
       console.log(receivedMessage);
-      this._initialRootBase = receivedMessage;
       this.setState({ 
         loading: false, 
         rootDir: receivedMessage,
@@ -97,7 +90,6 @@ class DataSpaceView extends Component {
           }
         }
       ));
-      this._initialRootBase = this.state.rootDir;
     });
 
     this.hubConnection.on(`SaveDirectoryMetadataFail${window.randomGen}`, (receivedMessage) => {
@@ -207,8 +199,9 @@ class DataSpaceView extends Component {
     ];
   };
 
-  // TODO: File read and upload ::FileReader()
+  // File read and upload
   onUploadFileSelected = (e) => {
+    this.setState({ fileUploading: true });
     // Get the file and prepare a FormData obj
     let reader = new FileReader();
     let file = e.target.files[0];
@@ -220,11 +213,8 @@ class DataSpaceView extends Component {
     }
 
     // Prepare the upload url-endpoint
-    this.setState({ fileUploading: true });
-    let directoryPath = this._prevDirs
-        .concat(this.state.rootDir.name ? this.state.rootDir.name : '')
-        .slice(1)
-        .join('/');
+    let directoryPath = this.state.rootDir.path ? this.state.rootDir.path + "/" : "";
+    directoryPath += this.state.rootDir.name ? this.state.rootDir.name : "";
 
     let url = `https://localhost:44380/api/dataspace/eldarja/files/${directoryPath}`;
     setTimeout(() => {
@@ -317,21 +307,19 @@ class DataSpaceView extends Component {
 
   onTraverseToDir = (dir) => {
     this._currentDirName = dir.name;
-    this._prevDirs.push(this.state.rootDir.name);
     this._prevDirObjects.push(this.state.rootDir);
     
     this.setState({ rootDir: dir });
   }
 
   _traverseBack = () => {
-    this._prevDirs.pop();
     let previousDirectory = this._prevDirObjects.pop();
     this._currentDirName = previousDirectory.name;
     this.setState({ rootDir: previousDirectory });
   }
 
   TraverseBackButton = () => {
-    if (!window.lolodash.isEqual(this.state.rootDir, this._initialRootBase)) {
+    if (this._prevDirObjects.length > 0) {
       return (
         <ActionButton iconProps={{iconName: "ChevronLeft"}} onClick={this._traverseBack}>Back</ActionButton>
       )
@@ -359,10 +347,8 @@ class DataSpaceView extends Component {
     let newDirDto = {  name: this.refs.newDirectoryInput.value };
     setTimeout(() => {
       // Create URL-endpoint: Splice to remove the first 'root' dir and join all other ones eg. /fodler1/folder1_1/...
-      let directoryPath = this._prevDirs
-        .concat(this.state.rootDir.name ? this.state.rootDir.name : '')
-        .slice(1)
-        .join('/');
+      let directoryPath = this.state.rootDir.path ? this.state.rootDir.path + "/" : "";
+      directoryPath += this.state.rootDir.name ? this.state.rootDir.name : "";
 
       let url = `https://localhost:44380/api/dataspace/eldarja/directories/${directoryPath}`;
       axios.post(url, newDirDto, {
