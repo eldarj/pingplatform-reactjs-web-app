@@ -207,18 +207,17 @@ class DataSpaceView extends Component {
 
   // TODO: File read and upload ::FileReader()
   onUploadFileSelected = (e) => {
+    // Get the file and prepare a FormData obj
     let reader = new FileReader();
-    let file = e.target.files[0]; // TODO: How to upload a file to a spefici directory? Opt: Change Upload endpoint to represent REST-principles (/directory)
+    let file = e.target.files[0];
     let formData = new FormData();
-
+    
     for (var i = 0; i < e.target.files.length; i++) {
       let file = e.target.files[i];
-      console.log("FILE:");
-      console.log(file);
-      formData.append('files[' + i + ']', file);
+      formData.append('files[' + i + ']', file); // we accept multi-file upload
     }
-    
-    console.log(formData);
+
+    // Prepare the upload url-endpoint
     this.setState({ fileUploading: true });
     let directoryPath = this._prevDirs
         .concat(this.state.rootDir.name ? this.state.rootDir.name : '')
@@ -226,11 +225,10 @@ class DataSpaceView extends Component {
         .join('/');
 
     let url = `https://localhost:44380/api/dataspace/eldarja/files/${directoryPath}`;
-    console.log(url);
     setTimeout(() => {
       axios.post(url, formData,
       {
-        headers: {
+        headers: { // TODO: Remove this in favour to a Authentication obj wrapper (on both front end back end)
           "AppId": window.randomGen,
           "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
           "OwnerFirstName": this.state.accountVM.firstname,
