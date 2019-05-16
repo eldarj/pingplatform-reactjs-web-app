@@ -177,8 +177,6 @@ class DataSpaceMainContent extends Component {
                     <th className="list-col">Visibility</th>
                     <th className="list-col">More</th>
                     <th className="list-col">Upload date</th>
-                    <th className="list-col">Dir name</th>
-                    <th className="list-col">Dir path</th>
                     <th className="list-col">Last modified</th>
                     <th className="list-col">Type</th>
                     <th className="list-col">Owner</th>
@@ -212,8 +210,6 @@ class DataSpaceMainContent extends Component {
                 <ListItemContext item={item} type="file" onDelete={() => this.actionDeleteFile([item])}/>
             </td>
             <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
-            <td className="list-col">{item.dirName}</td>
-            <td className="list-col">{item.dirPath}</td>
             <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
             <td className="list-col"><span className="badge badge-info bg-primary-blue">
                 {item.mimeType && item.mimeType.includes('.') ? item.mimeType.split('.').pop() : item.mimeType}
@@ -238,8 +234,6 @@ class DataSpaceMainContent extends Component {
                 <ListItemContext item={item} type="directory" onDelete={() => this.actionDeleteDirectory([item])}/>
             </td>
             <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
-            <td className="list-col">{item.dirName}</td>
-            <td className="list-col">{item.dirPath}</td>
             <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
             <td className="list-col"><span className="badge badge-info bg-primary-blue">Directory</span></td>
             <td className="list-col">{item.ownerFirstname + " " + item.ownerLastname}</td>
@@ -268,7 +262,7 @@ class DataSpaceMainContent extends Component {
 
     htmlOnNoFiles = () => (
         <div className="flex-grow-1 d-flex justify-content-center align-items-center flex-column">
-            <span className="label-primary">Drive empty. Please upload some resources first!</span>
+            <span className="label-primary">There's nothing here, please upload some resources.</span>
         </div>
     );
 

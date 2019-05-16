@@ -15,6 +15,8 @@ class DataSpaceView extends Component {
   hubConnection = null;
   _prevDir = null;
   _prevDirs = [];
+  _prevDirObjects = [];
+  _currentDirName = "My drive";
   _initialRootBase = {
     diskSize: '0',
     nodes: []
@@ -314,13 +316,18 @@ class DataSpaceView extends Component {
   );
 
   onTraverseToDir = (dir) => {
-    this._prevDir = this.state.rootDir;
+    this._currentDirName = dir.name;
     this._prevDirs.push(this.state.rootDir.name);
+    this._prevDirObjects.push(this.state.rootDir);
+    
     this.setState({ rootDir: dir });
   }
 
   _traverseBack = () => {
-    this.setState({ rootDir: this._prevDir });
+    this._prevDirs.pop();
+    let previousDirectory = this._prevDirObjects.pop();
+    this._currentDirName = previousDirectory.name;
+    this.setState({ rootDir: previousDirectory });
   }
 
   TraverseBackButton = () => {
@@ -332,6 +339,15 @@ class DataSpaceView extends Component {
     return null;
   }
 
+  DataSpaceSubHeading = () => {
+    return (
+      <div className="sub-holder">
+        <this.TraverseBackButton />
+        <div className="ml-2">{this._currentDirName}</div>
+      </div>
+    );
+  }
+
   _openNewDirModal = () => {
     this.setState({ IsUploadModalVisible: true });
   }
@@ -340,11 +356,7 @@ class DataSpaceView extends Component {
   };
   _createNewDirectory = () => { // TODO: Cleanup (backend-side is done) && lookinto using authentication vs eldarja in :url:
     this.setState({ IsUploadModalVisible: false, fileUploading: true });
-    let newDirDto = { 
-      dirName: this.refs.newDirectoryInput.value, 
-      // path: this.state.rootDir.name ? this.state.rootDir.name : '', 
-      // parentDirName: this.state.rootDir.name ? this.state.rootDir.name : '' 
-    };
+    let newDirDto = {  name: this.refs.newDirectoryInput.value };
     setTimeout(() => {
       // Create URL-endpoint: Splice to remove the first 'root' dir and join all other ones eg. /fodler1/folder1_1/...
       let directoryPath = this._prevDirs
@@ -407,7 +419,7 @@ class DataSpaceView extends Component {
                 </div>
             </Modal>
             <input type="file" ref="fileUploadInput" onChange={this.onUploadFileSelected} multiple hidden />
-            <this.TraverseBackButton />
+            <this.DataSpaceSubHeading />
             <DataSpaceMainContent
               hubConnection={this.hubConnection}
               directory={this.state.rootDir}
