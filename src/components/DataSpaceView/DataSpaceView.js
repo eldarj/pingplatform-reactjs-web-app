@@ -42,31 +42,11 @@ class DataSpaceView extends Component {
       .then(() => this.signalRHubOnConnected())
       .catch(() => console.log('Error establishing connection.'));
 
-    this.hubConnection.on(`UploadFileSuccess${window.randomGen}`, (receivedMessage) => {
-      console.log("Upload file success: ");
-      console.log(receivedMessage);
-      this.state.rootDir.nodes.unshift(receivedMessage);
-      this.setState(prevState => (
-        { 
-          fileUploading: false,
-          rootDir: {
-            ...this.state.rootDir,
-            nodes: [...this.state.rootDir.nodes]
-          }
-        }
-      ));
-    });
-
-    this.hubConnection.on(`UploadFileFail${window.randomGen}`, (receivedMessage) => {
-      console.log("Upload file fail: ");
-      console.log(receivedMessage);
-    });
-
     this.hubConnection.on(`RequestFilesMetaDataSuccess${window.randomGen}`, (receivedMessage) => {
       console.log("Request meta data success:");
       console.log(receivedMessage);
-      this.setState({ 
-        loading: false, 
+      this.setState({
+        loading: false,
         rootDir: receivedMessage,
         additionalCommandClasses: ''
       });
@@ -82,7 +62,7 @@ class DataSpaceView extends Component {
       console.log(directoryDto);
       this.state.rootDir.nodes.unshift(directoryDto);
       this.setState(prevState => (
-        { 
+        {
           fileUploading: false,
           rootDir: {
             ...this.state.rootDir,
@@ -94,6 +74,68 @@ class DataSpaceView extends Component {
 
     this.hubConnection.on(`SaveDirectoryMetadataFail${window.randomGen}`, (receivedMessage) => {
       console.log("On - SaveDirectoryMetadataFail:");
+      console.log(receivedMessage);
+    });
+
+    this.hubConnection.on(`DeleteDirectoryMetadataSuccess${window.randomGen}`, (directoryPath) => {
+      let filteredNodes = this.state.rootDir.nodes.filter(node => node.path + "/" + node.name !== directoryPath);
+
+      this.setState(prevState => (
+        {
+          loading: false,
+          rootDir: {
+            ...prevState.rootDir,
+            nodes: filteredNodes
+          }
+        }
+      ));
+
+      this._prevDirObjects[this._prevDirObjects.length - 1].nodes
+        .find(node => node.name === this.state.rootDir.name).nodes = filteredNodes;
+    });
+
+    this.hubConnection.on(`DeleteDirectoryMetadataFail${window.randomGen}`, (directoryPath, reasonMsg) => {
+      console.log("Delete file fail: " + directoryPath + reasonMsg);
+    });
+
+    this.hubConnection.on(`DeleteFileMetadataSuccess${window.randomGen}`, (filePath) => {
+      let filteredNodes = this.state.rootDir.nodes.filter(node => node.path + "/" + node.name !== filePath);
+
+      this.setState(prevState => (
+        {
+          loading: false,
+          rootDir: {
+            ...prevState.rootDir,
+            nodes: filteredNodes
+          }
+        }
+      ));
+
+      this._prevDirObjects[this._prevDirObjects.length - 1].nodes
+        .find(node => node.name === this.state.rootDir.name).nodes = filteredNodes;
+    });
+
+    this.hubConnection.on(`DeleteFileMetadataFail${window.randomGen}`, (filename, reasonMsg) => {
+      console.log("Delete file fail: " + filename + reasonMsg);
+    });
+
+    this.hubConnection.on(`UploadFileSuccess${window.randomGen}`, (receivedMessage) => {
+      console.log("Upload file success: ");
+      console.log(receivedMessage);
+      this.state.rootDir.nodes.unshift(receivedMessage);
+      this.setState(prevState => (
+        {
+          fileUploading: false,
+          rootDir: {
+            ...this.state.rootDir,
+            nodes: [...this.state.rootDir.nodes]
+          }
+        }
+      ));
+    });
+
+    this.hubConnection.on(`UploadFileFail${window.randomGen}`, (receivedMessage) => {
+      console.log("Upload file fail: ");
       console.log(receivedMessage);
     });
   }
@@ -206,7 +248,7 @@ class DataSpaceView extends Component {
     let reader = new FileReader();
     let file = e.target.files[0];
     let formData = new FormData();
-    
+
     for (var i = 0; i < e.target.files.length; i++) {
       let file = e.target.files[i];
       formData.append('files[' + i + ']', file); // we accept multi-file upload
@@ -219,31 +261,31 @@ class DataSpaceView extends Component {
     let url = `https://localhost:44380/api/dataspace/eldarja/files/${directoryPath}`;
     setTimeout(() => {
       axios.post(url, formData,
-      {
-        headers: { // TODO: Remove this in favour to a Authentication obj wrapper (on both front end back end)
-          "AppId": window.randomGen,
-          "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
-          "OwnerFirstName": this.state.accountVM.firstname,
-          "OwnerLastName": this.state.accountVM.lastname
-        },
-        onUploadProgress: (e) => {
-          let percentCompleted = Math.round((e.loaded * 100) / e.total);
-          console.log(percentCompleted);
-        },
-        withCredentials: false
-      })
-      .then((e) => {
-        console.log(e);
-        console.log("AXIOS:Then");
-      })
-      .finally((e) => {
-        console.log(e);
-        console.log("AXIOS:Finaly");
-      })
-      .catch((e) => {
-        console.log(e);
-        console.log("AXIOS:Catch");
-      });
+        {
+          headers: { // TODO: Remove this in favour to a Authentication obj wrapper (on both front end back end)
+            "AppId": window.randomGen,
+            "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
+            "OwnerFirstName": this.state.accountVM.firstname,
+            "OwnerLastName": this.state.accountVM.lastname
+          },
+          onUploadProgress: (e) => {
+            let percentCompleted = Math.round((e.loaded * 100) / e.total);
+            console.log(percentCompleted);
+          },
+          withCredentials: false
+        })
+        .then((e) => {
+          console.log(e);
+          console.log("AXIOS:Then");
+        })
+        .finally((e) => {
+          console.log(e);
+          console.log("AXIOS:Finaly");
+        })
+        .catch((e) => {
+          console.log(e);
+          console.log("AXIOS:Catch");
+        });
 
     }, 1500);
 
@@ -299,16 +341,16 @@ class DataSpaceView extends Component {
   };
 
   FarCommands = () => (
-      <div className={`d-flex flex-row ${this.state.additionalCommandClasses}`}>
-        <Spinner className="px-3" style={{visibility: this.state.fileUploading ? 'visible' : 'hidden'}} />
-        <IconButton className="ms-icon-regular h-auto" iconProps={{iconName: "Info"}} />
-      </div>
+    <div className={`d-flex flex-row ${this.state.additionalCommandClasses}`}>
+      <Spinner className="px-3" style={{ visibility: this.state.fileUploading ? 'visible' : 'hidden' }} />
+      <IconButton className="ms-icon-regular h-auto" iconProps={{ iconName: "Info" }} />
+    </div>
   );
 
   onTraverseToDir = (dir) => {
     this._currentDirName = dir.name;
     this._prevDirObjects.push(this.state.rootDir);
-    
+
     this.setState({ rootDir: dir });
   }
 
@@ -321,7 +363,7 @@ class DataSpaceView extends Component {
   TraverseBackButton = () => {
     if (this._prevDirObjects.length > 0) {
       return (
-        <ActionButton iconProps={{iconName: "ChevronLeft"}} onClick={this._traverseBack}>Back</ActionButton>
+        <ActionButton iconProps={{ iconName: "ChevronLeft" }} onClick={this._traverseBack}>Back</ActionButton>
       )
     }
     return null;
@@ -344,7 +386,7 @@ class DataSpaceView extends Component {
   };
   _createNewDirectory = () => { // TODO: Cleanup (backend-side is done) && lookinto using authentication vs eldarja in :url:
     this.setState({ IsUploadModalVisible: false, fileUploading: true });
-    let newDirDto = {  name: this.refs.newDirectoryInput.value };
+    let newDirDto = { name: this.refs.newDirectoryInput.value };
     setTimeout(() => {
       // Create URL-endpoint: Splice to remove the first 'root' dir and join all other ones eg. /fodler1/folder1_1/...
       let directoryPath = this.state.rootDir.path ? this.state.rootDir.path + "/" : "";
@@ -373,6 +415,7 @@ class DataSpaceView extends Component {
 
     }, 1500);
   }
+
   render() {
     return (
       <div className="container-fluid position-relative">
@@ -394,15 +437,15 @@ class DataSpaceView extends Component {
               isOpen={this.state.IsUploadModalVisible}
               className="new-dir-modal"
               isBlocking={false}>
-                <div className="modal-body d-flex flex-column">
-                  <strong className="modal-title mb-3">New directory</strong>
-                  <input type="text" ref="newDirectoryInput" className="px-1 flex-grow" 
-                    placeholder="Enter your directory name" />
-                </div>
-                <div className="modal-footer pb-1 pt-0">
-                  <ActionButton onClick={this._createNewDirectory} text="Create" />
-                  <ActionButton onClick={this._closeNewDirModal} text="Close" />
-                </div>
+              <div className="modal-body d-flex flex-column">
+                <strong className="modal-title mb-3">New directory</strong>
+                <input type="text" ref="newDirectoryInput" className="px-1 flex-grow"
+                  placeholder="Enter your directory name" />
+              </div>
+              <div className="modal-footer pb-1 pt-0">
+                <ActionButton onClick={this._createNewDirectory} text="Create" />
+                <ActionButton onClick={this._closeNewDirModal} text="Close" />
+              </div>
             </Modal>
             <input type="file" ref="fileUploadInput" onChange={this.onUploadFileSelected} multiple hidden />
             <this.DataSpaceSubHeading />

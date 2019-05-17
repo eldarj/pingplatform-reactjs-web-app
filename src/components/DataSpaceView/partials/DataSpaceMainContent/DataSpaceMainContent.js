@@ -2,15 +2,11 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
-import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox'
-import { Icon } from 'office-ui-fabric-react/lib/Icon'
-import { Spinner, SearchBox, ContextualMenuItemType, DefaultButton, PrimaryButton, IconButton } from 'office-ui-fabric-react'
+import { Checkbox, Icon, Spinner, SearchBox, ContextualMenuItemType, DefaultButton, PrimaryButton, IconButton } from 'office-ui-fabric-react'
 import { getFileTypeIconProps } from '@uifabric/file-type-icons'
 
 import ListItemContext from './ListItemContext'
-
 import DateUtils from '../../../../helpers/DateUtils'
-
 import './DataSpaceMainContent.scss'
 
 // TODO: Try implementing this using routes? So we don't re-render this component based on state holding our directory objection,
@@ -20,7 +16,6 @@ class DataSpaceMainContent extends Component {
 
     hubConnection = null;
     _allItems = [];
-
 
     constructor(props) {
         super(props);
@@ -46,46 +41,7 @@ class DataSpaceMainContent extends Component {
         }
     }
 
-    componentDidMount() {
-        this.hubConnection.on(`DeleteFileMetadataSuccess${window.randomGen}`, (filename) => {
-            this.setState(prevState => (
-                { 
-                  loading: false, 
-                  directory: {
-                      ...prevState.directory,
-                      nodes: this.state.directory.nodes.filter(obj => obj.fileName !== filename)
-                  } 
-                }
-              ));
-        });
-        this.hubConnection.on(`DeleteFileMetadataFail${window.randomGen}`, (filename, reasonMsg) => {
-            console.log("Delete file fail: " + filename + reasonMsg);
-        });
-
-        this.hubConnection.on(`DeleteDirectoryMetadataSuccess${window.randomGen}`, (directoryPath) => {
-            let dirName = directoryPath.split('/').pop();
-            console.log(dirName);
-            console.log(this.state.directory);
-            // TODO: Remove this dir from the current list but check if we are updating all the dir obj references in memory)
-            if (dirName) {
-                this.setState(prevState => (
-                    { 
-                      loading: false, 
-                      directory: {
-                          ...prevState.directory,
-                          nodes: this.state.directory.nodes.filter(obj => obj.name !== directoryPath)
-                      }
-                    }
-                  ));
-            }
-        });
-        this.hubConnection.on(`DeleteDirectoryMetadataFail${window.randomGen}`, (directoryPath, reasonMsg) => {
-            console.log("Delete file fail: " + directoryPath + reasonMsg);
-        });
-    }
-
     componentDidUpdate(prevProps) {
-        console.log("### COMPONENT DID UPDATE ###");
         if (prevProps.directory.nodes !== this.props.directory.nodes) {
             this._allItems = this.props.directory.nodes;
             this.setState({ loading: false, directory: this.props.directory });
@@ -106,73 +62,6 @@ class DataSpaceMainContent extends Component {
 
     _onCheckboxChange(e, isChecked) {
         console.log(`The option has been changed to ${isChecked}.`);
-    }
-
-    actionDeleteFile = (items) => {
-        //this.setState({ loading: true });
-        //Axios delete file
-        let url = 'https://localhost:44380/api/dataspace/eldarja/files/' + 
-            (items[0].path ? items[0].path + '/' : '') + items[0].name;
-        console.log("### DELETE FILE ###");
-        console.log(url);
-
-        setTimeout(() => {
-            axios.delete(url,
-            {
-              headers: {
-                "AppId": window.randomGen,
-                "OwnerPhoneNumber": this.state.accountVM.phoneNumber
-              },
-              withCredentials: false
-            })
-            .then((e) => {
-              console.log(e);
-              console.log("AXIOS:Delete Then");
-            })
-            .finally((e) => {
-              console.log(e);
-              console.log("AXIOS:Delete Finaly");
-            })
-            .catch((e) => {
-              console.log(e);
-              console.log("AXIOS:Delete Catch");
-            });
-      
-          }, 1500);
-    }
-
-    actionDeleteDirectory = (items) => {
-        //this.setState({ loading: true });
-        //Axios delete
-        let url = 'https://localhost:44380/api/dataspace/eldarja/directories/' + 
-            (items[0].path ? items[0].path + '/' : '') + items[0].name;
-
-        console.log("---- DELETE DIRECTRORY -----");
-        console.log(url);
-
-        setTimeout(() => {
-            axios.delete(url,
-            {
-              headers: {
-                "AppId": window.randomGen,
-                "OwnerPhoneNumber": this.state.accountVM.phoneNumber
-              },
-              withCredentials: false
-            })
-            .then((e) => {
-              console.log(e);
-              console.log("AXIOS:Delete Then");
-            })
-            .finally((e) => {
-              console.log(e);
-              console.log("AXIOS:Delete Finaly");
-            })
-            .catch((e) => {
-              console.log(e);
-              console.log("AXIOS:Delete Catch");
-            });
-      
-        }, 1500);
     }
 
     ListHeader = () => {
@@ -198,12 +87,12 @@ class DataSpaceMainContent extends Component {
     ListBody = () => (
         <tbody>
             {this.state.directory.nodes.map((item, k) => 
-                item.nodeType === "File" ? this.ListFile(item, k) : this.ListDirectory(item, k)
+                item.nodeType === "File" ? this.FileItem(item, k) : this.DirectoryItem(item, k)
             )}
         </tbody>
     );
 
-    ListFile = (item, k) => (
+    FileItem = (item, k) => (
         <tr key={k} className={`list-row`}>
             <td className="list-col">
                 <Checkbox className="list-item-select" onChange={this._onCheckboxChange} checked={item.checked} />
@@ -217,7 +106,8 @@ class DataSpaceMainContent extends Component {
             </td>
             <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
             <td className="list-col">
-                <ListItemContext item={item} type="file" onDelete={ this.actionDeleteFile.bind(this, [item]) }/>
+                <ListItemContext item={item} type="file" 
+                    onDelete={ () => this.setState({ loading: true }) }/>
             </td>
             <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
             <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
@@ -228,20 +118,25 @@ class DataSpaceMainContent extends Component {
         </tr>
     );
 
-    ListDirectory = (item, k) => (
+    DirectoryItem = (item, k) => (
         <tr key={k} className={`list-row`}>
             <td className="list-col">
-                <Checkbox className="list-item-select" onChange={this._onCheckboxChange} checked={item.checked} />
+                <Checkbox className="list-item-select" 
+                    onChange={this._onCheckboxChange} 
+                    checked={item.checked} />
             </td>
             <td className="list-col">
-                <Icon iconName="Directory" className="list-item-file" />
+                <Icon iconName="Directory" 
+                    className="list-item-file" />
             </td>
             <td className="list-col filename-col">
-                <span onClick={() => this.traverseToDir(item)} className="filename ml-2">{item.name}</span>
+                <span onClick={() => this.props.onTraverseToDir(item)} 
+                    className="filename ml-2">{item.name}</span>
             </td>
             <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
-            <td className="list-col">
-                <ListItemContext key={k} item={item} type="directory" onDelete={ this.actionDeleteDirectory.bind(this, [item]) }/>
+            <td className="list-col">{k}
+                <ListItemContext key={k} item={item} type="directory" 
+                    onDelete={ () => { this.setState({ loading: true }); } }/>
             </td>
             <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
             <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
@@ -250,46 +145,35 @@ class DataSpaceMainContent extends Component {
         </tr>
     );
 
-    traverseToDir = (dir) => {
-        this.props.onTraverseToDir(dir);
-    }
-
-    htmlOnLoad = () => (
-        <div className="flex-grow-1 d-flex justify-content-center align-items-center">
-            <Spinner label={DataSpaceMainContent.loadingMsg} labelPosition="right" />
-        </div>
-    );
-    
-
-    htmlOnNoFiles = () => (
-        <div className="flex-grow-1 d-flex justify-content-center align-items-center flex-column">
-            <span className="label-primary">There's nothing here, please upload some resources.</span>
-        </div>
-    );
-
-    htmlOnDataReceived = () => (
-        <div className="flex-grow-1">
-            <SearchBox placeholder="Search by name" className="ml-auto my-2"
-                onChange={newValue => this._onFilter(newValue)} underlined={true} />
-            <div className="table-responsive data-space-table ">
-                <table className="table list-root small">
-                    {this.ListHeader()}
-                    {this.ListBody()}
-                </table>
-            </div>
-        </div>
-    );
-
     render() {
         if (this.state.loading) {
-            return this.htmlOnLoad()
+            return (
+                <div className="flex-grow-1 d-flex justify-content-center align-items-center">
+                    <Spinner label={DataSpaceMainContent.loadingMsg} labelPosition="right" />
+                </div>
+            );
         }
 
         if (this._allItems.length === 0) {
-            return this.htmlOnNoFiles()
+            return(
+                <div className="flex-grow-1 d-flex justify-content-center align-items-center flex-column">
+                    <span className="label-primary">There's nothing here, please upload some resources.</span>
+                </div>
+            );
         }
         else {
-            return this.htmlOnDataReceived()
+            return (
+                <div className="flex-grow-1">
+                    <SearchBox placeholder="Search by name" className="ml-auto my-2"
+                        onChange={newValue => this._onFilter(newValue)} underlined={true} />
+                    <div className="table-responsive data-space-table ">
+                        <table className="table list-root small">
+                            <this.ListHeader />
+                            <this.ListBody />
+                        </table>
+                    </div>
+                </div>
+            );
         }
     }
 }

@@ -1,21 +1,103 @@
-
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import axios from 'axios'
+
 import { ContextualMenuItemType, IconButton } from 'office-ui-fabric-react'
 
-export default class ListItemContext extends Component {
+class ListItemContext extends Component {
     constructor(props) {
         super(props);
-        
         this.state = {
-            item: props.item,
-            onDelete: props.onDelete
+            accountVM: null,
+            item: null,
+            parentFunc: {
+                onDelete: null
+            }
+        }
+
+        if (props.account != null) {
+            this.state.accountVM = props.account;
+        }
+
+        if (props.item) {
+            this.state.item = props.item;
+        } 
+
+        if (props.onDelete) {
+            this.state.parentFunc.onDelete = props.onDelete;
         }
     }
 
-    htmlForFile = () => (
+    componentDidUpdate() {
+        this.state.parentFunc.onDelete = this.props.onDelete;
+    }
+
+    // Axios delete (single) file
+    actionDeleteFile = (item) => {
+        this.state.parentFunc.onDelete();
+        let url = 'https://localhost:44380/api/dataspace/eldarja/files/' + 
+            (item.path ? item.path + '/' : '') + item.name;
+
+        setTimeout(() => {
+            axios.delete(url,
+            {
+              headers: {
+                "AppId": window.randomGen,
+                "OwnerPhoneNumber": this.state.accountVM.phoneNumber
+              },
+              withCredentials: false
+            })
+            .then((e) => {
+              console.log(e);
+              console.log("AXIOS:Delete Then");
+            })
+            .finally((e) => {
+              console.log(e);
+              console.log("AXIOS:Delete Finaly");
+            })
+            .catch((e) => {
+              console.log(e);
+              console.log("AXIOS:Delete Catch");
+            });
+      
+          }, 1500);
+    }
+    
+    // Axios delete (single) directory
+    actionDeleteDirectory = (item) => {
+        this.state.parentFunc.onDelete();
+        let url = 'https://localhost:44380/api/dataspace/eldarja/directories/' + 
+            (item.path ? item.path + '/' : '') + item.name;
+
+        setTimeout(() => {
+            axios.delete(url,
+            {
+              headers: {
+                "AppId": window.randomGen,
+                "OwnerPhoneNumber": this.state.accountVM.phoneNumber
+              },
+              withCredentials: false
+            })
+            .then((e) => {
+              console.log(e);
+              console.log("AXIOS:Delete Then");
+            })
+            .finally((e) => {
+              console.log(e);
+              console.log("AXIOS:Delete Finaly");
+            })
+            .catch((e) => {
+              console.log(e);
+              console.log("AXIOS:Delete Catch");
+            });
+      
+        }, 1500);
+    }
+
+    renderFileContext = () => (
     <div>
-        <IconButton
-            iconProps={{ iconName: "MoreVertical" }} className="file-more-context" menuProps={{
+        <IconButton iconProps={{ iconName: "MoreVertical" }} className="file-more-context" 
+            menuProps={{
                 shouldFocusOnMount: true,
                 items: [
                     { key: 'preview', text: 'Preview' },
@@ -32,16 +114,16 @@ export default class ListItemContext extends Component {
                     { key: 'move', text: 'Move to' },
                     { key: 'copy', text: 'Copy to' },
                     { key: 'divider_1', itemType: ContextualMenuItemType.Divider },
-                    { key: 'delete', text: 'Delete', onClick: this.state.onDelete }
+                    { key: 'delete', text: 'Delete', onClick: this.actionDeleteFile.bind(this, this.props.item) }
                 ]
             }} />
     </div>
     );
 
-    htmlForDirectory = () => (
+    renderDirectoryContext = () => (
     <div>
-        <IconButton
-            iconProps={{ iconName: "MoreVertical" }} className="file-more-context" menuProps={{
+        <IconButton iconProps={{ iconName: "MoreVertical" }} className="file-more-context" 
+            menuProps={{
                 shouldFocusOnMount: true,
                 items: [
                     { key: 'preview', text: 'Preview' },
@@ -58,25 +140,31 @@ export default class ListItemContext extends Component {
                     { key: 'move', text: 'Move to' },
                     { key: 'copy', text: 'Copy to' },
                     { key: 'divider_1', itemType: ContextualMenuItemType.Divider },
-                    { key: 'delete', text: 'Delete', onClick: this.state.onDelete }
+                    { key: 'delete', text: 'Delete', onClick: this.actionDeleteDirectory.bind(this, this.props.item) }
                 ]
             }} />
     </div>
     );
 
     render() {
-        console.log("---- LISTITEM -----");
         let type = this.props.type;
+        
         if (type === "directory") 
         {
             return (
-                this.htmlForDirectory()
+                this.renderDirectoryContext()
             );
         } 
         else if (type === "file") {
             return (
-                this.htmlForFile()
+                this.renderFileContext()
             );
         }
+
+        return null;
     }
 }
+
+const mapStateToProps = state => ({ account: state.account });
+
+export default connect(mapStateToProps)(ListItemContext)
