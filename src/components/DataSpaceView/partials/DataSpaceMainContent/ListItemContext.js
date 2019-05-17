@@ -34,7 +34,6 @@ class ListItemContext extends Component {
 
     // Axios delete (single) file
     actionDeleteFile = (item) => {
-        this.state.parentFunc.onDelete();
         let url = 'https://localhost:44380/api/dataspace/eldarja/files/' + 
             (item.path ? item.path + '/' : '') + item.name;
 
@@ -65,7 +64,6 @@ class ListItemContext extends Component {
     
     // Axios delete (single) directory
     actionDeleteDirectory = (item) => {
-        this.state.parentFunc.onDelete();
         let url = 'https://localhost:44380/api/dataspace/eldarja/directories/' + 
             (item.path ? item.path + '/' : '') + item.name;
 

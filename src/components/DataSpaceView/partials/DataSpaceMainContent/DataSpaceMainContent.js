@@ -73,8 +73,8 @@ class DataSpaceMainContent extends Component {
                     </th>
                     <th className="list-col"><Icon iconName="FileTemplate" className="list-item-file" /></th>
                     <th className="list-col">Name</th>
-                    <th className="list-col">Visibility</th>
                     <th className="list-col">More</th>
+                    <th className="list-col">Visibility</th>
                     <th className="list-col">Upload date</th>
                     <th className="list-col">Last modified</th>
                     <th className="list-col">Type</th>
@@ -104,11 +104,11 @@ class DataSpaceMainContent extends Component {
             <td className="list-col filename-col">
                 <a href={item.path} target="_blank" className="filename ml-2">{item.name}</a>
             </td>
-            <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
             <td className="list-col">
                 <ListItemContext item={item} type="file" 
                     onDelete={ () => this.setState({ loading: true }) }/>
             </td>
+            <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
             <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
             <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
             <td className="list-col"><span className="badge badge-info bg-primary-blue">
@@ -133,11 +133,11 @@ class DataSpaceMainContent extends Component {
                 <span onClick={() => this.props.onTraverseToDir(item)} 
                     className="filename ml-2">{item.name}</span>
             </td>
-            <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
-            <td className="list-col">{k}
+            <td className="list-col">
                 <ListItemContext key={k} item={item} type="directory" 
                     onDelete={ () => { this.setState({ loading: true }); } }/>
             </td>
+            <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
             <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
             <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
             <td className="list-col"><span className="badge badge-info bg-primary-blue">Directory</span></td>

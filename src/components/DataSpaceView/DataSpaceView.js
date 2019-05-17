@@ -78,6 +78,10 @@ class DataSpaceView extends Component {
     });
 
     this.hubConnection.on(`DeleteDirectoryMetadataSuccess${window.randomGen}`, (directoryPath) => {
+      if (!directoryPath.includes('/')) {
+        directoryPath = '/' + directoryPath;
+      }
+
       let filteredNodes = this.state.rootDir.nodes.filter(node => node.path + "/" + node.name !== directoryPath);
 
       this.setState(prevState => (
@@ -89,9 +93,10 @@ class DataSpaceView extends Component {
           }
         }
       ));
-
-      this._prevDirObjects[this._prevDirObjects.length - 1].nodes
-        .find(node => node.name === this.state.rootDir.name).nodes = filteredNodes;
+      if (this._prevDirObjects.length > 0) {
+        this._prevDirObjects[this._prevDirObjects.length - 1].nodes
+          .find(node => node.name === this.state.rootDir.name).nodes = filteredNodes;
+      }
     });
 
     this.hubConnection.on(`DeleteDirectoryMetadataFail${window.randomGen}`, (directoryPath, reasonMsg) => {
@@ -99,6 +104,10 @@ class DataSpaceView extends Component {
     });
 
     this.hubConnection.on(`DeleteFileMetadataSuccess${window.randomGen}`, (filePath) => {
+      if (!filePath.includes('/')) {
+        filePath = '/' + filePath;
+      }
+
       let filteredNodes = this.state.rootDir.nodes.filter(node => node.path + "/" + node.name !== filePath);
 
       this.setState(prevState => (
@@ -110,9 +119,10 @@ class DataSpaceView extends Component {
           }
         }
       ));
-
-      this._prevDirObjects[this._prevDirObjects.length - 1].nodes
-        .find(node => node.name === this.state.rootDir.name).nodes = filteredNodes;
+      if (this._prevDirObjects.length > 0) {
+        this._prevDirObjects[this._prevDirObjects.length - 1].nodes
+          .find(node => node.name === this.state.rootDir.name).nodes = filteredNodes;
+      }
     });
 
     this.hubConnection.on(`DeleteFileMetadataFail${window.randomGen}`, (filename, reasonMsg) => {
@@ -246,7 +256,6 @@ class DataSpaceView extends Component {
     this.setState({ fileUploading: true });
     // Get the file and prepare a FormData obj
     let reader = new FileReader();
-    let file = e.target.files[0];
     let formData = new FormData();
 
     for (var i = 0; i < e.target.files.length; i++) {
