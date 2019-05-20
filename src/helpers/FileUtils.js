@@ -23,6 +23,15 @@ export default class FileUtils {
         return base64String.split(',')[1];
     }
 
+    static getFileSizeForHumans = (sizeInKB) => {
+        let decimals = 1;
+        if (sizeInKB > 99) {
+            return parseFloat(sizeInKB / 1024).toFixed(decimals) + " MB";
+        }
+
+        return parseFloat(sizeInKB).toFixed(decimals) + " KB";
+    }
+
     static getTypeDescription = (fileType) => {
         if (fileType.includes('.')) {
             fileType = fileType.slice(fileType.lastIndexOf('.') + 1);

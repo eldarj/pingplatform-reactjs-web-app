@@ -151,7 +151,7 @@ class DataSpaceMainContent extends Component {
             <td className="list-col">{item.ownerFirstname + " " + item.ownerLastname}</td>
         </tr>
     );
-
+    
     render() {
         if (this.state.loading) {
             return (

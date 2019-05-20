@@ -12,7 +12,7 @@ export default class BrandLogo extends Component {
             logoSrc = '/images/corporate/logo/ping-logo.jpg';
         }
         return (
-            <a className="logo-brand-a" href="/">
+            <a className="logo-brand-a" onContextMenu={ () => { return false }} href="/">
                 <img className={"logo-src " + this.props.className} src={logoSrc} alt="Ping - Chat"/>
             </a>
         );

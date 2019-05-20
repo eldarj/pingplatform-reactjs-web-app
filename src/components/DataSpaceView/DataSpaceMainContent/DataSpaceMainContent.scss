@@ -57,14 +57,15 @@
         }
         .btn-option {
             opacity: .8;
-            top: 0;
-            right: 0;
+            top: 2.5px;
+            right: 2.5px;
             z-index: 2;
 
             button {
                 transition: all .05s;
                 height: 17.5px;
                 width: 17.5px;
+                border-radius: 5%;
                 i {
                     font-size: .5rem;
                 }
@@ -131,6 +132,7 @@
                             }
                         }
                     }
+                    
                     video, .preview-img-wrap {
                         box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
                     }

@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import axios from 'axios'
-import httpAdapter from 'axios/lib/adapters/xhr'
 
-import { Icon, IconButton, Modal, Spinner, ActionButton, DefaultButton, PrimaryButton } from 'office-ui-fabric-react'
+import { ContextualMenu, Modal, Spinner, DefaultButton, PrimaryButton, Icon, IconButton } from 'office-ui-fabric-react'
 import { getFileTypeIconProps } from '@uifabric/file-type-icons'
 
 import FileUtils from '../../../../helpers/FileUtils'
@@ -44,8 +42,13 @@ class FilePreview extends Component {
         }
     }
 
+    _closePreviewModal = () => {
+        URL.revokeObjectURL(this.state.ObjectURL);
+        this.setState({ IsPreviewModalVisible: false });
+    }
+
     _openPreviewModal = () => {
-        // Check if we already have this content loaded
+        // If it not an img, vid or audio file, just display the preview without rendering any more content (icon is there by default)
         if (['image', 'video', 'audio'].indexOf(this.state.fileType) < 0) {
             this.setState({ 
                 IsPreviewModalVisible: true
@@ -53,14 +56,21 @@ class FilePreview extends Component {
             return;
         }
 
+        // Check if we already have this content fetched from API, from earlier
         if (this.state.contentBlob) {
-            this.setState({ 
-                IsPreviewModalVisible: true,
-                ObjectURL: URL.createObjectURL(this.state.contentBlob)
+            this.setState({
+                ObjectURL: URL.createObjectURL(this.state.contentBlob),
+                IsPreviewModalVisible: true
             });
+            URL.revokeObjectURL(this.state.ObjectURL);
             return;
         }
 
+        // Otherwise, display a spinner icon and fetch data from API
+        this._fetchFromApi();
+    }
+
+    _fetchFromApi = () => {
         this.setState({ 
             IsPreviewModalVisible: true, 
             IsPreviewLoading: true
@@ -68,17 +78,15 @@ class FilePreview extends Component {
 
         let url = `https://localhost:44380/api/dataspace/eldarja/files/${this.state.item.path}/${this.state.item.name}`;
         fetch(url).then(response => {
-            console.log(response);
             let rs = response.body;
             const reader = rs.getReader();
             return new ReadableStream({
                 async start(controller) {
                     return pump();
                     async function pump() {
-                        const { done, value } = await reader.read();
-                        // value is Uint8array
-
-                        if (done) { // when we don't have any more data, close and release lock
+                        const { done, value } = await reader.read(); // value is Uint8array
+                        // when we don't have any more data, close and release lock
+                        if (done) { 
                             controller.close();
                             reader.releaseLock();
                             return;
@@ -109,10 +117,16 @@ class FilePreview extends Component {
         .catch(console.error);
     }
 
-    _closePreviewModal = () => {
-        URL.revokeObjectURL(this.state.ObjectURL);
-        this.setState({ IsPreviewModalVisible: false });
-    };
+    _copyLink = () => {
+        alert('set up a link to a resource first');
+    }
+
+    _share = () => {
+    }
+
+    _changeAccess = () => {
+        console.log(this.state.item.private);
+    }
 
     _downloadFile = () => {
         var a = document.createElement("a");
@@ -121,6 +135,10 @@ class FilePreview extends Component {
         a.href = URL.createObjectURL(this.state.contentBlob);
         a.download = this.state.item.name;
         a.click();
+    }
+
+    _resizeImage = () => {
+        URL.revokeObjectURL(this.state.ObjectURL);
     }
 
     RenderFilePreview = () => {
@@ -132,24 +150,28 @@ class FilePreview extends Component {
         if (this.state.fileType === "image") {
             return (
                 <div className="preview-img-wrap">
-                    <div className="img-bg blurry-bg" style={{backgroundImage: 'url(' + this.state.ObjectURL + ')'}}></div>
-                    <img src={this.state.ObjectURL} className="preview-img" alt={this.state.item.name} />
+                    <div className="img-bg blurry-bg" style={{/*backgroundImage: 'url(' + this.state.ObjectURL + ')'*/}}></div>
+                    <img id="previewImg" src={this.state.ObjectURL} className="preview-img" alt={this.state.item.name} 
+                        onLoad={ this._resizeImage }
+                         onContextMenu={ (e) => e.preventDefault() }/>
                 </div>
             )
         } 
         if (this.state.fileType === "video") {
             return (
-                <video src={this.state.ObjectURL} controls="controls" preload="none" className="preview-video"
-                    width="600" poster="/images/corporate/ping-600x335-dark.png"
-                    onLoadedData={ e => e.target.play() }>
-                    <p>Your user agent does not support the HTML5 Video element.</p>
-                </video>
+                <div className="position-relative">
+                    <video id="previewVideo" src={this.state.ObjectURL} controls="controls" preload="none" 
+                        className="preview-video" width="600" poster="/images/corporate/ping-600x335-dark.png"
+                        onLoadedData={ e => e.target.play() } onContextMenu={ (e) => e.preventDefault() }>
+                        <p>Your user agent does not support the HTML5 Video element.</p>
+                    </video>
+                </div>
             )
         }
         if (this.state.fileType === "audio") {
             return (
                 <div className="audio-wrapper ping-poster">
-                    <audio src={this.state.ObjectURL}
+                    <audio src={this.state.ObjectURL} onContextMenu={ (e) => e.preventDefault() }
                         onLoadedData={ e => e.target.play() } controls="controls" />
                 </div>
             )
@@ -160,18 +182,6 @@ class FilePreview extends Component {
                 <Icon iconName={getFileTypeIconProps({ extension: this.state.item.name.split('.').pop() }).iconName}
                     className="icon" />
             </div>);
-    }
-
-    _copyLink = () => {
-        alert('set up a link to a resource first');
-    }
-
-    _share = () => {
-        alert('implement some contacts/friends feature first.')
-    }
-
-    _changeAccess = () => {
-        console.log(this.state.item.private);
     }
     
     render() {
@@ -189,7 +199,14 @@ class FilePreview extends Component {
                     <div className="preview-details">
                         <div className="d-flex justify-content-between align-items-center">
                             <strong className="modal-title">{this.state.item.name}</strong>
-                            <span className="badge badge-dark bg-primary-blue">{FileUtils.getTypeDescription(this.state.item.name)}</span>
+                            <div className="d-flex flex-column">
+                                <span className="badge badge-dark bg-primary-blue">
+                                    {FileUtils.getTypeDescription(this.state.item.name)}
+                                </span>
+                                <span className="blockquote-footer">
+                                    {FileUtils.getFileSizeForHumans(this.state.item.fileSizeInKB)}
+                                </span>
+                            </div>
                         </div>
                         <hr />
                         <div className="info">

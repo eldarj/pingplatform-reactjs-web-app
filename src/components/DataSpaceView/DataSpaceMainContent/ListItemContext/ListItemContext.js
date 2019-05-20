@@ -77,6 +77,12 @@ class ListItemContext extends Component {
             this.props.childPreviewHandler(this.onPreviewClicked);
         }
     }
+    
+    componentDidUpdate() {
+        if (this.onPreviewClicked) {
+            this.props.childPreviewHandler(this.onPreviewClicked);
+        }
+    }
 
     actionDelete = (item, endpointByType) => {
         this.state.parentFunc.onDelete();

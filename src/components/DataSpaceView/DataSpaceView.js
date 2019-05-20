@@ -261,6 +261,7 @@ class DataSpaceView extends Component {
     ];
   };
 
+  // TODO: CHECK FOR SAME NAME (EXISTING IMAGE WILL GET OVERRIDEN)
   // File read and upload
   onUploadFileSelected = (e) => {
     this.setState({ fileUploading: true });
@@ -270,6 +271,7 @@ class DataSpaceView extends Component {
 
     for (var i = 0; i < e.target.files.length; i++) {
       let file = e.target.files[i];
+      this.state.rootDir.nodes = this.state.rootDir.nodes.filter(node => node.name !== file.name);
       formData.append('files[' + i + ']', file); // we accept multi-file upload
     }
 
