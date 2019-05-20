@@ -4,10 +4,10 @@ import * as signalr from '@aspnet/signalr'
 import axios from 'axios'
 
 // Child components
-import NotificationsPane from './partials/NotificationsPane/NotificationsPane'
-import DataSpaceMainContent from './partials/DataSpaceMainContent/DataSpaceMainContent'
-import DataSpaceSearch from './partials/DataSpaceSearch/DataSpaceSearch'
-import SidebarNav from './partials/SidebarNav/SidebarNav'
+import NotificationsPane from './NotificationsPane/NotificationsPane'
+import DataSpaceMainContent from './DataSpaceMainContent/DataSpaceMainContent'
+import DataSpaceSearch from './DataSpaceSearch/DataSpaceSearch'
+import SidebarNav from './SidebarNav/SidebarNav'
 
 import { ActionButton, Modal, CommandBar, IconButton, Spinner } from 'office-ui-fabric-react'
 
@@ -23,7 +23,6 @@ class DataSpaceView extends Component {
       showNotificationsPanel: false,
       fileUploading: false,
       IsUploadModalVisible: false,
-      additionalCommandClasses: 'disabled',
       rootDir: { nodes: [] }
     }
 
@@ -47,29 +46,13 @@ class DataSpaceView extends Component {
       console.log(receivedMessage);
       this.setState({
         loading: false,
-        rootDir: receivedMessage,
-        additionalCommandClasses: ''
+        rootDir: receivedMessage
       });
     });
 
     this.hubConnection.on(`RequestFilesMetaDataFail${window.randomGen}`, (receivedMessage) => {
       console.log("Request meta data fail:");
       console.log(receivedMessage);
-    });
-
-    this.hubConnection.on(`SaveDirectoryMetadataSuccess${window.randomGen}`, (directoryDto) => {
-      console.log("On - SaveDirectoryMetadataSuccess:");
-      console.log(directoryDto);
-      this.state.rootDir.nodes.unshift(directoryDto);
-      this.setState(prevState => (
-        {
-          fileUploading: false,
-          rootDir: {
-            ...this.state.rootDir,
-            nodes: [...this.state.rootDir.nodes]
-          }
-        }
-      ));
     });
 
     this.hubConnection.on(`SaveDirectoryMetadataFail${window.randomGen}`, (receivedMessage) => {
@@ -103,6 +86,48 @@ class DataSpaceView extends Component {
       console.log("Delete file fail: " + directoryPath + reasonMsg);
     });
 
+    this.hubConnection.on(`UploadFileSuccess${window.randomGen}`, (receivedMessage) => {
+      console.log("Upload file success: ");
+      console.log(receivedMessage);
+      this.state.rootDir.nodes.unshift(receivedMessage);
+      this.setState(prevState => (
+        {
+          fileUploading: false,
+          rootDir: {
+            ...this.state.rootDir,
+            nodes: [...this.state.rootDir.nodes]
+          }
+        }
+      ));
+
+      if (this._prevDirObjects.length > 0) {
+        this._prevDirObjects[this._prevDirObjects.length - 1].nodes
+          .find(node => node.name === this.state.rootDir.name).nodes = this.state.rootDir.nodes;
+      }
+    });
+
+    this.hubConnection.on(`SaveDirectoryMetadataSuccess${window.randomGen}`, (directoryDto) => {
+      console.log("On - SaveDirectoryMetadataSuccess:");
+      console.log(directoryDto);
+      this.state.rootDir.nodes.unshift(directoryDto);
+      console.log(this.state.rootDir);
+
+      this.setState(prevState => (
+        {
+          fileUploading: false,
+          rootDir: {
+            ...this.state.rootDir,
+            nodes: [...this.state.rootDir.nodes]
+          }
+        }
+      ));
+      
+      if (this._prevDirObjects.length > 0) {
+        this._prevDirObjects[this._prevDirObjects.length - 1].nodes
+          .find(node => node.name === this.state.rootDir.name).nodes = this.state.rootDir.nodes;
+      }
+    });
+
     this.hubConnection.on(`DeleteFileMetadataSuccess${window.randomGen}`, (filePath) => {
       if (!filePath.includes('/')) {
         filePath = '/' + filePath;
@@ -127,21 +152,6 @@ class DataSpaceView extends Component {
 
     this.hubConnection.on(`DeleteFileMetadataFail${window.randomGen}`, (filename, reasonMsg) => {
       console.log("Delete file fail: " + filename + reasonMsg);
-    });
-
-    this.hubConnection.on(`UploadFileSuccess${window.randomGen}`, (receivedMessage) => {
-      console.log("Upload file success: ");
-      console.log(receivedMessage);
-      this.state.rootDir.nodes.unshift(receivedMessage);
-      this.setState(prevState => (
-        {
-          fileUploading: false,
-          rootDir: {
-            ...this.state.rootDir,
-            nodes: [...this.state.rootDir.nodes]
-          }
-        }
-      ));
     });
 
     this.hubConnection.on(`UploadFileFail${window.randomGen}`, (receivedMessage) => {
@@ -255,7 +265,7 @@ class DataSpaceView extends Component {
   onUploadFileSelected = (e) => {
     this.setState({ fileUploading: true });
     // Get the file and prepare a FormData obj
-    let reader = new FileReader();
+    //let reader = new FileReader();
     let formData = new FormData();
 
     for (var i = 0; i < e.target.files.length; i++) {
@@ -350,7 +360,7 @@ class DataSpaceView extends Component {
   };
 
   FarCommands = () => (
-    <div className={`d-flex flex-row ${this.state.additionalCommandClasses}`}>
+    <div className="d-flex flex-row">
       <Spinner className="px-3" style={{ visibility: this.state.fileUploading ? 'visible' : 'hidden' }} />
       <IconButton className="ms-icon-regular h-auto" iconProps={{ iconName: "Info" }} />
     </div>
@@ -359,12 +369,14 @@ class DataSpaceView extends Component {
   onTraverseToDir = (dir) => {
     this._currentDirName = dir.name;
     this._prevDirObjects.push(this.state.rootDir);
-
+    console.log(this.state.rootDir);
     this.setState({ rootDir: dir });
   }
 
   _traverseBack = () => {
     let previousDirectory = this._prevDirObjects.pop();
+    console.log("### TRAVERSE BACK ###");
+    console.log(previousDirectory);
     this._currentDirName = previousDirectory.name;
     this.setState({ rootDir: previousDirectory });
   }
@@ -435,7 +447,7 @@ class DataSpaceView extends Component {
           </div>
           <div className="col-md-10 d-flex flex-column">
             <div className="commandbar-holder d-flex bg-primary-grey-light">
-              <CommandBar className={`left-commands flex-grow-1 ${this.state.additionalCommandClasses}`}
+              <CommandBar className="left-commands flex-grow-1"
                 items={this._getItems()}
                 overflowItems={this._getOverlflowItems()} />
               <div className="right-commands px-3 d-flex">

@@ -1,5 +1,13 @@
 @import 'resources/styles/shared/color-vars';
 
+
+.ping-poster {
+  background: url("/images/corporate/ping-600x335-dark.png");
+  background-size: cover;
+  background-position: center;
+}
+
+
 /*        SCROLLBAR (react-scrollbar)    */
 div#scrollbars-container > div:last-of-type > div {
   z-index: 1; //make it appear above the navbar

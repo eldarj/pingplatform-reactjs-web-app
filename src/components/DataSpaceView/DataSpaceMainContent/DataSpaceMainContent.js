@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import axios from 'axios'
 
-import { Checkbox, Icon, Spinner, SearchBox, ContextualMenuItemType, DefaultButton, PrimaryButton, IconButton } from 'office-ui-fabric-react'
+import { Checkbox, Icon, Spinner, SearchBox } from 'office-ui-fabric-react'
+
 import { getFileTypeIconProps } from '@uifabric/file-type-icons'
 
-import ListItemContext from './ListItemContext'
-import DateUtils from '../../../../helpers/DateUtils'
+import ListItemContext from './ListItemContext/ListItemContext'
+import DateUtils from '../../../helpers/DateUtils'
+import FileUtils from '../../../helpers/FileUtils'
 import './DataSpaceMainContent.scss'
 
 // TODO: Try implementing this using routes? So we don't re-render this component based on state holding our directory objection,
@@ -86,56 +87,62 @@ class DataSpaceMainContent extends Component {
 
     ListBody = () => (
         <tbody>
-            {this.state.directory.nodes.map((item, k) => 
+            {this.state.directory.nodes.map((item, k) =>
                 item.nodeType === "File" ? this.FileItem(item, k) : this.DirectoryItem(item, k)
             )}
         </tbody>
     );
 
-    FileItem = (item, k) => (
-        <tr key={k} className={`list-row`}>
-            <td className="list-col">
-                <Checkbox className="list-item-select" onChange={this._onCheckboxChange} checked={item.checked} />
-            </td>
-            <td className="list-col">
-                <Icon iconName={getFileTypeIconProps({ extension: item.name.split('.').pop() }).iconName}
-                    className="list-item-file" />
-            </td>
-            <td className="list-col filename-col">
-                <a href={item.path} target="_blank" className="filename ml-2">{item.name}</a>
-            </td>
-            <td className="list-col">
-                <ListItemContext item={item} type="file" 
-                    onDelete={ () => this.setState({ loading: true }) }/>
-            </td>
-            <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
-            <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
-            <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
-            <td className="list-col"><span className="badge badge-info bg-primary-blue">
-                {item.mimeType && item.mimeType.includes('.') ? item.mimeType.split('.').pop() : item.mimeType}
-            </span></td>
-            <td className="list-col">{item.ownerFirstname + " " + item.ownerLastname}</td>
-        </tr>
-    );
+    FileItem = (item, k) => {
+        let onPreview = () => undefined;
+        return (
+            <tr key={k} className={`list-row`}>
+                <td className="list-col">
+                    <Checkbox className="list-item-select" onChange={this._onCheckboxChange} checked={item.checked} />
+                </td>
+                <td className="list-col">
+                    <Icon iconName={getFileTypeIconProps({ extension: item.name.split('.').pop() }).iconName}
+                        className="list-item-file" />
+                </td>
+                <td className="list-col filename-col">
+                    <span onClick={ () => onPreview() }
+                        className="filename ml-2">{item.name}</span>
+                </td>
+                <td className="list-col">
+                    <ListItemContext item={item} onDelete={() => this.setState({ loading: true })}
+                        childPreviewHandler={ handler => onPreview = handler } />                    
+                </td>
+                <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
+                <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
+                <td className="list-col">{DateUtils.formatISODate(item.lastModifiedTime)}</td>
+                <td className="list-col">
+                    <span className="badge badge-info bg-primary-blue">
+                        {FileUtils.getTypeDescription(item.name)}
+                        {/* {item.mimeType && item.mimeType.includes('.') ? item.mimeType.split('.').pop() : item.mimeType} */}
+                    </span>
+                </td>
+                <td className="list-col">{item.ownerFirstname + " " + item.ownerLastname}</td>
+            </tr>
+        )
+    }
 
     DirectoryItem = (item, k) => (
         <tr key={k} className={`list-row`}>
             <td className="list-col">
-                <Checkbox className="list-item-select" 
-                    onChange={this._onCheckboxChange} 
+                <Checkbox className="list-item-select"
+                    onChange={this._onCheckboxChange}
                     checked={item.checked} />
             </td>
             <td className="list-col">
-                <Icon iconName="Directory" 
+                <Icon iconName="Directory"
                     className="list-item-file" />
             </td>
             <td className="list-col filename-col">
-                <span onClick={() => this.props.onTraverseToDir(item)} 
+                <span onClick={() => this.props.onTraverseToDir(item)}
                     className="filename ml-2">{item.name}</span>
             </td>
             <td className="list-col">
-                <ListItemContext key={k} item={item} type="directory" 
-                    onDelete={ () => { this.setState({ loading: true }); } }/>
+                <ListItemContext key={k} item={item} onDelete={() => { this.setState({ loading: true }); }} />
             </td>
             <td className="list-col">{item.private ? 'Private' : 'Public'}</td>
             <td className="list-col">{DateUtils.formatISODate(item.creationTime)}</td>
@@ -148,14 +155,24 @@ class DataSpaceMainContent extends Component {
     render() {
         if (this.state.loading) {
             return (
-                <div className="flex-grow-1 d-flex justify-content-center align-items-center">
-                    <Spinner label={DataSpaceMainContent.loadingMsg} labelPosition="right" />
+                <div className="flex-grow-1">
+                    <div className="loading-div">
+                        <Spinner label={DataSpaceMainContent.loadingMsg} labelPosition="right" />
+                    </div>
+                    <SearchBox placeholder="Search by name" className="ml-auto my-2"
+                        onChange={newValue => this._onFilter(newValue)} underlined={true} />
+                    <div className="table-responsive data-space-table ">
+                        <table className="table list-root small">
+                            <this.ListHeader />
+                            <this.ListBody />
+                        </table>
+                    </div>
                 </div>
             );
         }
 
         if (this._allItems.length === 0) {
-            return(
+            return (
                 <div className="flex-grow-1 d-flex justify-content-center align-items-center flex-column">
                     <span className="label-primary">There's nothing here, please upload some resources.</span>
                 </div>
