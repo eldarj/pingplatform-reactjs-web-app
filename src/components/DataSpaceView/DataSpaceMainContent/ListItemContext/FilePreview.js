@@ -150,7 +150,8 @@ class FilePreview extends Component {
         if (this.state.fileType === "image") {
             return (
                 <div className="preview-img-wrap">
-                    <div className="img-bg blurry-bg" style={{/*backgroundImage: 'url(' + this.state.ObjectURL + ')'*/}}></div>
+                    <div className="img-bg" style={{/*backgroundImage: 'url(' + this.state.ObjectURL + ')'*/}}></div>
+                    {/* <img id="previewImg" src={this.state.ObjectURL} className="img-bg blurry-bg" alt={this.state.item.name}/> */}
                     <img id="previewImg" src={this.state.ObjectURL} className="preview-img" alt={this.state.item.name} 
                         onLoad={ this._resizeImage }
                          onContextMenu={ (e) => e.preventDefault() }/>

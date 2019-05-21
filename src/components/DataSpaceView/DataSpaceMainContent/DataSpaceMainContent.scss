@@ -100,6 +100,7 @@
                         height: 100%;
                         width: 100%;
                         z-index: 0;
+                        background: #151519;
                     }
                     .blurry-bg {
                         filter: blur(8px) grayscale(50%) opacity(.5);
@@ -149,7 +150,7 @@
                     }
                 }
                 .preview-details {
-                    padding: 2.5px 7.5px 7.5px 7.5px;
+                    padding: 5px 7.5px 7.5px 7.5px;
 
                     .modal-title {
                         margin-bottom: 0;
