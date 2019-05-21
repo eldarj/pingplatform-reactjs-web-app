@@ -2,7 +2,10 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 
-import { ContextualMenuItemType, IconButton } from 'office-ui-fabric-react'
+import { Dialog, DialogType, DialogFooter, 
+    PrimaryButton, DefaultButton, 
+    ContextualMenuItemType, 
+    IconButton } from 'office-ui-fabric-react'
 
 import FilePreview from './FilePreview'
 
@@ -12,6 +15,7 @@ class ListItemContext extends Component {
         this.state = {
             accountVM: null,
             item: null,
+            hideDialog: true,
             menuItems: [],
             parentFunc: {
                 onDelete: null
@@ -47,7 +51,7 @@ class ListItemContext extends Component {
                 { key: 'move', text: 'Move to' },
                 { key: 'copy', text: 'Copy to' },
                 { key: 'divider_1', itemType: ContextualMenuItemType.Divider },
-                { key: 'delete', text: 'Delete', onClick: this.actionDelete.bind(this, this.props.item, "files") }
+                { key: 'delete', text: 'Delete', onClick: this._showDialog }
             ];
         }
 
@@ -67,7 +71,7 @@ class ListItemContext extends Component {
                 { key: 'move', text: 'Move to' },
                 { key: 'copy', text: 'Copy to' },
                 { key: 'divider_1', itemType: ContextualMenuItemType.Divider },
-                { key: 'delete', text: 'Delete', onClick: this.actionDelete.bind(this, this.props.item, "directories") }
+                { key: 'delete', text: 'Delete', onClick: this._showDialog }
             ]
         }
     }
@@ -84,8 +88,10 @@ class ListItemContext extends Component {
         }
     }
 
-    actionDelete = (item, endpointByType) => {
+    _actionDelete = (item, itemType) => {
         this.state.parentFunc.onDelete();
+        let endpointByType = itemType === "File" ? "files" : "directories";
+
         let url = 'https://localhost:44380/api/dataspace/eldarja/' + endpointByType + '/' +
             (item.path ? item.path + '/' : '') + item.name;
 
@@ -111,13 +117,44 @@ class ListItemContext extends Component {
             }} />
     )
 
+    _showDialog = () => {
+        this.setState({ hideDialog: false });
+    };
+
+    _closeDialog = () => {
+        this.setState({ hideDialog: true });
+    };
+
+    htmlConfirmDelete = () => (
+        <Dialog
+            hidden={this.state.hideDialog}
+            onDismiss={this._closeDialog}
+            dialogContentProps={{
+                type: DialogType.normal,
+                title: `Delete ${this.props.item.nodeType.toLowerCase()}`,
+                subText: `Are you sure you'd like "${this.props.item.name}" to be deleted?`
+            }}
+            modalProps={{
+                isBlocking: true,
+                styles: { main: { maxWidth: 450 } }
+            }}>
+            <DialogFooter>
+                <PrimaryButton onClick={this._actionDelete.bind(this, this.props.item, this.props.item.nodeType)}
+                    text="Delete" />
+                <DefaultButton onClick={this._closeDialog}
+                    text="Cancel" />
+            </DialogFooter>
+        </Dialog>
+    );
+
     render() {
         if (this.props.item.nodeType === "File") {
             return (
                 <div>
                     <this.ContextButton />
-                    <FilePreview item={this.props.item} 
+                    <FilePreview item={this.props.item}
                         childPreviewHandler={ handler => this.onPreviewClicked = handler }/>
+                    <this.htmlConfirmDelete />
                 </div>
             )
         }
@@ -125,6 +162,7 @@ class ListItemContext extends Component {
             return (
                 <div>
                     <this.ContextButton />
+                    <this.htmlConfirmDelete />
                 </div>
             )
         }

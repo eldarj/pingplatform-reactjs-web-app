@@ -1,4 +1,55 @@
 @import 'resources/styles/shared/color-vars';
+@import 'resources/styles/shared/typography-vars';
+
+body {
+  .dialog-modal-body {
+    max-width: 450px;
+    .dialog-header {
+      .dialog-title {
+        padding: 20px 28px 0px 28px;
+        font-size: $title-size;
+        font-weight: $title-weight;
+      }
+    }
+    .dialog-inner {
+      padding: 0 28px 20px 28px;
+      .dialog-content {
+        .dialog-list {
+          ul {
+            list-style-type: none;
+            padding-left: 10px;
+            li {
+              &:before {
+                content: '-';
+              }
+            }
+          }
+        }
+        .dialog-sub-text {
+          font-size: $body-size;
+          font-weight: $body-weight;
+        }
+      }
+      .dialog-actions {
+        margin: 20px 0 0 0;
+        button {
+          margin-left: 8px;
+        }
+      }
+    }
+  }
+  .ms-Dialog-title {
+    padding: 20px 28px 0px 28px;
+    font-size: $title-size;
+    font-weight: $title-weight;
+  }
+  .ms-Dialog-content {
+    .ms-Dialog-subText {
+      font-size: $body-size;
+      font-weight: $body-weight;
+    }
+  }
+}
 
 
 .ping-poster {
@@ -6,7 +57,6 @@
   background-size: cover;
   background-position: center;
 }
-
 
 /*        SCROLLBAR (react-scrollbar)    */
 div#scrollbars-container > div:last-of-type > div {

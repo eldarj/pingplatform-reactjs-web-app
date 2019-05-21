@@ -9,12 +9,19 @@ import DataSpaceMainContent from './DataSpaceMainContent/DataSpaceMainContent'
 import DataSpaceSearch from './DataSpaceSearch/DataSpaceSearch'
 import SidebarNav from './SidebarNav/SidebarNav'
 
-import { ActionButton, Modal, CommandBar, IconButton, Spinner } from 'office-ui-fabric-react'
+import { Modal, CommandBar, IconButton, Spinner,
+  PrimaryButton, DefaultButton, ActionButton } from 'office-ui-fabric-react'
 
 class DataSpaceView extends Component {
   hubConnection = null;
   _prevDirObjects = [];
   _currentDirName = "My drive";
+
+
+  filesToOverride = [];
+  confirmUploadTitle = "";
+  confirmUploadText = "";
+  formData = null;
 
   constructor(props) {
     super(props);
@@ -22,6 +29,7 @@ class DataSpaceView extends Component {
       accountVM: null,
       showNotificationsPanel: false,
       fileUploading: false,
+      IsConfirmUploadModalVisible: false,
       IsUploadModalVisible: false,
       rootDir: { nodes: [] }
     }
@@ -261,19 +269,35 @@ class DataSpaceView extends Component {
     ];
   };
 
-  // TODO: CHECK FOR SAME NAME (EXISTING IMAGE WILL GET OVERRIDEN)
   // File read and upload
   onUploadFileSelected = (e) => {
     this.setState({ fileUploading: true });
     // Get the file and prepare a FormData obj
     //let reader = new FileReader();
-    let formData = new FormData();
+    
+    // Move this somewhere else - we're creating a FormData obj and looping in a for, 
+    //  --- even if we don't know yet that we'll do an upload (cuz of possible overrideCheck Dialog)
+    this.formData = new FormData();
 
     for (var i = 0; i < e.target.files.length; i++) {
       let file = e.target.files[i];
-      this.state.rootDir.nodes = this.state.rootDir.nodes.filter(node => node.name !== file.name);
-      formData.append('files[' + i + ']', file); // we accept multi-file upload
+      this.formData.append('files[' + i + ']', file); // we accept multi-file upload
     }
+
+    let existingFiles = this.state.rootDir.nodes.map(node => node.name);
+    let filesToUpload = Array.from(e.target.files).map(f => f.name);
+    this.filesToOverride = filesToUpload.filter(f => existingFiles.includes(f));
+
+    if (this.filesToOverride.length > 0) {
+      this._showDialog();
+    } else {
+      this.doUpload();
+    }
+  }
+
+  doUpload = () => {
+    // Removes existing files from the current dir, that will be overwritten
+    this.state.rootDir.nodes = this.state.rootDir.nodes.filter(node => !this.filesToOverride.includes(node.name));
 
     // Prepare the upload url-endpoint
     let directoryPath = this.state.rootDir.path ? this.state.rootDir.path + "/" : "";
@@ -281,7 +305,7 @@ class DataSpaceView extends Component {
 
     let url = `https://localhost:44380/api/dataspace/eldarja/files/${directoryPath}`;
     setTimeout(() => {
-      axios.post(url, formData,
+      axios.post(url, this.formData,
         {
           headers: { // TODO: Remove this in favour to a Authentication obj wrapper (on both front end back end)
             "AppId": window.randomGen,
@@ -439,6 +463,61 @@ class DataSpaceView extends Component {
     }, 1500);
   }
 
+  _showDialog = () => {
+    this.confirmUploadTitle = "Overwrite files";
+    this.confirmUploadText = `File(s) with same name(s) already exist, and by confirming the upload, 
+      the next ones would be overwritten: `;
+    this.confirmUploadQ = "Would you like to proceed with the upload?";
+
+    this.setState({ IsConfirmUploadModalVisible: true });
+  };
+
+  _closeDialog = () => {
+    this.setState({ IsConfirmUploadModalVisible: false });
+  };
+
+  htmlConfirmDelete = () => {
+    let overrideList = (
+      <ul>
+        {
+        this.filesToOverride.map((file, i) => {
+          return <li key={i}>{file}</li>
+        })
+      }
+      </ul>
+    );
+    return (
+      <Modal isOpen={this.state.IsConfirmUploadModalVisible} onDismiss={this._closeDialog}
+        isDarkOverlay={false}
+        isBlocking={true}>
+        <div className="dialog-modal-body">
+          <div className="dialog-header">
+            <p className="dialog-title">{this.confirmUploadTitle}</p>
+          </div>
+          <div className="dialog-inner">
+            <div className="dialog-content">
+              <p className="dialog-sub-text pb-2 border-bottom">
+                {this.confirmUploadText}
+              </p>
+              <div className="dialog-list border-bottom">
+                {overrideList}
+              </div>
+              <p className="dialog-sub-text mt-4">
+                {this.confirmUploadQ}
+              </p>
+            </div>
+            <div className="dialog-actions text-right">
+              <PrimaryButton onClick={() => {this._closeDialog(); this.doUpload(); }}
+                text="Upload and overwrite" />
+              <DefaultButton onClick={this._closeDialog}
+                text="Cancel" />
+            </div>
+          </div>
+        </div>
+      </Modal>
+    );
+  }
+
   render() {
     return (
       <div className="container-fluid position-relative">
@@ -479,6 +558,7 @@ class DataSpaceView extends Component {
           </div>
         </div>
         <NotificationsPane isOpen={this.state.showNotificationsPanel} />
+        <this.htmlConfirmDelete />
       </div>
     );
   }
