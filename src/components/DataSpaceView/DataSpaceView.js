@@ -19,9 +19,26 @@ class DataSpaceView extends Component {
 
 
   filesToOverride = [];
-  confirmUploadTitle = "";
-  confirmUploadText = "";
   formData = null;
+  newDirDto = null;
+
+  dialogMessagesKey = "fileMessages";
+  uploadDialogMessages = {
+    fileMessages: {
+      confirmTitle: "Overwrite files",
+      confirmText: `File(s) with same name(s) already exist, and by confirming the upload, 
+      the next ones would be overwritten: `,
+      confirmQuestion: "Would you like to proceed with the upload?",
+      confirmButton: "Upload and overwrite"
+    },
+    dirMessages: {
+      confirmTitle: "Overwrite directory",
+      confirmText: `Directory with same name already exist, and by confirming the upload, 
+      the next ones would be overwritten: `,
+      confirmQuestion: "Would you like to proceed with creating the new directory?",
+      confirmButton: "Create and overwrite"
+    }
+  }
 
   constructor(props) {
     super(props);
@@ -120,15 +137,13 @@ class DataSpaceView extends Component {
       this.state.rootDir.nodes.unshift(directoryDto);
       console.log(this.state.rootDir);
 
-      this.setState(prevState => (
-        {
-          fileUploading: false,
-          rootDir: {
-            ...this.state.rootDir,
-            nodes: [...this.state.rootDir.nodes]
-          }
+      this.setState(prevState => ({
+        fileUploading: false,
+        rootDir: {
+          ...this.state.rootDir,
+          nodes: [...this.state.rootDir.nodes]
         }
-      ));
+      }));
       
       if (this._prevDirObjects.length > 0) {
         this._prevDirObjects[this._prevDirObjects.length - 1].nodes
@@ -143,15 +158,14 @@ class DataSpaceView extends Component {
 
       let filteredNodes = this.state.rootDir.nodes.filter(node => node.path + "/" + node.name !== filePath);
 
-      this.setState(prevState => (
-        {
-          loading: false,
-          rootDir: {
-            ...prevState.rootDir,
-            nodes: filteredNodes
-          }
+      this.setState(prevState => ({
+        loading: false,
+        rootDir: {
+          ...prevState.rootDir,
+          nodes: filteredNodes
         }
-      ));
+      }));
+
       if (this._prevDirObjects.length > 0) {
         this._prevDirObjects[this._prevDirObjects.length - 1].nodes
           .find(node => node.name === this.state.rootDir.name).nodes = filteredNodes;
@@ -177,104 +191,29 @@ class DataSpaceView extends Component {
           console.error(err);
         });
     }, 150); // TODO: REMOVE OR ADJUST THIS 
-
-    //this.getStream();
   }
 
-  // Get signalR streamed data
-  getStream = () => {
-    // this.hubConnection.stream("DelayCounter", 500)
-    //   .subscribe({
-    //     next: (item) => {
-    //       console.log(item);
-    //     },
-    //     complete: () => {
-    //       console.log('completed');
-    //     },
-    //     error: (err) => {
-    //       console.log('error');
-    //     },
-    //   });
-  }
   // Data for CommandBar
-  _getItems = () => {
-    return [
-      {
-        key: 'newItem',
-        name: 'New',
-        iconProps: { iconName: 'Add' },
-        subMenuProps: {
-          items: [
-            {
-              key: 'directory',
-              name: 'Directory',
-              iconProps: { iconName: 'FabricNewFolder' },
-              onClick: this._openNewDirModal
-            },
-            {
-              key: 'link',
-              name: 'link',
-              iconProps: { iconName: 'Link' }
-            }
-          ]
-        }
-      },
-      {
-        key: 'upload',
-        name: 'Upload',
-        iconProps: { iconName: 'Upload' },
-        onClick: () => this.refs.fileUploadInput.click()
-      },
-      {
-        key: 'share',
-        name: 'Share',
-        iconProps: { iconName: 'Share' },
-        onClick: () => console.log('Share')
-      },
-      {
-        key: 'download',
-        name: 'Download',
-        iconProps: { iconName: 'Download' },
-        onClick: () => console.log('Download')
-      }
-    ];
-  };
+  _getItems = () => [
+    { key: 'newItem', name: 'New', iconProps: { iconName: 'Add' }, subMenuProps: {
+      items: [
+        { key: 'directory', name: 'Directory', iconProps: { iconName: 'FabricNewFolder' }, onClick: this._openNewDirModal },
+        { key: 'link', name: 'link', iconProps: { iconName: 'Link' } }
+      ]}
+    },
+    { key: 'upload', name: 'Upload', iconProps: { iconName: 'Upload' }, onClick: () => this.refs.fileUploadInput.click() },
+    { key: 'share', name: 'Share', iconProps: { iconName: 'Share' }, onClick: () => console.log('Share') },
+    { key: 'download', name: 'Download', iconProps: { iconName: 'Download' }, onClick: () => console.log('Download') }
+  ];
 
-  _getOverlflowItems = () => {
-    return [
-      {
-        key: 'move',
-        name: 'Move to...',
-        onClick: () => console.log('Move to'),
-        iconProps: {
-          iconName: 'MoveToFolder'
-        }
-      },
-      {
-        key: 'copy',
-        name: 'Copy to...',
-        onClick: () => console.log('Copy to'),
-        iconProps: {
-          iconName: 'Copy'
-        }
-      },
-      {
-        key: 'delete',
-        name: 'Delete...',
-        onClick: () => console.log('Delete'),
-        iconProps: {
-          iconName: 'Delete'
-        }
-      }
-    ];
-  };
+  _getOverlflowItems = () => [
+    { key: 'move', name: 'Move to...', onClick: () => console.log('Move to'), iconProps: { iconName: 'MoveToFolder' } },
+    { key: 'copy', name: 'Copy to...', onClick: () => console.log('Copy to'), iconProps: { iconName: 'Copy' } },
+    { key: 'delete', name: 'Delete...', onClick: () => console.log('Delete'), iconProps: { iconName: 'Delete' } }
+  ];
 
-  // File read and upload
   onUploadFileSelected = (e) => {
     this.setState({ fileUploading: true });
-    // Get the file and prepare a FormData obj
-    //let reader = new FileReader();
-    
     // Move this somewhere else - we're creating a FormData obj and looping in a for, 
     //  --- even if we don't know yet that we'll do an upload (cuz of possible overrideCheck Dialog)
     this.formData = new FormData();
@@ -289,7 +228,7 @@ class DataSpaceView extends Component {
     this.filesToOverride = filesToUpload.filter(f => existingFiles.includes(f));
 
     if (this.filesToOverride.length > 0) {
-      this._showDialog();
+      this._showDialog("fileMessages");
     } else {
       this.doUpload();
     }
@@ -318,67 +257,8 @@ class DataSpaceView extends Component {
             console.log(percentCompleted);
           },
           withCredentials: false
-        })
-        .then((e) => {
-          console.log(e);
-          console.log("AXIOS:Then");
-        })
-        .finally((e) => {
-          console.log(e);
-          console.log("AXIOS:Finaly");
-        })
-        .catch((e) => {
-          console.log(e);
-          console.log("AXIOS:Catch");
         });
-
     }, 1500);
-
-    // // FOR LOADING INTO A VIEW OR SMTHNG (EG. Images)
-    // let fileSize;
-    // reader.onloadstart = (e) => {
-    //     console.log('LOADSTART');
-    //     fileSize = e.total;
-    //     console.log(e);
-    // }
-    // reader.onload = (e) => {
-    // }
-    // reader.onprogress = (e) => {
-    //     let uploadedPercentage = (e.loaded / fileSize) * 100;
-    //     console.log(`PROGRESS - ${uploadedPercentage}%`);
-    //     console.log(e);
-    // }
-    // reader.onerror = (e) => {
-    // }
-    // reader.onloadend = (e) => {
-    //     console.log('LOADEND');
-    //     console.log(e);
-    //     console.log(file);
-    //     console.log(reader.result);
-
-    //     let formData = new FormData();
-    //     formData.append('file', file);
-    //     axios({
-    //       method: 'post',
-    //       url: 'https://localhost:44380/api/dataspace/upload2',
-    //       headers: {
-    //         'Content-Type': 'multipart/form-data',
-    //         'Filename': '1851768.txt'
-    //       },
-    //       data: formData
-    //     }).then(() => {
-    //         console.log("AXIOS:Then");
-    //       })
-    //       .finally(() => {
-    //         console.log("AXIOS:Finaly");
-    //         this.setState({ fileUploading: false });
-    //       })
-    //       .catch(() => {
-    //         console.log("AXIOS:Catch");
-    //       });
-    // }
-    // reader.readAsArrayBuffer(file);
-    // reader.readAsDataURL(file); // triggers on load end
   }
 
   _showPanel = () => {
@@ -428,47 +308,54 @@ class DataSpaceView extends Component {
   _openNewDirModal = () => {
     this.setState({ IsUploadModalVisible: true });
   }
+  
   _closeNewDirModal = () => {
     this.setState({ IsUploadModalVisible: false });
   };
-  _createNewDirectory = () => { // TODO: Cleanup (backend-side is done) && lookinto using authentication vs eldarja in :url:
-    this.setState({ IsUploadModalVisible: false, fileUploading: true });
-    let newDirDto = { name: this.refs.newDirectoryInput.value };
-    setTimeout(() => {
-      // Create URL-endpoint: Splice to remove the first 'root' dir and join all other ones eg. /fodler1/folder1_1/...
-      let directoryPath = this.state.rootDir.path ? this.state.rootDir.path + "/" : "";
-      directoryPath += this.state.rootDir.name ? this.state.rootDir.name : "";
 
-      let url = `https://localhost:44380/api/dataspace/eldarja/directories/${directoryPath}`;
-      axios.post(url, newDirDto, {
+  // TODO: Cleanup (backend-side is done) && lookinto using authentication vs eldarja in :url:
+  _createNewDirectory = () => {
+    this.setState({ IsUploadModalVisible: false, fileUploading: true });
+    this.newDirDto = { name: this.refs.newDirectoryInput.value };
+
+    let existingDirs = this.state.rootDir.nodes.reduce( (filtered, node) => { 
+      if(node.nodeType === "Directory") {
+        filtered.push(node.name);
+      }
+      return filtered;
+    }, []);
+    
+    this.filesToOverride = existingDirs.filter(f => f === this.newDirDto.name);
+
+    if (this.filesToOverride.length > 0) {
+      this._showDialog("dirMessages");
+    } else {
+      this.doCreateDir();
+    }
+  }
+
+  doCreateDir = () => {
+    this.state.rootDir.nodes = this.state.rootDir.nodes.filter(node => this.newDirDto.name !== node.name);
+
+    // Create URL-endpoint: Splice to remove the first 'root' dir and join all other ones eg. /fodler1/folder1_1/...
+    let directoryPath = this.state.rootDir.path ? this.state.rootDir.path + "/" : "";
+    directoryPath += this.state.rootDir.name ? this.state.rootDir.name : "";
+
+    let url = `https://localhost:44380/api/dataspace/eldarja/directories/${directoryPath}`;
+    setTimeout(() => {
+      // Fire and forget? - No... either switch to SignalR - or keep at API for uploading dirs with content?
+      axios.post(url, this.newDirDto, {
         headers: {
           "AppId": window.randomGen,
           "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
         },
         withCredentials: false
-      })
-        .then((e) => {
-          console.log(e);
-          console.log("AXIOS DIRECTORY:Then");
-        })
-        .finally((e) => {
-          console.log(e);
-          console.log("AXIOS DIRECTORY:Finaly");
-        })
-        .catch((e) => {
-          console.log(e);
-          console.log("AXIOS DIRECTORY:Catch");
-        });
-
+      });
     }, 1500);
   }
 
-  _showDialog = () => {
-    this.confirmUploadTitle = "Overwrite files";
-    this.confirmUploadText = `File(s) with same name(s) already exist, and by confirming the upload, 
-      the next ones would be overwritten: `;
-    this.confirmUploadQ = "Would you like to proceed with the upload?";
-
+  _showDialog = (messagesFor) => {
+    this.dialogMessagesKey = messagesFor;
     this.setState({ IsConfirmUploadModalVisible: true });
   };
 
@@ -492,23 +379,30 @@ class DataSpaceView extends Component {
         isBlocking={true}>
         <div className="dialog-modal-body">
           <div className="dialog-header">
-            <p className="dialog-title">{this.confirmUploadTitle}</p>
+            <p className="dialog-title">{this.uploadDialogMessages[this.dialogMessagesKey].confirmTitle}</p>
           </div>
           <div className="dialog-inner">
             <div className="dialog-content">
               <p className="dialog-sub-text pb-2 border-bottom">
-                {this.confirmUploadText}
+                {this.uploadDialogMessages[this.dialogMessagesKey].confirmText}
               </p>
               <div className="dialog-list border-bottom">
                 {overrideList}
               </div>
               <p className="dialog-sub-text mt-4">
-                {this.confirmUploadQ}
+                {this.uploadDialogMessages[this.dialogMessagesKey].confirmQuestion}
               </p>
             </div>
             <div className="dialog-actions text-right">
-              <PrimaryButton onClick={() => {this._closeDialog(); this.doUpload(); }}
-                text="Upload and overwrite" />
+              <PrimaryButton onClick={() => {
+                  this._closeDialog(); 
+                  if (this.dialogMessagesKey === "fileMessages") {
+                    this.doUpload();
+                  } else {
+                    this.doCreateDir();
+                  }
+                }}
+                text={this.uploadDialogMessages[this.dialogMessagesKey].confirmButton} />
               <DefaultButton onClick={this._closeDialog}
                 text="Cancel" />
             </div>
@@ -517,6 +411,23 @@ class DataSpaceView extends Component {
       </Modal>
     );
   }
+
+  htmlNewDirectory = React.forwardRef((props, ref) => (
+    <Modal
+      isOpen={this.state.IsUploadModalVisible}
+      className="new-dir-modal"
+      isBlocking={false}>
+      <div className="modal-body d-flex flex-column">
+        <strong className="modal-title mb-3">New directory</strong>
+        <input type="text" ref={ref} className="px-1 flex-grow"
+          placeholder="Enter your directory name" />
+      </div>
+      <div className="modal-footer pb-1 pt-0">
+        <ActionButton onClick={this._createNewDirectory} text="Create" />
+        <ActionButton onClick={this._closeNewDirModal} text="Close" />
+      </div>
+    </Modal>
+  ));
 
   render() {
     return (
@@ -535,20 +446,7 @@ class DataSpaceView extends Component {
                 <this.FarCommands />
               </div>
             </div>
-            <Modal
-              isOpen={this.state.IsUploadModalVisible}
-              className="new-dir-modal"
-              isBlocking={false}>
-              <div className="modal-body d-flex flex-column">
-                <strong className="modal-title mb-3">New directory</strong>
-                <input type="text" ref="newDirectoryInput" className="px-1 flex-grow"
-                  placeholder="Enter your directory name" />
-              </div>
-              <div className="modal-footer pb-1 pt-0">
-                <ActionButton onClick={this._createNewDirectory} text="Create" />
-                <ActionButton onClick={this._closeNewDirModal} text="Close" />
-              </div>
-            </Modal>
+            <this.htmlNewDirectory ref="newDirectoryInput" />
             <input type="file" ref="fileUploadInput" onChange={this.onUploadFileSelected} multiple hidden />
             <this.DataSpaceSubHeading />
             <DataSpaceMainContent
