@@ -89,6 +89,38 @@ class DataSpaceView extends Component {
       console.log(receivedMessage);
     });
 
+    this.hubConnection.on(`DeleteMultipleNodesMetadataSuccess${window.randomGen}`, (nodes) => {
+      let filteredNodes = this.state.rootDir.nodes.filter(node => {
+        return !nodes.map(n => n.path + n.name + n.nodeType).includes(node.path + node.name + node.nodeType)
+      });
+
+      if (this._prevDirObjects.length > 0) {
+        this._prevDirObjects[this._prevDirObjects.length - 1].nodes
+          .find(node => node.name === this.state.rootDir.name).nodes = filteredNodes;
+      }
+
+      // Reset any checkboxes
+      this._selectedItems = [];
+      let allCheckboxes = document.getElementsByClassName("list-item-select");
+      for (let i = 0; i < allCheckboxes.length; i++) {
+        allCheckboxes[i].querySelector("input").checked = false;
+      }
+      
+      this.setState(prevState => (
+        {
+          loading: false,
+          rootDir: {
+            ...prevState.rootDir,
+            nodes: filteredNodes
+          }
+        }
+      ));
+    });
+
+    this.hubConnection.on(`DeleteMultipleNodesMetadataFail${window.randomGen}`, (nodes, reasonMsg) => {
+      console.log("Nodes batch delete failed: " + reasonMsg);
+    });
+
     this.hubConnection.on(`DeleteDirectoryMetadataSuccess${window.randomGen}`, (directoryPath) => {
       if (!directoryPath.includes('/')) {
         directoryPath = '/' + directoryPath;
@@ -215,7 +247,7 @@ class DataSpaceView extends Component {
   _getOverlflowItems = () => [
     { key: 'move', name: 'Move to...', onClick: () => console.log('Move to'), iconProps: { iconName: 'MoveToFolder' } },
     { key: 'copy', name: 'Copy to...', onClick: () => console.log('Copy to'), iconProps: { iconName: 'Copy' } },
-    { key: 'delete', name: 'Delete...', onClick: this._deleteSelected, iconProps: { iconName: 'Delete' } }
+    { key: 'delete', name: 'Delete...', onClick: this._deleteMultiple, iconProps: { iconName: 'Delete' } }
   ];
 
   onUploadFileSelected = (e) => {
@@ -442,23 +474,45 @@ class DataSpaceView extends Component {
     </Modal>
   ));
 
-  _deleteSelected = () => {
-    alert('delete seleceted');
+  _deleteMultiple = () => {
+    // Display spinner
+    let url = 'https://localhost:44380/api/dataspace/eldarja/files';
+
+    console.log(this._selectedItems);
+    setTimeout(() => {
+      axios.delete(url, {
+          withCredentials: false,
+          headers: {
+            "AppId": window.randomGen,
+            "OwnerPhoneNumber": this.state.accountVM.phoneNumber
+          },
+          data: this._selectedItems
+        }).then((e) => {
+          console.log(e);
+          console.log("AXIOS:Delete Then");
+        }).catch((e) => {
+          console.log(e);
+        });
+    }, 1500);
   }
 
-  onCheckedItems = (items, isChecked) => {
-    if (items.length > 0) 
+  onCheckedItems = (passedItems, isChecked) => {
+    if (passedItems.length > 0) 
     {
       if (isChecked) 
       {
-        this._selectedItems.push(...items.filter(i => !this._selectedItems.includes(i)));
+        this._selectedItems.push(...passedItems.filter(pi => {
+            return !this._selectedItems.map(si => si.name).includes(pi.name)
+          })
+        );
       } 
       else 
       {
-        this._selectedItems = this._selectedItems.filter(i => !items.includes(i))
+        this._selectedItems = this._selectedItems.filter(i => {
+          return !passedItems.map(pi => pi.name).includes(i.name)
+        });
       }
     }
-    console.log(this._selectedItems);
   }
 
   render() {

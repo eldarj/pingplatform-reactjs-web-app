@@ -78,15 +78,19 @@ class DataSpaceMainContent extends Component {
                 inputEl.checked = isChecked;
             }
         }
-
-        this.props.onCheckedItems(this.state.directory.nodes, isChecked)
+        this.props.onCheckedItems(
+            this.state.directory.nodes.map(i => { return { name: i.name, path: i.path, nodeType: i.nodeType } }), 
+            isChecked
+        );
     }
 
     _onCheckItem = (isChecked, item) => {
         if (!isChecked) {
             document.getElementById("checkAllBoxId").checked = false;
         }
-        this.props.onCheckedItems([item], isChecked);
+        this.props.onCheckedItems([{ name: item.name, path: item.path, nodeType: item.nodeType }], 
+            isChecked
+        );
     }
 
     ListHeader = () => {
