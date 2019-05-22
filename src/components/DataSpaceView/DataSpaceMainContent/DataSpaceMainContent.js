@@ -16,12 +16,15 @@ class DataSpaceMainContent extends Component {
     static loadingMsg = "Loading, please wait...";
 
     hubConnection = null;
-    _allItems = [];
+    originalDirectory = {
+        nodes: []
+    }
 
     constructor(props) {
         super(props);
         this.state = {
             loading: true,
+            searchFilter: "",
             directory: {
                 diskSize: '0',
                 nodes: []
@@ -38,41 +41,65 @@ class DataSpaceMainContent extends Component {
 
         if (props.directory != null) {
             this.state.directory = props.directory;
-            this._allItems = props.directory.nodes;
+            this.originalDirectory = props.directory;
         }
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.directory.nodes !== this.props.directory.nodes) {
-            this._allItems = this.props.directory.nodes;
-            this.setState({ loading: false, directory: this.props.directory });
+        if (prevProps.directory !== this.props.directory) {
+            this.originalDirectory = this.props.directory;
+            let cpyDir = Object.assign({}, this.originalDirectory);;
+            if (this.state.searchFilter.length > 0) {
+                cpyDir.nodes = cpyDir.nodes.filter(i => i.name.toLowerCase().indexOf(this.state.searchFilter) > -1);
+            }
+            this.setState({
+                loading: false,
+                directory: cpyDir
+            });
         }
     }
 
     _onFilter = (text) => {
-        console.log(text);
-        this.setState(prevState => (
-            {
-                directory: {
-                    ...prevState.directory,
-                    nodes: text ? this._allItems.filter(i => i.name.toLowerCase().indexOf(text) > -1) : this._allItems
-                }
+        this.setState(prevState => ({
+            searchFilter: text,
+            directory: {
+                ...prevState.directory,
+                nodes: text ? this.originalDirectory.nodes.filter(i => i.name.toLowerCase().indexOf(text) > -1) : this.originalDirectory.nodes
             }
-        ));
+        }));
     }
 
-    _onCheckboxChange(e, isChecked) {
-        console.log(`The option has been changed to ${isChecked}.`);
+    _onCheckAllItems = (isChecked) => {
+        let allCheckboxes = document.getElementsByClassName("list-item-select");
+        for (let i = 0; i < allCheckboxes.length; i++) {
+            let inputEl = allCheckboxes[i].querySelector("input");
+            
+            if (inputEl.type === "checkbox") {
+                inputEl.checked = isChecked;
+            }
+        }
+
+        this.props.onCheckedItems(this.state.directory.nodes, isChecked)
+    }
+
+    _onCheckItem = (isChecked, item) => {
+        if (!isChecked) {
+            document.getElementById("checkAllBoxId").checked = false;
+        }
+        this.props.onCheckedItems([item], isChecked);
     }
 
     ListHeader = () => {
         return (
             <thead>
                 <tr>
-                    <th className="list-col">
-                        <Checkbox className="list-item-select" onChange={this._onCheckboxChange} />
+                    <th className="list-col text-center">
+                        <div className="flatos-checkbox flatos-checkbox-primary centered">
+                            <input type="checkbox" id="checkAllBoxId"
+                                onChange={ (e) => this._onCheckAllItems(e.target.checked) } />
+                        </div>
                     </th>
-                    <th className="list-col"><Icon iconName="FileTemplate" className="list-item-file" /></th>
+                    <th className="list-col text-center"><Icon iconName="FileTemplate" className="list-item-file" /></th>
                     <th className="list-col">Name</th>
                     <th className="list-col">More</th>
                     <th className="list-col">Visibility</th>
@@ -87,7 +114,7 @@ class DataSpaceMainContent extends Component {
 
     ListBody = () => (
         <tbody>
-            {this.state.directory.nodes.map((item, k) =>
+            {this.state.directory.nodes.map((item, k) => 
                 item.nodeType === "File" ? this.FileItem(item, k) : this.DirectoryItem(item, k)
             )}
         </tbody>
@@ -97,10 +124,13 @@ class DataSpaceMainContent extends Component {
         let onPreview = () => undefined;
         return (
             <tr key={k} className={`list-row`}>
-                <td className="list-col">
-                    <Checkbox className="list-item-select" onChange={this._onCheckboxChange} checked={item.checked} />
+                <td className="list-col text-center">
+                    <div className="list-item-select flatos-checkbox flatos-checkbox-primary centered">
+                        <input type="checkbox"
+                            onChange={ (e) => { this._onCheckItem(e.target.checked, item) }} />
+                    </div>
                 </td>
-                <td className="list-col">
+                <td className="list-col text-center">
                     <Icon iconName={getFileTypeIconProps({ extension: item.name.split('.').pop() }).iconName}
                         className="list-item-file" />
                 </td>
@@ -128,17 +158,18 @@ class DataSpaceMainContent extends Component {
 
     DirectoryItem = (item, k) => (
         <tr key={k} className={`list-row`}>
-            <td className="list-col">
-                <Checkbox className="list-item-select"
-                    onChange={this._onCheckboxChange}
-                    checked={item.checked} />
+            <td className="list-col text-center">
+                <div className="list-item-select flatos-checkbox flatos-checkbox-primary centered">
+                    <input type="checkbox"
+                        onChange={ (e) => this._onCheckItem(e.target.checked, item)} />
+                </div>
             </td>
-            <td className="list-col">
+            <td className="list-col text-center">
                 <Icon iconName="Directory"
                     className="list-item-file" />
             </td>
             <td className="list-col filename-col">
-                <span onClick={() => this.props.onTraverseToDir(item)}
+                <span onClick={() => this.props.onTraverseToDir(item) }
                     className="filename ml-2">{item.name}</span>
             </td>
             <td className="list-col">
@@ -159,7 +190,7 @@ class DataSpaceMainContent extends Component {
                     <div className="loading-div">
                         <Spinner label={DataSpaceMainContent.loadingMsg} labelPosition="right" />
                     </div>
-                    <SearchBox placeholder="Search by name" className="ml-auto my-2"
+                    <SearchBox ref="listSearch" placeholder="Search by name" className="ml-auto my-2"
                         onChange={newValue => this._onFilter(newValue)} underlined={true} />
                     <div className="table-responsive data-space-table ">
                         <table className="table list-root small">
@@ -170,8 +201,8 @@ class DataSpaceMainContent extends Component {
                 </div>
             );
         }
-
-        if (this._allItems.length === 0) {
+        
+        if (this.originalDirectory.nodes.length === 0) {
             return (
                 <div className="flex-grow-1 d-flex justify-content-center align-items-center flex-column">
                     <span className="label-primary">There's nothing here, please upload some resources.</span>

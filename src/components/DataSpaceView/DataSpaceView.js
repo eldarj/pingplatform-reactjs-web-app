@@ -9,14 +9,15 @@ import DataSpaceMainContent from './DataSpaceMainContent/DataSpaceMainContent'
 import DataSpaceSearch from './DataSpaceSearch/DataSpaceSearch'
 import SidebarNav from './SidebarNav/SidebarNav'
 
-import { Modal, CommandBar, IconButton, Spinner,
+import { Modal, CommandBar, IconButton, Icon,
+  Spinner, ProgressIndicator,
   PrimaryButton, DefaultButton, ActionButton } from 'office-ui-fabric-react'
 
 class DataSpaceView extends Component {
   hubConnection = null;
   _prevDirObjects = [];
-  _currentDirName = "My drive";
-
+  _currentDirName = "";
+  _selectedItems = [];
 
   filesToOverride = [];
   formData = null;
@@ -48,6 +49,8 @@ class DataSpaceView extends Component {
       fileUploading: false,
       IsConfirmUploadModalVisible: false,
       IsUploadModalVisible: false,
+      uploadProgress: 0,
+      uploadSuccess: null,
       rootDir: { nodes: [] }
     }
 
@@ -71,7 +74,8 @@ class DataSpaceView extends Component {
       console.log(receivedMessage);
       this.setState({
         loading: false,
-        rootDir: receivedMessage
+        rootDir: receivedMessage,
+        uploadProgress: 0
       });
     });
 
@@ -118,6 +122,7 @@ class DataSpaceView extends Component {
       this.setState(prevState => (
         {
           fileUploading: false,
+          uploadSuccess: true,
           rootDir: {
             ...this.state.rootDir,
             nodes: [...this.state.rootDir.nodes]
@@ -139,6 +144,7 @@ class DataSpaceView extends Component {
 
       this.setState(prevState => ({
         fileUploading: false,
+        uploadSuccess: true,
         rootDir: {
           ...this.state.rootDir,
           nodes: [...this.state.rootDir.nodes]
@@ -209,7 +215,7 @@ class DataSpaceView extends Component {
   _getOverlflowItems = () => [
     { key: 'move', name: 'Move to...', onClick: () => console.log('Move to'), iconProps: { iconName: 'MoveToFolder' } },
     { key: 'copy', name: 'Copy to...', onClick: () => console.log('Copy to'), iconProps: { iconName: 'Copy' } },
-    { key: 'delete', name: 'Delete...', onClick: () => console.log('Delete'), iconProps: { iconName: 'Delete' } }
+    { key: 'delete', name: 'Delete...', onClick: this._deleteSelected, iconProps: { iconName: 'Delete' } }
   ];
 
   onUploadFileSelected = (e) => {
@@ -243,22 +249,23 @@ class DataSpaceView extends Component {
     directoryPath += this.state.rootDir.name ? this.state.rootDir.name : "";
 
     let url = `https://localhost:44380/api/dataspace/eldarja/files/${directoryPath}`;
-    setTimeout(() => {
-      axios.post(url, this.formData,
-        {
-          headers: { // TODO: Remove this in favour to a Authentication obj wrapper (on both front end back end)
-            "AppId": window.randomGen,
-            "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
-            "OwnerFirstName": this.state.accountVM.firstname,
-            "OwnerLastName": this.state.accountVM.lastname
-          },
-          onUploadProgress: (e) => {
-            let percentCompleted = Math.round((e.loaded * 100) / e.total);
-            console.log(percentCompleted);
-          },
-          withCredentials: false
-        });
-    }, 1500);
+    axios.post(url, this.formData,
+      {
+        headers: { // TODO: Remove this in favour to a Authentication obj wrapper (on both front end back end)
+          "AppId": window.randomGen,
+          "OwnerPhoneNumber": this.state.accountVM.phoneNumber,
+          "OwnerFirstName": this.state.accountVM.firstname,
+          "OwnerLastName": this.state.accountVM.lastname
+        },
+        onUploadProgress: (e) => {
+            this.setState({
+              uploadProgress: parseFloat((e.loaded / e.total)*100).toFixed(2)
+            })
+        },
+        withCredentials: false
+      }).catch(e => {
+        this.setState({ fileUploading: false, uploadSuccess: false });
+      });
   }
 
   _showPanel = () => {
@@ -266,31 +273,37 @@ class DataSpaceView extends Component {
   };
 
   FarCommands = () => (
-    <div className="d-flex flex-row">
-      <Spinner className="px-3" style={{ visibility: this.state.fileUploading ? 'visible' : 'hidden' }} />
-      <IconButton className="ms-icon-regular h-auto" iconProps={{ iconName: "Info" }} />
+    <div className="font-size-regular d-flex flex-row align-items-center">
+      <span className={ "mr-2 " + (this.state.fileUploading ? "" : "d-none") }>{this.state.uploadProgress} %</span>
+      <Icon iconName="SkypeCircleCheck" 
+        className={ "ms-icon-regular mr-3 color-success " + (!this.state.fileUploading && this.state.uploadSuccess === true ? "" : "d-none") } />
+      <Icon iconName="SkypeCircleCheck" 
+        className={ "ms-icon-regular mr-3 color-error " + (!this.state.fileUploading && this.state.uploadSuccess === false ? "" : "d-none") } />
+      <Spinner className={"px-3 " + (this.state.fileUploading ? "" : "d-none") } />
+      <IconButton className="ms-icon-regular" iconProps={{ iconName: "Info" }} />
     </div>
   );
 
   onTraverseToDir = (dir) => {
     this._currentDirName = dir.name;
     this._prevDirObjects.push(this.state.rootDir);
-    console.log(this.state.rootDir);
+
     this.setState({ rootDir: dir });
   }
 
   _traverseBack = () => {
     let previousDirectory = this._prevDirObjects.pop();
-    console.log("### TRAVERSE BACK ###");
-    console.log(previousDirectory);
     this._currentDirName = previousDirectory.name;
+
     this.setState({ rootDir: previousDirectory });
   }
 
   TraverseBackButton = () => {
     if (this._prevDirObjects.length > 0) {
       return (
-        <ActionButton iconProps={{ iconName: "ChevronLeft" }} onClick={this._traverseBack}>Back</ActionButton>
+        <ActionButton iconProps={{ iconName: "ChevronLeft" }}
+          className="traverse-back-btn"
+          onClick={this._traverseBack}>Back</ActionButton>
       )
     }
     return null;
@@ -299,8 +312,8 @@ class DataSpaceView extends Component {
   DataSpaceSubHeading = () => {
     return (
       <div className="sub-holder">
+        <div className="title ml-2">{this._prevDirObjects.length <= 0 ? "My drive" : this._currentDirName}</div>
         <this.TraverseBackButton />
-        <div className="ml-2">{this._currentDirName}</div>
       </div>
     );
   }
@@ -429,7 +442,35 @@ class DataSpaceView extends Component {
     </Modal>
   ));
 
+  _deleteSelected = () => {
+    alert('delete seleceted');
+  }
+
+  onCheckedItems = (items, isChecked) => {
+    if (items.length > 0) 
+    {
+      if (isChecked) 
+      {
+        this._selectedItems.push(...items.filter(i => !this._selectedItems.includes(i)));
+      } 
+      else 
+      {
+        this._selectedItems = this._selectedItems.filter(i => !items.includes(i))
+      }
+    }
+    console.log(this._selectedItems);
+  }
+
   render() {
+    //// TODO: Check performance?
+    // let mainContent;
+    // if (this.state.rootDir.nodes.length > 0) {
+    //   mainContent = <DataSpaceMainContent />
+    // } else {
+    //   mainContent = <div className="flex-grow-1 d-flex justify-content-center align-items-center flex-column">
+    //       <span className="label-primary">There's nothing here, please upload some resources.</span>
+    //     </div>
+    // }
     return (
       <div className="container-fluid position-relative">
         <div className="row">
@@ -448,11 +489,15 @@ class DataSpaceView extends Component {
             </div>
             <this.htmlNewDirectory ref="newDirectoryInput" />
             <input type="file" ref="fileUploadInput" onChange={this.onUploadFileSelected} multiple hidden />
+            <ProgressIndicator className={ "upload-progress-bar " + (this.state.fileUploading ? "visible" : "invisible") }/>
             <this.DataSpaceSubHeading />
             <DataSpaceMainContent
               hubConnection={this.hubConnection}
               directory={this.state.rootDir}
-              onTraverseToDir={this.onTraverseToDir} />
+              onCheckedAllItems={this.onCheckedAllItems}
+              onCheckedItems={this.onCheckedItems}
+              onTraverseToDir={this.onTraverseToDir} 
+            />
           </div>
         </div>
         <NotificationsPane isOpen={this.state.showNotificationsPanel} />
