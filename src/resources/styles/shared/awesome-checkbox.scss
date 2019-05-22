@@ -1,5 +1,5 @@
 // Mixins and predefined values
-@mixin checkmark-regular {
+@mixin checkmark-regular { // TODO: set vars for all these sizes (will need to recheck all other scss aswell)
     font-size: 11px;
     height: 17px;
     width: 17px;
@@ -55,15 +55,15 @@
         @include checkbox-input-height-regular;
 
         &:hover, &:focus {
-            &:after { opacity: 1; }
+            &:after { opacity: 1; outline: 1px solid focus-ring-color; outline: 1px solid -webkit-focus-ring-color; }
         }
         &:checked {
             &:before { background-color: #fff; }
-            &:after { opacity: 1; color: #222; }
+            &:after { opacity: 1; color: $primary-black-dark; }
         }
         &:before {
             content: "";
-            border: 1px solid #aaa;
+            border: 1px solid $primary-grey;
             background-color: #fff;
             
             @include checkbox-input-height-regular;
@@ -74,7 +74,7 @@
             font-weight: 900;
             font-family: "Font Awesome\ 5 Free";
             opacity: 0;
-            color: #aaa;
+            color: $primary-grey;
             text-align: center;
 
             @include checkmark-regular;
@@ -99,7 +99,7 @@
     &.flatos-checkbox-primary {
         input[type="checkbox"], input[type="radio"] {
             &:checked {
-                &:before { background-color: #337ab7; }
+                &:before { background-color: $primary-brand; border-color: $primary-brand; }
                 &:after { color: #fff; }
             }
         }
@@ -107,7 +107,7 @@
     &.flatos-checkbox-info {
         input[type="checkbox"], input[type="radio"] {
             &:checked {
-                &:before { background-color: #5bc0de; }
+                &:before { background-color: $primary-info; border-color: $primary-info; }
                 &:after { color: #fff; }
             }
         }
@@ -115,7 +115,7 @@
     &.flatos-checkbox-success {
         input[type="checkbox"], input[type="radio"] {
             &:checked {
-                &:before { background-color: #5cb85c; }
+                &:before { background-color: $primary-success; border-color: $primary-success; }
                 &:after { color: #fff; }
             }
         }
@@ -123,7 +123,7 @@
     &.flatos-checkbox-warning {
         input[type="checkbox"], input[type="radio"] {
             &:checked {
-                &:before { background-color: #f0ad4e; }
+                &:before { background-color: $primary-warning; border-color: $primary-warning; }
                 &:after { color: #fff; }
             }
         }
@@ -131,7 +131,7 @@
     &.flatos-checkbox-danger {
         input[type="checkbox"], input[type="radio"] {
             &:checked {
-                &:before { background-color: #d9534f; }
+                &:before { background-color: $primary-danger; border-color: $primary-danger; }
                 &:after { color: #fff; }
             }
         }
@@ -139,7 +139,7 @@
     &.flatos-checkbox-dark {
         input[type="checkbox"], input[type="radio"] {
             &:checked {
-                &:before { background-color: #333; }
+                &:before { background-color: $primary-black; border-color: $primary-black; }
                 &:after { color: #fff; }
             }
         }

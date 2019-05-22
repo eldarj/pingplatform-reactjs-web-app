@@ -225,11 +225,11 @@ i.font-icon-md {
   padding: .15rem .25rem .25rem .15rem !important;
 }
 .label-primary {
-  color: $primary-blue !important;
+  color: $primary-brand !important;
   font-size: 16px !important;
 }
 .bg-primary-blue {
-  background-color: $primary-blue !important;
+  background-color: $primary-brand !important;
 }
 .bg-primary-grey-dark {
   background-color: $primary-grey-dark !important;
@@ -254,7 +254,7 @@ i.ms-icon-regular, button.ms-icon-regular i {
   text-align: center;
   vertical-align: middle;
   flex-shrink: 0;
-  color: $primary-blue;
+  color: $primary-brand;
 }
 .disabled .ms-Button {
   color: $primary-grey;

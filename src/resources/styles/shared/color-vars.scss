@@ -1,10 +1,20 @@
-$primary-blue: #0062cc;
+// Primary color palette
+$primary-black: #333;
+$primary-black-dark: #111;
+$primary-black-light: #777;
 
 $primary-grey: #ccc; 
 $primary-grey-dark: #aaa; 
 $primary-grey-light: #f4f4f4; 
 
-$secondary-light-color: #f3f6f8;
+$primary-background: #f3f6f8;
+$primary-background-dark: #aaa;
+$primary-background-light: #fff;
 
+$primary-brand: #0062cc;
+$primary-info: #5bc0de;
 $primary-success: #94d82d;
+$primary-warning: #f0ad4e;
 $primary-error: #a80000;
+
+// Secondary color palette

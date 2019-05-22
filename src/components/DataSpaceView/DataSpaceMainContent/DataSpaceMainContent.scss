@@ -1,8 +1,10 @@
 @import '../../../resources/styles/shared/color-vars';
+@import '../../../resources/styles/shared/typography-vars';
 
 .ms-SearchBox {
     width: 300px;
     padding-left: 0;
+    margin: 0 0 8px auto !important;
 }
 
 .loading-div {
@@ -19,6 +21,12 @@
     }
 }
 
+.upload-progress-bar {
+    .ms-ProgressIndicator-itemProgress {
+        padding: 0;
+    }
+}
+
 .commandbar-holder {
     flex-direction: row;
     @media (max-width: 767.98px) {
@@ -28,7 +36,19 @@
         min-height: 38px;
     }
 }
-
+.sub-holder {
+    .title {
+        font-size: $title-size;
+        font-weight: $title-weight;
+    }
+    .traverse-back-btn {
+        position: absolute;
+        height: 40px;
+        i {
+            margin-left: 0;
+        }
+    }
+}
 .breadcrumbs-holder {
     margin-top: 5px;
     button {
@@ -182,7 +202,8 @@
         .list-item-select {
             &.ms-Checkbox {
                 label {
-                    margin-bottom: 0;
+                    display: block;
+                    margin: auto;
                     .ms-Checkbox-checkbox {
                         width: 17px;
                         height: 17px;
@@ -234,11 +255,13 @@
 
                 .list-item-select {
                     &.ms-Checkbox {
+                        input { opacity: 1;}
                         &:not(.is-checked) {
-                            opacity: 0;
+                            // opacity: 0;
                         }
                         label {
-                            margin-bottom: 0;
+                            display: block;
+                            margin: auto;
                             .ms-Checkbox-checkbox {
                                 width: 17px;
                                 height: 17px;
