@@ -198,38 +198,15 @@
             font-weight: 400;
             border: none;
         }
-
-        .list-item-select {
-            &.ms-Checkbox {
-                label {
-                    display: block;
-                    margin: auto;
-                    .ms-Checkbox-checkbox {
-                        width: 17px;
-                        height: 17px;
-                        border-color: $primary-grey-dark;
-                    }
-                }
-            }
-        }
     }
     tbody {
         tr.list-row {
             &:hover {
                 background-color: $primary-grey-light;
             }
-    
             td.list-col {
                 padding: .35rem;
                 vertical-align: middle;
-
-                &:hover {
-                    .list-item-select {
-                        &.ms-Checkbox {
-                            opacity: 1 !important;
-                        }
-                    }
-                }
 
                 &.filename-col {
                     .filename  {
@@ -245,32 +222,34 @@
                         display: none;
                     }
                 }
-
                 .list-item-file {    
                     min-width: 23px;
                     min-height: 25px;
                     font-size: 16px;
                     text-align: center;
                 }
-
-                .list-item-select {
-                    &.ms-Checkbox {
-                        input { opacity: 1;}
-                        &:not(.is-checked) {
-                            // opacity: 0;
+            }
+            // Checkbox invisible until on-row-hover
+            .list-item-select {
+                &.flatos-checkbox {
+                    input[type="checkbox"], input[type="radio"] {
+                        &:checked {
+                            opacity: 1;
                         }
-                        label {
-                            display: block;
-                            margin: auto;
-                            .ms-Checkbox-checkbox {
-                                width: 17px;
-                                height: 17px;
-                                border-color: $primary-grey-dark;
-                            }
+                        &:not(:checked) {
+                            opacity: 0;
                         }
                     }
                 }
-                
+            }
+            &:hover {
+                .list-item-select {
+                    &.flatos-checkbox {
+                            input[type="checkbox"], input[type="radio"] {
+                                opacity: 1;
+                            }
+                        }
+                    }
             }
         }
     }

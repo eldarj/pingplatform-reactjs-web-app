@@ -55,8 +55,9 @@
         @include checkbox-input-height-regular;
 
         &:hover {
-            &:after { opacity: 1; outline: 1px solid focus-ring-color; outline: 1px solid -webkit-focus-ring-color; }
+            &:after { opacity: 1; }
         }
+
         &:checked {
             &:before { background-color: #fff; }
             &:after { opacity: 1; color: $primary-black-dark; }
