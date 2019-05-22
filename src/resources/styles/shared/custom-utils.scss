@@ -1,4 +1,16 @@
 /*        CUSTOM UTILS       */
+
+.font-size-regular {
+    font-size: 14px;
+}
+
+.color-success {
+    color: $primary-success !important;
+}
+.color-error {
+    color: $primary-error !important;
+}
+
 .btn-group-xs > .btn, .btn-xs {
     padding: .185rem .35rem;
     font-size: .725rem;

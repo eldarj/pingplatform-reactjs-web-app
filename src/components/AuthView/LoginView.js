@@ -135,17 +135,13 @@ class LoginView extends Component {
                                             onChange={this.handlePhoneNumberChange} />
                                     </div>
                                     <div className="form-group">
-                                        <div className="checkbox mt-2">
-                                            <input id="createSession" type="checkbox" className="styled"
-                                                value={this.state.createSession}
+                                        <div className="flatos-checkbox flatos-checkbox-sm mt-2">
+                                            <input id="createSession" type="checkbox" value={this.state.createSession}
                                                 onChange={this.handleCreateSessionChange} />
                                             <label htmlFor="createSession">
                                                 Stay logged in
                                             </label>
                                         </div>
-                                    </div>
-                                    <div className="form-group sublte-box-shadow">
-                                        {submit}
                                     </div>
                                 </div>
                             </div>
