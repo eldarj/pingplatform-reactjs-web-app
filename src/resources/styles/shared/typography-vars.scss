@@ -1,5 +1,43 @@
+// Mixins
+@mixin ellipsis-onliner {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+// Sizes
 $title-size: 19px;
 $title-weight: 600;
 
-$body-size: 14px;
+$body-size: 15px;
+$body-size-lg: 16px;
+$body-size-sm: 14px;
 $body-weight: 400;
+
+$subtext-size: 12px;
+$subtext-size-sm: 11px;
+$subtext-weight: 400;
+
+$textfield-size: 16px;
+
+// Implementations
+.font-body {
+    font-size: $body-size;
+    font-weight: $body-weight;
+}
+.font-body-sm {
+    font-size: $body-size-sm;
+    font-weight: $body-weight;
+}
+.font-subtext {
+    font-size: $subtext-size;
+    font-weight: $subtext-weight;
+}
+
+.font-main-color {
+    color: $primary-black;
+}
+
+.font-secondary-color {
+    color: $primary-black-light;
+}

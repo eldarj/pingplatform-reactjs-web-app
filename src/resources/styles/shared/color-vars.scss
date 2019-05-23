@@ -1,18 +1,24 @@
 // Primary color palette
-$primary-black: #333;
+$primary-black: #444;
 $primary-black-dark: #111;
 $primary-black-light: #777;
 
 $primary-grey: #ccc; 
 $primary-grey-dark: #aaa; 
+$primary-grey-semi-light: #eee; 
 $primary-grey-light: #f4f4f4; 
 
 $primary-background: #f3f6f8;
 $primary-background-dark: #aaa;
+$primary-background-semi-dark: #dde;
+$primary-background-semi-light: #e7e7ff;
 $primary-background-light: #fff;
 
 $primary-brand: #0062cc;
-$primary-info: #5bc0de;
+$primary-brand-dark: #0042aa;
+$primary-brand-highlight: rgb(152, 183, 247);
+
+$primary-info: #45baec;
 $primary-success: #94d82d;
 $primary-warning: #f0ad4e;
 $primary-danger: #a80000;

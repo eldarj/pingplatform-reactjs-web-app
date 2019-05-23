@@ -1,5 +1,21 @@
 /*        CUSTOM UTILS       */
 
+.input-border-shadow {
+    border-radius: 5%;
+    box-shadow: 0 0 2.5px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid #ccc !important;
+    border-radius: 2.5px;
+    outline: none;
+}
+
+.rounded-perspective {
+    border-radius: 125% / 100%;
+}
+
+.border-dashed {
+    border: 1px dashed;
+}
+
 .font-size-regular {
     font-size: 14px;
 }
@@ -67,7 +83,21 @@ code {
     font-size: 20px;
 }
 
+.close {
+    position: absolute;
+    cursor: pointer;
+    opacity: .5;
 
+    top: 5px;
+    right: 5px;
+    padding: 5px;
+    font-size: 1.2rem;
+    transition: all 0s;
+
+    &.close-sm {
+        font-size: .8rem;
+    }
+}
 
 .btn-option {
     position: absolute;
@@ -107,24 +137,49 @@ code {
     }
 }
 
-.close {
-    position: absolute;
-    cursor: pointer;
-    opacity: .5;
-
-    top: 5px;
-    right: 5px;
-    padding: 5px;
-    font-size: 1.2rem;
-    transition: all 0s;
-
-    &.close-sm {
-        font-size: .8rem;
-    }
-}
-
 .btn-opaque {
     opacity: .4;
+}
+
+.btn-light {
+    font-weight: 600;
+    color: $primary-brand;
+}
+
+.btn-brand {
+    &:hover {
+        color: $primary-background;
+        background: $primary-brand-dark;
+    }
+    font-weight: 600;
+    border-radius: 0;
+    color: $primary-background;
+    background: $primary-brand;
+}
+
+.btn-brand-dark {
+    &:hover {
+        color: $primary-background;
+        background: $primary-black-dark;
+    }
+
+    font-weight: 600;
+    border-radius: 0;
+    color: $primary-background;
+    background: $primary-black;
+}
+
+.btn-brand-light {
+    &:hover {
+        color: $primary-brand;
+        background: $primary-background-semi-light;
+    }
+
+    font-weight: 600;
+    border-radius: 0;
+    color: $primary-brand;
+    background: $primary-background;
+    border-color: $primary-background-semi-dark !important;
 }
 
 .loading-div-bg {

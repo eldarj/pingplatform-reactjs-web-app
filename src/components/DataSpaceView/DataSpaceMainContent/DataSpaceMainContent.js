@@ -194,7 +194,7 @@ class DataSpaceMainContent extends Component {
                     <div className="loading-div">
                         <Spinner label={DataSpaceMainContent.loadingMsg} labelPosition="right" />
                     </div>
-                    <SearchBox ref="listSearch" placeholder="Search by name" className="ml-auto my-2"
+                    <SearchBox ref="listSearch" placeholder="Search by name" className="data-space-list-search"
                         onChange={newValue => this._onFilter(newValue)} underlined={true} />
                     <div className="table-responsive data-space-table ">
                         <table className="table list-root small">
@@ -216,7 +216,7 @@ class DataSpaceMainContent extends Component {
         else {
             return (
                 <div className="flex-grow-1">
-                    <SearchBox placeholder="Search by name" className="ml-auto my-2"
+                    <SearchBox placeholder="Search by name" className="data-space-list-search"
                         onChange={newValue => this._onFilter(newValue)} underlined={true} />
                     <div className="table-responsive data-space-table ">
                         <table className="table list-root small">

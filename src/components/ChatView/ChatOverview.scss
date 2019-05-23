@@ -1,0 +1,25 @@
+@import '../../resources/styles/shared/color-vars';
+@import '../../resources/styles/shared/typography-vars';
+
+.contact-holder {
+    padding: 20px;
+    .contact-left-holder {
+        .profile-pic {
+            border: 1px solid #fff;
+            box-shadow: 0 .5px 5px rgba(0,0,0, .1);
+            transition: all 50ms ease-in-out;
+        }
+    }
+    .contact-right-holder {
+        .person-name {
+            font-size: $body-size-lg;
+            font-weight: $title-weight;
+        }
+
+        .person-last-seen {
+            color: $primary-grey;
+            font-size: $subtext-size;
+            font-weight: $subtext-weight;
+        }
+    }
+}

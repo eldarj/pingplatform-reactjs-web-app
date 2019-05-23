@@ -1,0 +1,141 @@
+@import '../../../resources/styles/shared/color-vars';
+@import '../../../resources/styles/shared/typography-vars';
+
+.dialog-modal-body {
+    min-width: 300px;
+}
+
+.chat-main {
+    display: flex;
+    flex-grow: 1;
+
+    &.start-conversation {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        max-width: 25%;
+        margin: auto;
+    }
+
+    &.conversation {
+        flex-direction: column;
+
+        .chat-body-wrap {
+            display: flex;
+            justify-content: center;
+            flex-grow: 1;
+
+            .chat-body {
+                width: 60%;
+                padding: 10px 20px 10px 20px;
+
+                .msg-bubble-wrap {
+                    display: flex;
+                    margin: 5px;
+                    
+                    .msg-bubble {
+                        padding: 5px 10px;
+                        margin: 0 auto 0 0;
+                        border-radius: 5% / 40%;
+                        color: #fff;
+                        background-color: $primary-info;
+                        box-shadow: .5px .5px 1.5px rgba(0,0,0, .15);
+
+                        .msg {
+                            font-weight: 400;
+                        }
+                        .msg-time {
+                            font-size: $subtext-size-sm;
+                            font-weight: $subtext-weight;
+                        }
+
+                        &.msg-me {
+                            margin: 0 0 0 auto;
+
+                            color: $primary-black;
+                            background-color: $primary-background-semi-light;
+                        }
+                    }
+                }
+            }
+        }
+
+        .chat-bottom-bar-wrap {
+            display: flex;
+            justify-content: center;
+            border-top: 1px solid $primary-grey-semi-light;
+
+            .chat-bottom-bar {
+                padding: 10px 40px 10px 40px;
+                width: 60%;
+
+                .input-holder {
+                    display: flex;
+                    position: relative;
+                    margin-bottom: 5px;
+
+                    .placeholder-msg {
+                        opacity: 0;
+                        color: $primary-grey;
+                        position: absolute;
+                        pointer-events: none;
+                        top: 2.5px;
+                        left: 5px;
+                    }
+
+                    textarea {
+                        color: $primary-black;
+                        resize: none;
+                        flex-grow: 1;
+                        padding: 2.5px 5px;
+                        height: 80px;
+
+                        &:invalid + .placeholder-msg {
+                            opacity: 1;
+                        }
+                    }
+                }
+                .options-holder {
+                    display: flex;
+                    flex-direction: row;
+                    .left-options {
+                        flex-grow: 1;
+                    }
+                }
+            }
+        }
+
+        .contact-holder {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 10px 20px 10px 0;
+            height: 75px;
+            border-bottom: 1px solid $primary-grey-semi-light;
+            
+            .contact-left-holder {
+                cursor: pointer;
+                padding-left: 15px;
+            }
+            .contact-right-holder {
+                display: flex;
+                flex-direction: row;
+                flex-grow: 1;
+                justify-content: space-between;
+                align-items: ceter;
+
+                .contact-right-info {
+                    padding-left: 15px;
+                    cursor: pointer;
+
+                    .person-phone-number {
+                        color: $primary-grey;
+                        font-size: $body-size-sm;
+                        font-weight: $body-weight;
+                    }
+                }
+                
+            }
+        }
+    }
+}

@@ -1,0 +1,77 @@
+@import '../../../resources/styles/shared/color-vars';
+@import '../../../resources/styles/shared/typography-vars';
+
+.chat-contacts-sidebar {
+    border-right: 1px solid $primary-grey-semi-light;
+
+    .chat-contacts-search-holder {
+        height: 75px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid $primary-grey-semi-light;
+
+        &:hover {
+            .contacts-searchbox {
+                opacity: 1;
+            }
+        }
+        .contacts-searchbox {
+            flex-grow: 1;
+            margin: 0 10px;
+            transition: all 100ms ease-in-out;
+            opacity: .7;
+        }
+    }
+
+    .contacts-list {
+        .contact-holder {
+            cursor: pointer;
+
+            + .contact-holder {
+                border-top: 1px solid $primary-grey-semi-light;
+            }
+
+            &:hover {
+                background-color: rgba(255,255,255, .8);
+                .profile-pic {
+                    box-shadow: 0 0 0 3.5px $primary-brand-highlight;
+                }
+            }
+            .contact-right-holder {
+                min-width: 0;
+        
+                .person-last-msg {
+                    font-size: $body-size-sm;
+                    font-weight: $body-weight;
+                    color: $primary-grey-dark;
+                    @include ellipsis-onliner;
+                    &:hover {
+                        + .last-msg-preview {
+                            display: block;
+                            opacity: 1;
+                        }
+                    }
+                }
+                .last-msg-preview {
+                    &:hover {
+                        display: block;
+                        opacity: 1;
+                    }
+                    display: none;
+                    font-size: $body-size-sm;
+                    font-weight: $body-weight;
+                    color: $primary-grey-dark;
+                    transition: all 100ms ease-in-out;
+        
+                    white-space: normal;
+                    position: absolute;
+                    background: #fff;
+                    border: 1px solid #ddd;
+                    box-shadow: 0 0 2.5px rgba(0,0,0, .1);
+                    padding: 7.5px;
+                    opacity: 0;
+                }
+            }
+        }
+    }
+}

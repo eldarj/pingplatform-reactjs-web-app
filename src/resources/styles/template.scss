@@ -2,8 +2,38 @@
 @import 'resources/styles/shared/typography-vars';
 
 body {
+  .profile-pic {
+    background-size: cover;
+    background-position: center;
+    
+    width: 55px;
+    height: 55px;
+  
+    -webkit-box-shadow: 0px 0px 0px #dee2e6;
+            box-shadow: 0px 0px 0px #dee2e6;
+
+    &.profile-sm {
+      height: 40px;
+      width: 40px;
+    }
+
+    &.profile-md {
+      width: 70px;
+      height: 70px;
+    }
+
+    &.profile-lg {
+      width: 100px;
+      height: 100px;
+    }
+
+    &.profile-placeholder {
+      background-image: url('/images/user/default/profile_avatar_placeholder.png');
+    }
+  }
   .dialog-modal-body {
     max-width: 450px;
+    
     .dialog-header {
       .dialog-title {
         padding: 20px 28px 0px 28px;
@@ -11,9 +41,39 @@ body {
         font-weight: $title-weight;
       }
     }
+
     .dialog-inner {
       padding: 0 28px 20px 28px;
+      
       .dialog-content {
+        font-size: $body-size;
+        input {
+          padding: 2.5px 10px;
+          font-size: $textfield-size;
+        }
+        button {
+          &.ms-Pivot-link {
+            padding: 0;
+            margin-right: 0;
+            height: 25px;
+
+            + .ms-Pivot-link {
+              margin-left: 20px;
+            }
+            &.is-selected {
+              &:before {
+                border-color: $primary-brand;
+              }
+            }
+            &:before {
+              left: 0;
+              right: 0;
+            }
+          }
+        }
+        div[role="tabpanel"] {
+          margin: 20px 0 35px 0;
+        }
         .dialog-list {
           ul {
             list-style-type: none;
@@ -28,11 +88,13 @@ body {
             }
           }
         }
+        
         .dialog-sub-text {
           font-size: $body-size;
           font-weight: $body-weight;
         }
       }
+      
       .dialog-actions {
         margin: 20px 0 0 0;
         button {
@@ -40,6 +102,26 @@ body {
         }
       }
     }
+
+    
+  /* FORMS */
+  .minimalistic-form {
+    background: $primary-brand;
+    
+    label {
+        color: white;
+        font-weight: 200;
+    }
+    h3 {
+        text-align: center;
+        color: #fff;
+    }
+    .ForgetPwd {
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+    }
+  }
   }
   .ms-Dialog-title {
     padding: 20px 28px 0px 28px;
@@ -188,22 +270,6 @@ body .message-time {
   font-size: 10px;
 }
 
-body .message-profile-pic {
-  width: 30px;
-  height: 30px;
-}
-
-body .friends-profile-img {
-  width: 50px;
-  height: 50px;
-}
-
-body .profile-pic {
-  background-size: cover;
-  background-position: center;
-  -webkit-box-shadow: 0px 0px 0px 1px #dee2e6;
-          box-shadow: 0px 0px 0px 1px #dee2e6;
-}
 
 body .bg-rgba-white-90 {
     background: rgba(255, 255, 255, 0.8);
@@ -255,7 +321,29 @@ i.ms-icon-regular, button.ms-icon-regular i {
   vertical-align: middle;
   flex-shrink: 0;
   color: $primary-brand;
+  &:hover {
+    color: $primary-black;
+  }
 }
+
+button.ms-icon-regular {
+  &:hover {
+    i {
+      color: $primary-info;
+    }
+  }
+  &.icon-grey {
+    i {
+      color: $primary-grey-dark;
+    }
+    &:hover {
+      i {
+        color: $primary-black;
+      }
+    }
+  }
+}
+
 .disabled .ms-Button {
   color: $primary-grey;
   pointer-events: none; 
