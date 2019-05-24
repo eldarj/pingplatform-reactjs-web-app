@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { ContextualMenu, Modal, Spinner, DefaultButton, PrimaryButton, Icon, IconButton } from 'office-ui-fabric-react'
+import { Modal, Spinner, DefaultButton, PrimaryButton, Icon, IconButton } from 'office-ui-fabric-react'
 import { getFileTypeIconProps } from '@uifabric/file-type-icons'
 
 import FileUtils from '../../../../helpers/FileUtils'

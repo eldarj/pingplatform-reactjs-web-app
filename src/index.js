@@ -15,9 +15,9 @@ import { initializeIcons } from '@uifabric/icons';
 import { initializeFileTypeIcons } from '@uifabric/file-type-icons';
 import { registerIcons } from 'office-ui-fabric-react/lib/Styling';
 
-// Register icons and pull the fonts from the default SharePoint cdn.
 import App from './App';
 
+// Register icons and pull the fonts from the default SharePoint cdn.
 registerIcons({
     icons: {
       'Directory': (

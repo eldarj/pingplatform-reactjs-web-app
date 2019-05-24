@@ -1,3 +1,7 @@
+@import '../../resources/styles/shared/color-vars';
+@import '../../resources/styles/shared/typography-vars';
+
+
 // Mixins and predefined values
 @mixin checkmark-regular { // TODO: set vars for all these sizes (will need to recheck all other scss aswell)
     font-size: 11px;

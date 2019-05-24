@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { Checkbox, Icon, Spinner, SearchBox } from 'office-ui-fabric-react'
+import { Icon, Spinner, SearchBox } from 'office-ui-fabric-react'
 
 import { getFileTypeIconProps } from '@uifabric/file-type-icons'
 

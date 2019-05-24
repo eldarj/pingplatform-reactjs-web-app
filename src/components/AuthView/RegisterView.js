@@ -81,7 +81,8 @@ class RegisterView extends Component {
             email: this.state.email,
             firstname: this.state.firstname,
             lastname: this.state.lastname,
-            createSession: this.state.createSession
+            createSession: this.state.createSession,
+            // contacts: [{contactName: "Mama", phoneNumber: "62123123"}, {contactName: "Indira", phoneNumber: "61290555"}]
         }
 
         this.hubConnection

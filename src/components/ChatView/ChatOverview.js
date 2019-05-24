@@ -1,13 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import * as signalr from '@aspnet/signalr'
-import axios from 'axios'
 
-import {
-    Modal, CommandBar, IconButton, Icon,
-    Spinner, ProgressIndicator,
-    PrimaryButton, DefaultButton, ActionButton
-} from 'office-ui-fabric-react'
+import { ProgressIndicator } from 'office-ui-fabric-react'
 
 import ChatContactsSidebar from './ChatContactsSidebar/ChatContactsSidebar';
 import ChatTopbar from './ChatTopbar/ChatTopbar';
