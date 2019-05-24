@@ -15,7 +15,6 @@ import './DataSpaceMainContent.scss'
 class DataSpaceMainContent extends Component {
     static loadingMsg = "Loading, please wait...";
 
-    hubConnection = null;
     originalDirectory = {
         nodes: []
     }
@@ -33,10 +32,6 @@ class DataSpaceMainContent extends Component {
 
         if (props.account != null) {
             this.state.accountVM = props.account;
-        }
-
-        if (props.hubConnection != null) {
-            this.hubConnection = props.hubConnection;
         }
 
         if (props.directory != null) {
