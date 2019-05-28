@@ -1,4 +1,11 @@
 export default class ImageUtils {
+
+    static defaultAvatarUrl = "/images/user/default/profile_avatar_placeholder.png";
+
+    static getAvatarImage = (avatarImageUrl) => {
+        return avatarImageUrl != null ? avatarImageUrl : this.defaultAvatarUrl;
+    }
+
     static checkImage = (imageUrl, defaultUrl) => {
         let httpClient = new XMLHttpRequest();
 

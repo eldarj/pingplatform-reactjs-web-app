@@ -38,9 +38,6 @@ class LoginView extends Component {
             
 
         this.hubConnection.on(`AuthenticationDone${window.randomGen}`, (receivedMessage) => {
-            console.log("message: ");
-            console.log(receivedMessage);
-
             this.reduxDispatch(setAccountAction(
                 receivedMessage.createSession,
                 receivedMessage.dateRegistered,
@@ -50,15 +47,16 @@ class LoginView extends Component {
                 receivedMessage.phoneNumber,
                 receivedMessage.token,
                 receivedMessage.avatarImageUrl,
-                receivedMessage.coverImageUrl));
-
+                receivedMessage.coverImageUrl,
+                receivedMessage.contacts));
+            
             window.setTimeout(() => {
                 this.setState({ redirect: true, redirectUrl: 'profile' });
             }, 1000);
         });
 
         this.hubConnection.on(`AuthenticationFailed${window.randomGen}`, (receivedMessage) => {
-            console.warn("message: " + receivedMessage);
+            console.warn("Hub connection failed message: " + receivedMessage);
             window.setTimeout(() => {
                 this.setState({ redirect: true, redirectUrl: 'register' });
             }, 1000);
@@ -142,6 +140,9 @@ class LoginView extends Component {
                                                 Stay logged in
                                             </label>
                                         </div>
+                                    </div>
+                                    <div className="form-group">
+                                        {submit}
                                     </div>
                                 </div>
                             </div>

@@ -5,23 +5,19 @@ import { FloatBox } from './shared/FloatBoxComponent/FloatBox';
 import { Footer } from './Footer/Footer';
 
 class Layout extends Component {
-
   constructor(props) {
     super(props);
-    
-    this.state = {
-      isLogged: false
-    }
+    this.state = { isLogged: false }
 
     if (props.account != null) {
         this.state.isLogged = true;
     }
   }
-  
+
   render () {
     return (
     <div className="root-inner-wrap">
-      <NavMenu />
+    	<NavMenu />
       <div className="root-main-content d-flex flex-column">
         {this.props.children}
       </div>

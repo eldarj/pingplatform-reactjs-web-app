@@ -1,89 +1,156 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { SearchBox, TooltipHost } from 'office-ui-fabric-react'
+import { SearchBox, Spinner, IconButton } from 'office-ui-fabric-react'
+import ImageUtils from '../../../helpers/ImageUtils'
+
+import { setContacts } from '../../../redux/actions'
 
 import './ChatContactsSidebar.scss'
 
 class ChatContactsSidebar extends Component {
+    hubConnection = null;
+    reduxDispatch = null;
     _listedContacts = [];
 
     constructor(props) {
         super(props);
-
-        this._listedContacts = [
-            { firstname: "Jon", lastname: "Fisher", phoneNumber: "+387 62 005 152", 
-                profile: { imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Alessandro_Del_Piero_in_2014.jpg/220px-Alessandro_Del_Piero_in_2014.jpg" }, 
-                active: false, lastSeen: "15 mins ago", messages: [{text: "Yeah, I know, but I never even tried that one out. How was it?"}] },
-            { firstname: "Ela", lastname: "Dvornik", phoneNumber: "+387 62 005 152", 
-                profile: { imageUrl: "http://wardrobefocus.com/wp-content/uploads/2018/03/2018-Hipster-Fashion-Trends-For-Women-37.jpg" }, 
-                active: false, lastSeen: "3 hours ago", messages: [{text: "Ok, thanks again. If you need that again, let me now."}] },
-            { firstname: "Sabaha", lastname: "Jahijagić", phoneNumber: "+387 62 005 152", 
-                profile: { imageUrl: "https://pkimgcdn.peekyou.com/92fec4fb8c1c686d87c0f38156fbf1b5.jpeg" }, 
-                active: false, lastSeen: "yesterday", messages: [{text: "Haha, I was watchin that right now - how did you like it?"}] },
-            { firstname: "Samir", lastname: "Nasri", phoneNumber: "+387 62 005 152", 
-                profile: { imageUrl: "https://design.printexpress.co.uk/wp-content/uploads/2016/02/01-avatars.jpg" }, 
-                active:false, lastSeen: "4 days ago", messages: [{text: "you there no?"}] },
-        ];
+        this.reduxDispatch = props.dispatch; // set the redux dispatch for handling redux-state
 
         this.state = {
-            contactsSearchFilter: "",
-            contacts: this._listedContacts
+            activeContactList: "contactname",
+            contacts: []
+        }
+
+        if (props.contacts != null) {
+            this._listedContacts = props.contacts;
+            this.state.contacts = props.contacts;
+        } 
+
+        if (props.hubConnection != null) {
+            this.hubConnection = props.hubConnection;
+        }
+
+        if (props.contacts.length > 0) {
+            this._selectedContact = props.contacts[0];
+            props.onConversationSelected(this._selectedContact);
         }
     }
 
-    _onContactsFilter = (text) => {
-        this.setState({
-            searchFilter: text,
-            contacts: text ? this._listedContacts.filter(c => (c.firstname + " " + c.lastname).toLowerCase().indexOf(text.toLowerCase()) > -1) : 
-                this._listedContacts
+    componentDidMount() {
+        this.hubConnection.on(`RequestContactsSuccess${window.randomGen}`, (contacts) => {
+            setTimeout(() => {
+                this.props.isStateLoading(false);
+                this.reduxDispatch(setContacts(contacts));
+            }, 1000);
         });
     }
 
-    ContactsList = () => (
-        <div className="contacts-list flex-column">
-            {this.state.contacts.map((contact, k) => (
-                <div key={k} className="contact-holder d-flex flex-row contact align-items-center"
-                    onClick={ () => this.props.onConversationSelected(contact) }>
-                    <div className="contact-left-holder">
-                        <div className="profile-pic rounded-perspective " 
-                            style={{ backgroundImage: `url('${contact.profile.imageUrl}')` }}></div>
-                    </div>
-                    <div className="contact-right-holder flex-grow-1 ml-2">
-                        <div>
-                            <div className="person-name">{contact.firstname} {contact.lastname}</div>
-                            <div className="person-last-msg">{contact.messages[contact.messages.length - 1].text}</div>
-                            <div className="last-msg-preview">{contact.messages[contact.messages.length - 1].text}</div>
-                        </div>
-                        <div className="person-last-seen">Last seen {contact.lastSeen}</div>
-                    </div>
-                </div>
-            ))}
-        </div>
-    );
-
-    render() {
-        return (
-            <div className="chat-contacts-sidebar">
-                <div className="chat-contacts-search-holder">
-                    <SearchBox ref="contactsSearch" placeholder="Search contacts" className="contacts-searchbox input-border-shadow"
-                        onChange={newValue => this._onContactsFilter(newValue)} 
-                    />
-                </div>
-                <this.ContactsList />
-                <div className="px-3 mt-4 mb-1 text-muted">
-                    <h6>Storage</h6>
-                    5GB out of 10GB
+    componentDidUpdate() {
+        if (this.props.contacts != null && !window.lolodash.isEqual(this.props.contacts, this._listedContacts)) {
+            this._listedContacts = this.props.contacts;
+            this.props.onConversationSelected(this.props.contacts.filter(c => c.contactPhoneNumber === this._selectedContact.contactPhoneNumber)[0]);
+            this.setState({ contacts: this.props.contacts });
+        }
+    }
+    
+    _onContactsFilter = (text) => {
+        this.setState({
+            searchFilter: text,
+            contacts: text ? this._listedContacts.filter(c => (c.contactName).toLowerCase().indexOf(text.toLowerCase()) > -1) : 
+            this._listedContacts
+        });
+    }
+    
+    ContactsNav = () => (
+        <div className="contacts-list-nav">
+            <div className={"contacts-nav-icon " + (this.state.activeContactList === "recent" ? "active" : "")}
+            	onClick={ this._orderContactsAsRecents }>
+                <IconButton className="ms-icon-regular" iconProps={{iconName:'Recent'}} />
             </div>
-                <div className="px-3 mt-4 mb-1 text-muted">
-                    <h6>Groups</h6>
-                    <p className="small">Groups help you share your content with specific people.</p>
-                </div>
+            <div className={"contacts-nav-icon " + (this.state.activeContactList === "contactname" ? "active" : "")}
+            	onClick={ this._orderByContactname }>
+                <IconButton className="ms-icon-regular" iconProps={{iconName:'Contact'}} />
+			</div>
+    	</div>
+    )
+    
+    _orderContactsAsRecents = (a, b) => {
+        this.setState({ 
+            activeContactList: "recent",
+            contacts: this._listedContacts.slice(0).sort((a,b) => a.messages[a.messages.length -1].ticks - b.messages[b.messages.length -1].ticks )
+        })
+    }
+    
+    _orderByContactname = () => {
+        this.setState({ activeContactList: "contactname", contacts: this._listedContacts });
+    }
+    
+    PopFlashDiv = (props) =>  {
+        let elements = document.getElementsByClassName(props.className);
+        for (let i = 0; i < elements.length; i++) {
+            elements[i].animate([{ background: '#76d1f8' }, { background: 'transparent' }], {  duration: 600 });
+        }
+        return (
+            <div className={props.className}>
+                {props.children}
             </div>
         )
     }
+
+    ContactsList = () => {
+        return (
+            <this.PopFlashDiv className="contacts-list flex-column">
+                {this.state.contacts.map((contact, k) => (
+                    <div key={k} className="contact-holder d-flex flex-row contact align-items-center"
+                        onClick={ () => { this._selectedContact = contact; this.props.onConversationSelected(contact) } }>
+                        <div className="contact-left-holder">
+                            <div className="profile-pic rounded-perspective " 
+                                style={{ backgroundImage: `url('${ImageUtils.getAvatarImage(contact.avatarImageUrl)}')` }}></div>
+                        </div>
+                        <div className="contact-right-holder flex-grow-1 ml-2">
+                            <div>
+                                <div className="person-name">{contact.contactName}</div>
+                                <div className="person-last-msg">Hey</div>
+                                <div className="last-msg-preview">Hey</div>
+                            </div>
+                            <div className="person-last-seen">Last seen 25 min</div>
+                        </div>
+                    </div>
+                ))}
+            </this.PopFlashDiv>
+        )
+    }
+
+    render() {
+        if (this.state.loading) {
+            return (
+                <div className="chat-contacts-sidebar">
+                    <div className="loading-div">
+                        <Spinner label="Loading..." labelPosition="right" />
+                    </div>
+                </div>
+            )
+        }
+        else {
+            return (
+                <div className="chat-contacts-sidebar">
+                    <div className="chat-contacts-search-holder">
+                        <SearchBox ref="contactsSearch" placeholder="Search contacts" className="contacts-searchbox input-border-shadow"
+                            onChange={newValue => this._onContactsFilter(newValue)} 
+                        />
+                    </div>
+                    <this.ContactsNav />
+                    <this.ContactsList />
+                    <div className="px-3 mt-4 mb-1 text-muted">
+                        <h6>Groups</h6>
+                        <p className="small">Groups help you share your content with specific people.</p>
+                    </div>
+                </div>
+            )
+        }
+    }
 }
 
-const mapStateToProps = state => ({ account: state.account });
-
+const mapStateToProps = state => ({ contacts: state.contacts });
 export default connect(mapStateToProps)(ChatContactsSidebar)

@@ -1,3 +1,11 @@
+// Pop-up-flash
+@keyframes pop-flash-info { 0% { } 50% { background: $primary-info } 100% { }}
+
+.pop-flash {
+    -webkit-animation: pop-flash-info .41s ease-in-out;
+    -moz-animation: pop-flash-info .4s ease-in-out;
+    animation: pop-flash-info .4s ease-in-out;
+}
 
 // Rotate for 360
 @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }

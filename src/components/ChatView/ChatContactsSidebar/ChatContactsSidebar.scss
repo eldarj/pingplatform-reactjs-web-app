@@ -3,7 +3,7 @@
 
 .chat-contacts-sidebar {
     border-right: 1px solid $primary-grey-semi-light;
-
+    
     .chat-contacts-search-holder {
         height: 75px;
         display: flex;
@@ -20,6 +20,37 @@
             margin: 0 10px;
             transition: all 100ms ease-in-out;
             opacity: .7;
+        }
+    }
+
+    .contacts-list-nav {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        
+        .contacts-nav-icon {
+            background-color: $primary-info;
+            padding: 2.5px 0;
+            text-align: center;
+            cursor: pointer;
+            flex-grow: 1;
+            .ms-icon-regular {
+                border-bottom: 2px solid transparent;
+                outline: none;
+                i { color: $primary-background; }
+            }
+            &:hover {
+                background-color: $primary-info-light;
+                .ms-icon-regular {
+                    i { color: $primary-background-light; }
+                }
+            }
+            &.active {
+                .ms-icon-regular {
+                    border-color: $primary-background-light;
+                    i { color: $primary-background-light; }
+                }
+            }
         }
     }
 

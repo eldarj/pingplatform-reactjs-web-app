@@ -7,7 +7,8 @@ class AccountModel {
         phoneNumber,
         token,
         avatarImageUrl,
-        coverImageUrl) {
+        coverImageUrl,
+        contacts) {
             this.createSession = createSession;
             this.dateRegistered = dateRegistered;
             this.email = email;
@@ -17,6 +18,7 @@ class AccountModel {
             this.token = token;
             this.avatarImageUrl = avatarImageUrl;
             this.coverImageUrl = coverImageUrl;
+            this.contacts = contacts ? [...contacts] : [];
     }
 
     static getInstance(obj) {
@@ -29,7 +31,8 @@ class AccountModel {
             obj.phoneNumber,
             obj.token,
             obj.avatarImageUrl,
-            obj.coverImageUrl
+            obj.coverImageUrl,
+            obj.contacts
         );
     }
 }

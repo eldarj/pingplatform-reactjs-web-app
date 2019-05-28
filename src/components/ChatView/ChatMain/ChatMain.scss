@@ -26,34 +26,75 @@
             flex-grow: 1;
 
             .chat-body {
+                display: flex;
+                flex-direction: column-reverse;
+                max-width: 600px;
                 width: 60%;
                 padding: 10px 20px 10px 20px;
+                margin-right: 5px;
+                
+                .no-msgs {
+                    color: $primary-black-light;
+                    text-align: center;
+                }
 
                 .msg-bubble-wrap {
                     display: flex;
-                    margin: 5px;
-                    
-                    .msg-bubble {
-                        padding: 5px 10px;
-                        margin: 0 auto 0 0;
-                        border-radius: 5% / 40%;
-                        color: #fff;
-                        background-color: $primary-info;
-                        box-shadow: .5px .5px 1.5px rgba(0,0,0, .15);
+                    margin: 2.5px;
 
+                    &.msg-squash {
+                        // margin: 0 !important;
+                        
                         .msg {
-                            font-weight: 400;
+                            // padding-top: 0 !important;
+                        	// position: relative;
                         }
                         .msg-time {
+                            display: none;
+                        }
+                        & + .msg-bubble-wrap {
+                            // margin: 2.5px 0 0 0 !important;
+                            .msg {
+                                // padding-bottom: 0 !important;
+                            }
+                            &.msg-squash {
+                                // margin: 0 !important;
+                                .msg {
+                                    // padding-top: 0 !important;
+                        			// position: relative;
+                                }
+                            }
+                        }
+                    }
+
+                    .msg-bubble {
+                        margin: 0 auto 0 0;
+                        max-width: 60%;
+                        color: $primary-grey-dark;
+                        .msg {
+                            font-weight: 400;
+                            padding: 2.5px 10px 3.5px 10px;
+                            border-radius: 0 5px / 0 10px;
+                            background-color: #45baec;
+                            box-shadow: 1.5px 2.5px 1.5px 0.5px rgba(0, 0, 0, .1);
+                            color: #fff;
+                        }
+
+                        .msg-time {
                             font-size: $subtext-size-sm;
-                            font-weight: $subtext-weight;
+                            font-weight: 400;
                         }
 
                         &.msg-me {
                             margin: 0 0 0 auto;
-
-                            color: $primary-black;
-                            background-color: $primary-background-semi-light;
+                            .msg {
+                                color: $primary-black;
+                                background-color: $primary-background-semi-light;
+                                border-radius: 5px 0 / 10px 0;
+                            }
+                            .msg-time {
+                                text-align: right;
+                            }
                         }
                     }
                 }
@@ -88,7 +129,6 @@
                         resize: none;
                         flex-grow: 1;
                         padding: 2.5px 5px;
-                        height: 80px;
 
                         &:invalid + .placeholder-msg {
                             opacity: 1;

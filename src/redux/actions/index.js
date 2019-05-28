@@ -1,6 +1,29 @@
 import AccountModel from '../models/AccountModel';
 
-// Action
+// Action set contacts
+export const setContacts = (contactsArray) => {
+      return {
+            type: 'SET_CONTACTS', 
+            contacts: contactsArray
+      }
+}
+
+export const addMessage = (contact, newMessage) => {
+      return {
+            type: 'ADD_MESSAGE',
+            contact: contact,
+            message: newMessage
+      }
+}
+
+export const addContact = (contactObj) => {
+      return {
+            type: 'ADD_CONTACT',
+            contact: contactObj
+      }
+}
+
+// Action set account
 export const setAccountAction = (
       createSession,
       dateRegistered,
@@ -10,7 +33,8 @@ export const setAccountAction = (
       phoneNumber,
       token,
       avatarImageUrl,
-      coverImageUrl
+      coverImageUrl,
+      contacts
 ) => {
       // Testing goes here :)
       return {
@@ -24,6 +48,7 @@ export const setAccountAction = (
                   phoneNumber,
                   token,
                   avatarImageUrl,
-                  coverImageUrl)
+                  coverImageUrl,
+                  contacts)
       }
 };

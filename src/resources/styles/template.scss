@@ -1,7 +1,14 @@
 @import 'resources/styles/shared/color-vars';
 @import 'resources/styles/shared/typography-vars';
-
+@import 'resources/styles/shared/animations';
 body {
+  
+  .upload-progress-bar {
+    .ms-ProgressIndicator-itemProgress {
+        padding: 0;
+    }
+  }
+
   .profile-pic {
     background-size: cover;
     background-position: center;
@@ -332,14 +339,24 @@ button.ms-icon-regular {
       color: $primary-info;
     }
   }
-  &.icon-grey {
-    i {
-      color: $primary-grey-dark;
-    }
+
+  &.is-disabled {
+    opacity: .4;
+  }
+
+  &.icon-bg-brand {
+    background-color: $primary-info;
+    i { color: $primary-background-semi-light; }
     &:hover {
-      i {
-        color: $primary-black;
-      }
+      background-color: $primary-info-light;
+      i { color: $primary-background-light }
+    }
+  }
+
+  &.icon-grey {
+    i { color: $primary-grey-dark; }
+    &:hover {
+      i { color: $primary-black; }
     }
   }
 }
