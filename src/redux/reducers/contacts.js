@@ -13,23 +13,31 @@ const contacts = (state = null, actionModel) => {
                         })]
                     };
                 })
-            ]
+            ];
 
         case 'ADD_MESSAGE':
             return [
                 ...state.map(contact => {
                     if (contact.contactPhoneNumber === actionModel.contact.contactPhoneNumber) {
-                        return contact.messages ? 
+                        return contact.messages ?
                             { ...contact, messages: [actionModel.message, ...contact.messages] } :
-                            { ...contact, messages: [actionModel.message]}
+                            { ...contact, messages: [actionModel.message] }
                     } else {
                         return { ...contact }
                     }
                 })
-            ]
+            ];
 
         case 'ADD_CONTACT':
             return [actionModel.contact, ...state];
+
+        case 'SET_IS_FAVORITE':
+            return state.map(contact => {
+                if (contact.contactPhoneNumber === actionModel.contactPhoneNumber) {
+                    contact.isFavorite = actionModel.isFavorite;
+                }
+                return contact;
+            });
 
         case 'ACCOUNT_AUTHED':
             return actionModel.accountModel.contacts ? actionModel.accountModel.contacts : [];

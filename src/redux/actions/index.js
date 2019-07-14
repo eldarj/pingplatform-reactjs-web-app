@@ -23,6 +23,14 @@ export const addContact = (contactObj) => {
       }
 }
 
+export const setContactIsFavorite = (contactPhoneNumber, isFavorite) => {
+      return {
+            type: 'SET_IS_FAVORITE',
+            contactPhoneNumber: contactPhoneNumber,
+            isFavorite: isFavorite
+      }
+}
+
 // Action set account
 export const setAccountAction = (
       createSession,

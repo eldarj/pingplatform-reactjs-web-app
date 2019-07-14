@@ -84,6 +84,15 @@ class ChatOverview extends Component {
             });
     }
 
+    onUpdateContact = (contactDto) => {
+        this.hubConnection
+            .invoke("UpdateContact", window.randomGen, this.state.accountVM.phoneNumber, contactDto)
+            .catch(err => {
+                console.error(`Error on: RequestAuthentication(${window.randomGen}, requestobj)`);
+                console.error(err);
+            });
+    }
+
     onConversationSelected = (contact) => {
         this.setState({ mainConversationContact: contact });
     }
@@ -109,6 +118,7 @@ class ChatOverview extends Component {
         if (this.state.mainConversationContact) {
             mainContent = <ChatMain contact={this.state.mainConversationContact}
                 onSendMessage={this.onSendMessage}
+                onUpdateContact={this.onUpdateContact}
                 loading={this.state.loading}/>
         } else {
             mainContent = <this.NoContactSelected />
