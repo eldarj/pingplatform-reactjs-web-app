@@ -19,73 +19,95 @@ class LoginView extends Component {
 
         this.state = {
             phoneNumber: '',
+            callingCode: '',
             createSession: false,
             redirect: false,
             redirectUrl: 'register',
-            loading: false
+            btnLoading: false,
+            callingCodesLoading: true,
+            callingCountryCode: '',
+            callingCodes: [],
+            testaccount: null,
         };
+        
+        if (props.account !== null) {
+            this.state.testaccount = props.account;
+        }
     }
 
     componentDidMount = () => {
+        // this.hub2 = new signalr.HubConnectionBuilder()
+        //     .withUrl('https://localhost:44380/chathub', { accessTokenFactory: () => this.state.testaccount.token })
+        //     .build();
+        
         this.hubConnection = new signalr.HubConnectionBuilder()
             .withUrl('https://localhost:44380/authhub')
             .build();
             
         this.hubConnection
             .start()
-            .then(() => console.log('Connection started.'))
+            .then(() => { this.signalRHubOnConnected() })
             .catch(() => console.log('Error establishing connection.'));
             
 
-        this.hubConnection.on(`AuthenticationDone${window.randomGen}`, (receivedMessage) => {
+        this.hubConnection.on(`AuthenticationDone${window.randomGen}`, (response) => {
             this.reduxDispatch(setAccountAction(
-                receivedMessage.createSession,
-                receivedMessage.dateRegistered,
-                receivedMessage.email,
-                receivedMessage.firstname,
-                receivedMessage.lastname,
-                receivedMessage.phoneNumber,
-                receivedMessage.token,
-                receivedMessage.avatarImageUrl,
-                receivedMessage.coverImageUrl,
-                receivedMessage.contacts));
+                response.createSession,
+                response.dateRegistered,
+                response.email,
+                response.firstname,
+                response.lastname,
+                response.phoneNumber,
+                response.token,
+                response.avatarImageUrl,
+                response.coverImageUrl,
+                response.contacts));
             
             window.setTimeout(() => {
                 this.setState({ redirect: true, redirectUrl: 'profile' });
             }, 1000);
         });
 
-        this.hubConnection.on(`AuthenticationFailed${window.randomGen}`, (receivedMessage) => {
-            console.warn("Hub connection failed message: " + receivedMessage);
+        this.hubConnection.on(`AuthenticationFailed${window.randomGen}`, (response) => {
+            console.warn("Hub connection failed message: " + response.message);
             window.setTimeout(() => {
                 this.setState({ redirect: true, redirectUrl: 'register' });
             }, 1000);
         });
+
+        this.hubConnection.on(`ResponseCallingCodes${window.randomGen}`, (receivedMessage) => {
+            this.setState({ callingCodesLoading: false, callingCodes: receivedMessage, callingCountryCode: receivedMessage[0].callingCountryCode });
+        });
     }
 
-    renderRedirect = () => {
-        if (this.state.redirect) {
-            return <Redirect to={{
-                pathname: `/${this.state.redirectUrl}`,
-                state: { msg: 'erol' } // for future ref
-            }}/>
-        }
+    signalRHubOnConnected = () => {
+        setTimeout(() => {
+            this.hubConnection
+            .invoke("RequestCallingCodes", window.randomGen)
+            .catch(err => {
+                    console.error(`Error on: RequestAuthentication(${window.randomGen}, requestobj)`);
+                    console.error(err);
+            });
+        }, 1000);
     }
 
     doLogin = () => {
         this.setState({
-            loading: true
+            btnLoading: true
         });
 
         let requestObj = {
             phoneNumber: this.state.phoneNumber,
+            callingCountryCode: this.state.callingCountryCode,
             createSession: this.state.createSession
         }
+
+        console.log(requestObj);
 
         this.hubConnection
             .invoke("RequestAuthentication", window.randomGen, requestObj)
             .catch(err => {
-                console.error(`Error on: RequestAuthentication(${window.randomGen}, requestobj)`);
+                console.error(`Error on: RequestAuthentication(requestobj)`);
                 console.error(err);
             });
 
@@ -97,6 +119,19 @@ class LoginView extends Component {
           }, 10000);
     }
 
+    renderRedirect = () => {
+        if (this.state.redirect) {
+            return <Redirect to={{
+                pathname: `/${this.state.redirectUrl}`,
+                state: { msg: 'erol' } // for future ref
+            }}/>
+        }
+    }
+
+    handleCallingCodeChange = (e) => {
+        this.setState({callingCountryCode: e.target.value});
+    }
+
     handlePhoneNumberChange = (e) => {
         this.setState({phoneNumber: e.target.value});
     }
@@ -106,15 +141,33 @@ class LoginView extends Component {
     }
 
     render() {
-        let loading = this.state.loading;
-        let submit;
+        let btnLoading = this.state.btnLoading;
+        let callingCodesLoading = this.state.callingCodesLoading;
+
+        let submitBtnHtml,
+        	callingCodesSpinnerHtml;
         
-        if (loading) {
-            submit = <button className="btn btn-light w-50 rounded-0 pointer-events-none">
-                <i className="fas fa-circle-notch rotate anim-speed-slow"></i>
-            </button>;
+        if (callingCodesLoading) {
+            callingCodesSpinnerHtml = <div><i className="fas fa-circle-notch rotate anim-speed-slow"></i></div>
         } else {
-            submit = <button onClick={this.doLogin} className="btn btn-light w-50 rounded-0">Submit</button>;
+            callingCodesSpinnerHtml = 
+                <select className="custom-select"
+                	onChange={this.handleCallingCodeChange} 
+                	defaultValue={this.state.callingCodes[0].callingCountryCode}>
+                    {this.state.callingCodes.map((obj, i) => {
+                        return <option key={i} value={obj.callingCountryCode}>
+                                {'+' + obj.callingCountryCode + " " + obj.countryName + " (" + obj.isoCode + ")"}
+                            </option>
+                    })}
+                </select>
+        }
+
+        if (btnLoading) {
+            submitBtnHtml = <button className="btn btn-light w-50 rounded-0 pointer-events-none">
+                	<i className="fas fa-circle-notch rotate anim-speed-slow"></i>
+            	</button>
+        } else {
+            submitBtnHtml = <button onClick={this.doLogin} className="btn btn-light w-50 rounded-0">Submit</button>;
         }
 
         return (
@@ -126,6 +179,10 @@ class LoginView extends Component {
                             <div className="minimalistic-form p-4 subtle-box-shadow disperse-shadow">
                                 <h3>Get started</h3>
                                 <div>
+                                    <div className="form-group">
+                                        <label htmlFor="callingCode">Calling code</label>
+                                        {callingCodesSpinnerHtml}
+                                    </div>
                                     <div className="form-group">
                                         <label htmlFor="phoneNumber">Phone number</label>
                                         <input id="phoneNumber" type="number" className="form-control"
@@ -142,7 +199,7 @@ class LoginView extends Component {
                                         </div>
                                     </div>
                                     <div className="form-group">
-                                        {submit}
+                                        {submitBtnHtml}
                                     </div>
                                 </div>
                             </div>
@@ -162,5 +219,5 @@ class LoginView extends Component {
     }
 }
 
-
-export default connect()(LoginView)
+const mapStateToProps = state => ({ account: state.account });
+export default connect(mapStateToProps)(LoginView)
