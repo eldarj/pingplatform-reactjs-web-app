@@ -359,8 +359,19 @@ button.ms-icon-regular {
       i { color: $primary-black; }
     }
   }
-}
 
+  &.icon-gold {
+    i { color: $primary-gold; }
+    &:hover {
+      i { color: $primary-gold-dark; }
+    }
+  }
+}
+.context-button-no-arrow {
+  i[data-icon-name="ChevronDown"] {
+    display: none;
+  }
+}
 .disabled .ms-Button {
   color: $primary-grey;
   pointer-events: none; 
