@@ -58,6 +58,7 @@ class ProfileHeader extends Component {
     }
 
     componentDidMount() {
+        console.log(this.state.accountVM.token); 
         this.hubConnection = new signalr.HubConnectionBuilder()
             .withUrl('https://localhost:44380/accounthub', { accessTokenFactory: () => this.state.accountVM.token })
             .build();
@@ -76,16 +77,20 @@ class ProfileHeader extends Component {
             console.log("Avatar updated: ");
             console.log(receivedMessage);
 
-            // this.reduxDispatch(setAccountAction(
-            //     receivedMessage.createSession,
-            //     receivedMessage.dateRegistered,
-            //     receivedMessage.email,
-            //     receivedMessage.firstname,
-            //     receivedMessage.lastname,
-            //     receivedMessage.phoneNumber,
-            //     receivedMessage.token,
-            //     receivedMessage.avatarImageUrl));
-        })
+            this.reduxDispatch(setAccountAction(
+                receivedMessage.createSession,
+                receivedMessage.dateRegistered,
+                receivedMessage.email,
+                receivedMessage.firstname,
+                receivedMessage.lastname,
+                receivedMessage.phoneNumber,
+                receivedMessage.token,
+                receivedMessage.avatarImageUrl,
+                receivedMessage.coverImageUrl)); // TODO Need to make sure contacts field is included here (Check AccountDto with platform)
+
+            this.avatarChangesDiscard();
+            this.coverChangesDiscard();
+        });
     }
 
     // TODO
@@ -162,7 +167,6 @@ class ProfileHeader extends Component {
             })
 
             console.log(postRequest);
-            
             fetch('https://localhost:44380/api/account/profile/cover', {
                 method: 'POST',
                 headers: {
@@ -174,12 +178,14 @@ class ProfileHeader extends Component {
             })
         });
 
-        // this.setState({
-        //         profileUploadProps: {
-        //             coverFile: null,
-        //             coverLoading: false
-        //         }
-        // })
+        this.setState(prevState => (
+            {
+                profileUploadProps: {
+                    ...prevState.profileUploadProps,
+                    coverLoading: false
+                }
+            }
+        ));
     }
 
     coverChangesDiscard = () => {
@@ -264,8 +270,6 @@ class ProfileHeader extends Component {
                 fileExtension: FileUtils.getFileExtension(this.state.profileUploadProps.avatarFile),
             })
 
-            console.log(postRequest);
-            console.log(this.state.accountVM);
             fetch('https://localhost:44380/api/account/profile/avatar', {
                 method: 'POST',
                 headers: {
@@ -277,12 +281,14 @@ class ProfileHeader extends Component {
             })
         });
 
-        // this.setState({
-        //         profileUploadProps: {
-        //             avatarFile: null,
-        //             avatarLoading: false
-        //         }
-        // })
+        this.setState(prevState => (
+            {
+                profileUploadProps: {
+                    ...prevState.profileUploadProps,
+                    avatarLoading: true
+                }
+            }
+        ));
     }
 
     avatarChangesDiscard = () => {

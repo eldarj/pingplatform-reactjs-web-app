@@ -32,6 +32,7 @@ export const setContactIsFavorite = (contactPhoneNumber, isFavorite) => {
 }
 
 // Action set account
+// TODO Change this to accept objects (or models - should we do the mapping somewhere else?)
 export const setAccountAction = (
       createSession,
       dateRegistered,
