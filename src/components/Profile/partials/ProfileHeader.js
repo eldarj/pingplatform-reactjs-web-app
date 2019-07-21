@@ -59,7 +59,7 @@ class ProfileHeader extends Component {
 
     componentDidMount() {
         this.hubConnection = new signalr.HubConnectionBuilder()
-            .withUrl('https://localhost:44380/accounthub')
+            .withUrl('https://localhost:44380/accounthub', { accessTokenFactory: () => this.state.accountVM.token })
             .build();
             
         this.hubConnection
@@ -67,33 +67,33 @@ class ProfileHeader extends Component {
             .then(() => console.log('Connection started.'))
             .catch(() => console.log('Error establishing connection.'));
 
-        this.hubConnection.on(`UpdateProfileFailed${window.randomGen}`, (receivedMessage) => {
+        this.hubConnection.on(`UpdateProfileFailed`, (receivedMessage) => {
             console.log("Request failed: ");
             console.log(receivedMessage);
         });
 
-        this.hubConnection.on(`UpdateProfileSuccess${window.randomGen}`, (receivedMessage) => {
+        this.hubConnection.on(`UpdateProfileSuccess`, (receivedMessage) => {
             console.log("Avatar updated: ");
             console.log(receivedMessage);
 
-            this.reduxDispatch(setAccountAction(
-                receivedMessage.createSession,
-                receivedMessage.dateRegistered,
-                receivedMessage.email,
-                receivedMessage.firstname,
-                receivedMessage.lastname,
-                receivedMessage.phoneNumber,
-                receivedMessage.token,
-                receivedMessage.avatarImageUrl));
+            // this.reduxDispatch(setAccountAction(
+            //     receivedMessage.createSession,
+            //     receivedMessage.dateRegistered,
+            //     receivedMessage.email,
+            //     receivedMessage.firstname,
+            //     receivedMessage.lastname,
+            //     receivedMessage.phoneNumber,
+            //     receivedMessage.token,
+            //     receivedMessage.avatarImageUrl));
         })
     }
 
     // TODO
     updateProfile = () => {
         this.hubConnection
-            .invoke("UpdateProfile", window.randomGen, this.state.accountVM)
+            .invoke("UpdateProfile", this.state.accountVM)
             .catch(err => {
-                console.error(`Error on: UpdateProfile(${window.randomGen}, requestobj)`);
+                console.error(`Error on: UpdateProfile`);
                 console.error(err);
             });
     }
@@ -168,6 +168,7 @@ class ProfileHeader extends Component {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + this.state.accountVM.token
                 },
                 body: postRequest
             })
@@ -264,12 +265,13 @@ class ProfileHeader extends Component {
             })
 
             console.log(postRequest);
-            
+            console.log(this.state.accountVM);
             fetch('https://localhost:44380/api/account/profile/avatar', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + this.state.accountVM.token
                 },
                 body: postRequest
             })
