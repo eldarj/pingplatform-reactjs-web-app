@@ -182,7 +182,7 @@ class ProfileHeader extends Component {
             {
                 profileUploadProps: {
                     ...prevState.profileUploadProps,
-                    coverLoading: false
+                    coverLoading: true
                 }
             }
         ));

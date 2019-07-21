@@ -1,8 +1,20 @@
+@import '../../../resources/styles/shared/color-vars.scss';
+
 .button-dropdown-container {
-    
     .dropdown-menu {
+        align-items: center;
+        &.show {
+            display: flex;
+        }
+        .dropdown-item {
+            width: 100%;
+            &:hover {
+                background-color: $primary-background-semi-light;
+            }
+        }
+
         &:focus {
-            display: block;
+            display: flex;
         }
 
         &.pull-left {
@@ -13,13 +25,13 @@
 
     &.small, &.btn-option-sm {
         .dropdown-menu {
+            height: 35px;
             box-shadow: .25px .25px 2px 0.5px rgba(0,0,0,.1);
             padding: 0px;
             border: 0;
     
             .dropdown-item {
-                border-radius: 5px;
-                font-size: 80%;
+                font-size: 75%;
                 padding: 4px 14px;
             }
         }
