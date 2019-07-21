@@ -30,7 +30,7 @@ class ChatOverview extends Component {
         }
 
         this.hubConnection = new signalr.HubConnectionBuilder()
-            .withUrl('https://localhost:44380/chathub')
+            .withUrl('https://localhost:44380/chathub', { accessTokenFactory: () => this.state.accountVM.token })
             .build();
     }
 
@@ -67,9 +67,9 @@ class ChatOverview extends Component {
     signalRHubOnConnected = () => {
         this.setState({ loading: true });
         this.hubConnection
-            .invoke("RequestContacts", window.randomGen, this.state.accountVM.phoneNumber)
+            .invoke("RequestContacts")
             .catch(err => {
-                    console.error(`Error on: RequestAuthentication(${window.randomGen}, requestobj)`);
+                    console.error(`Error on: RequestContacts()`);
                     console.error(err);
             });
     }

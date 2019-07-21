@@ -23,6 +23,7 @@ class RegisterView extends Component {
             firstname: '',
             lastname: '',
             createSession: false,
+            callingCodesLoading: true,
             redirect: false,
             redirectUrl: '',
             loading: false
@@ -36,7 +37,7 @@ class RegisterView extends Component {
 
         this.hubConnection
             .start()
-            .then(() => console.log('Connection started.'))
+            .then(() => { this.signalRHubOnConnected() })
             .catch(() => console.log('Error establishing connection.'));
 
         this.hubConnection.on(`RegistrationDone${window.randomGen}`, (receivedMessage) => {
@@ -63,6 +64,21 @@ class RegisterView extends Component {
                 this.setState({ loading: false });
             }, 1000);
         });
+
+        this.hubConnection.on(`ResponseCallingCodes${window.randomGen}`, (receivedMessage) => {
+            this.setState({ callingCodesLoading: false, callingCodes: receivedMessage, callingCountryCode: receivedMessage[0].callingCountryCode });
+        });
+    }
+
+    signalRHubOnConnected = () => {
+        setTimeout(() => {
+            this.hubConnection
+            .invoke("RequestCallingCodes", window.randomGen)
+            .catch(err => {
+                    console.error(`Error on: RequestAuthentication(${window.randomGen}, requestobj)`);
+                    console.error(err);
+            });
+        }, 1000);
     }
 
     renderRedirect = () => {
@@ -78,6 +94,7 @@ class RegisterView extends Component {
 
         let requestObj = {
             phoneNumber: this.state.phoneNumber,
+            callingCountryCode: this.state.callingCountryCode,
             email: this.state.email,
             firstname: this.state.firstname,
             lastname: this.state.lastname,
@@ -124,7 +141,9 @@ class RegisterView extends Component {
 
     render() {
         let loading = this.state.loading;
-        let submit;
+        let callingCodesLoading = this.state.callingCodesLoading;
+        let submit,
+        	callingCodesSpinnerHtml;
 
         if (loading) {
             submit = <button className="btn btn-light w-50 rounded-0 pointer-events-none">
@@ -132,6 +151,21 @@ class RegisterView extends Component {
             </button>;
         } else {
             submit = <button onClick={this.doRegister} className="btn btn-light w-50 rounded-0">Register</button>;
+        }
+                
+        if (callingCodesLoading) {
+            callingCodesSpinnerHtml = <div><i className="fas fa-circle-notch rotate anim-speed-slow"></i></div>
+        } else {
+            callingCodesSpinnerHtml = 
+                <select className="custom-select"
+                	onChange={this.handleCallingCodeChange} 
+                	defaultValue={this.state.callingCodes[0].callingCountryCode}>
+                    {this.state.callingCodes.map((obj, i) => {
+                        return <option key={i} value={obj.callingCountryCode}>
+                                {'+' + obj.callingCountryCode + " " + obj.countryName + " (" + obj.isoCode + ")"}
+                            </option>
+                    })}
+                </select>
         }
 
         return (
@@ -144,6 +178,10 @@ class RegisterView extends Component {
                             <div className="minimalistic-form p-4 subtle-box-shadow disperse-shadow">
                                 <h3>Register</h3>
                                 <div>
+                                    <div className="form-group">
+                                        <label htmlFor="callingCode">Calling code</label>
+                                        {callingCodesSpinnerHtml}
+                                    </div>
                                     <div className="form-group">
                                         <label htmlFor="phoneNumber">Phone number</label>
                                         <input id="phoneNumber" type="number" className="form-control"
