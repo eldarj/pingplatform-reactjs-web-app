@@ -36,10 +36,6 @@ class LoginView extends Component {
     }
 
     componentDidMount = () => {
-        // this.hub2 = new signalr.HubConnectionBuilder()
-        //     .withUrl('https://localhost:44380/chathub', { accessTokenFactory: () => this.state.testaccount.token })
-        //     .build();
-        
         this.hubConnection = new signalr.HubConnectionBuilder()
             .withUrl('https://localhost:44380/authhub')
             .build();

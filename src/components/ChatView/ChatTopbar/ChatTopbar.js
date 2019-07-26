@@ -4,17 +4,19 @@ import { connect } from 'react-redux'
 import {
     Modal, CommandBar, IconButton, Icon,
     Spinner, Pivot, PivotItem,
-    PrimaryButton, DefaultButton 
+    PrimaryButton, DefaultButton
 } from 'office-ui-fabric-react'
 
 class ChatTopbar extends Component {
     commandBarItems = [
-        { key: 'view', name: 'View', iconProps: { iconName: 'ActivityFeed' },  subMenuProps: {
-            isBeakVisible: false,
-            items: [{ key: 'contacts', name: 'Show Contacts' }, 
-            	{ key: 'conversations', name: 'Show Recent Conversations'},
+        {
+            key: 'view', name: 'View', iconProps: { iconName: 'ActivityFeed' }, subMenuProps: {
+                isBeakVisible: false,
+                items: [{ key: 'contacts', name: 'Show Contacts' },
+                { key: 'conversations', name: 'Show Recent Conversations' },
                 { key: 'favorites', name: 'Show Favorites' }]
-        }},
+            }
+        },
         { key: 'conversation', name: 'Conversation', iconProps: { iconName: 'ChatInviteFriend' } },
         { key: 'call', name: 'Call', iconProps: { iconName: 'Phone' } }
     ];
@@ -28,9 +30,9 @@ class ChatTopbar extends Component {
             newContact: { name: "", contactPhoneNumber: "" }
         }
     }
-    
+
     componentDidMount() {
-        this.props.childAddContactModalHandler(() => this.setState({ isModalVisible: true }) );
+        this.props.childAddContactModalHandler(() => this.setState({ isModalVisible: true }));
     }
 
     FarCommands = () => (
@@ -39,16 +41,16 @@ class ChatTopbar extends Component {
             <Icon iconName="SkypeCircleCheck"
                 className={"ms-icon-regular mr-3 color-success "} />
             <IconButton className="ms-icon-regular" iconProps={{ iconName: "Info" }} />
-            <IconButton iconProps={{ iconName: "MoreVertical" }} className="ms-icon-regular" 
-            	onClick={ () => this.setState({ isModalVisible: true }) }/>
+            <IconButton iconProps={{ iconName: "MoreVertical" }} className="ms-icon-regular"
+                onClick={() => this.setState({ isModalVisible: true })} />
         </div>
     );
 
-    _setNewContactName = (text) => this.setState(prevState => ({ 
+    _setNewContactName = (text) => this.setState(prevState => ({
         newContact: { ...prevState.newContact, name: text }
     }));
 
-	_setNewContactPhone = (phone) => this.setState(prevState => ({ 
+    _setNewContactPhone = (phone) => this.setState(prevState => ({
         newContact: { ...prevState.newContact, contactPhoneNumber: phone }
     }));
 
@@ -60,44 +62,35 @@ class ChatTopbar extends Component {
                     <div className="right-commands px-3 d-flex">
                         <this.FarCommands />
                     </div>
-                    <Modal isOpen={this.state.isModalVisible} onDismiss={ () => this.setState({ isModalVisible: false }) }
+                    <Modal isOpen={this.state.isModalVisible} onDismiss={() => this.setState({ isModalVisible: false })}
                         isBlocking={false} className="file-preview-modal">
                         <div className="dialog-modal-body">
-                        <div className="dialog-header">
-                            <p className="dialog-title">Add new contact</p>
-                        </div>
-                        <div className="dialog-inner">
-                            <div className="dialog-content">
-                            <Pivot>
-                                <PivotItem
-                                    headerText="Phone number"
-                                    headerButtonProps={{
-                                    'data-order': 1,
-                                    'data-title': 'My Files Title'
-                                    }}>
-                                    <p className="mb-1">Add using phone number</p>
-                                    <div>
-                                        <input type="text" placeholder="Name" className="input-border-shadow w-100 mb-1" 
-                                            value={this.state.newContact.name} onChange={ (e) => this._setNewContactName(e.target.value) }/>
-                                        <input type="text" placeholder="Phone number" className="input-border-shadow w-100" 
-                                            value={this.state.newContact.contactPhoneNumber} onChange={ (e) => this._setNewContactPhone(e.target.value) }/>
-                                    </div>
-                                </PivotItem>
-                                <PivotItem headerText="Email">
-                                    <p className="mb-1">Add using email address</p>
-                                    <div>
-                                        <input type="text" placeholder="Email" className="input-border-shadow w-100"/>
-                                    </div>
-                                </PivotItem>
-                                </Pivot>
+                            <div className="dialog-header">
+                                <p className="dialog-title">Add new contact</p>
                             </div>
-                            <div className="dialog-actions text-right">
-                            <PrimaryButton onClick={ () => this.props.onAddNewContact(this.state.newContact.name, this.state.newContact.contactPhoneNumber)}
-                                text="Add" />
-                            <DefaultButton onClick={ () => this.setState({ isModalVisible: false }) }
-                                text="Cancel" />
+                            <div className="dialog-inner">
+                                <div className="dialog-content">
+                                    <p className="dialog-sub-text pb-2 border-bottom">
+                                        Contact's name will be used to display it as is, in your contacts list. 
+                                        If the contact isn't a user already, we'll make sure to send him a SMS notification to join Ping today!
+                                    </p>
+                                    <div className="dialog-list border-bottom">
+                                        <div>
+                                            <input type="text" placeholder="Name" className="input-border-shadow w-100 mb-1"
+                                                value={this.state.newContact.name} onChange={(e) => this._setNewContactName(e.target.value)} />
+                                            <input type="text" placeholder="Phone number" className="input-border-shadow w-100"
+                                                value={this.state.newContact.contactPhoneNumber} onChange={(e) => this._setNewContactPhone(e.target.value)} />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="dialog-actions text-right">
+                                    <PrimaryButton onClick={
+                                        () => this.props.onAddNewContact(this.state.newContact.name, this.state.newContact.contactPhoneNumber)
+                                    } text="Add" />
+                                    <DefaultButton onClick={() => this.setState({ isModalVisible: false })}
+                                        text="Cancel" />
+                                </div>
                             </div>
-                        </div>
                         </div>
                     </Modal>
                 </div>

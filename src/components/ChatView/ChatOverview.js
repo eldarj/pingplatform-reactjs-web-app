@@ -76,8 +76,9 @@ class ChatOverview extends Component {
 
     onAddNewContact = (contactName, contactPhoneNumber) => {
         let newContactDto = { phoneNumber: this.state.accountVM.phoneNumber, contactName: contactName, contactPhoneNumber: contactPhoneNumber }
+        console.log(newContactDto);
         this.hubConnection
-            .invoke("AddContact", window.randomGen, this.state.accountVM.phoneNumber, newContactDto)
+            .invoke("AddContact", newContactDto)
             .catch(err => {
                 console.error(`Error on: RequestAuthentication(${window.randomGen}, requestobj)`);
                 console.error(err);
@@ -86,7 +87,7 @@ class ChatOverview extends Component {
 
     onUpdateContact = (contactDto) => {
         this.hubConnection
-            .invoke("UpdateContact", window.randomGen, this.state.accountVM.phoneNumber, contactDto)
+            .invoke("UpdateContact", contactDto)
             .catch(err => {
                 console.error(`Error on: RequestAuthentication(${window.randomGen}, requestobj)`);
                 console.error(err);
