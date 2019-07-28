@@ -44,7 +44,7 @@ class ChatOverview extends Component {
             this.reduxDispatch(addMessage(this.state.mainConversationContact, newMessage));
         });
 
-        this.hubConnection.on(`AddContactResponse${window.randomGen}`, (contactResponse) => {
+        this.hubConnection.on(`AddContactResponse`, (contactResponse) => {
             if (contactResponse.messageCode === "CONTACT_ADDED_SUCCESSFULLY") {
                 this.reduxDispatch(addContact(contactResponse.dto));
             } else {

@@ -18,6 +18,7 @@ class ChatContactsSidebar extends Component {
         this.reduxDispatch = props.dispatch; // set the redux dispatch for handling redux-state
 
         this.state = {
+            accountVM: null,
             activeContactList: "contactname",
             displayedContacts: []
         }
@@ -26,6 +27,11 @@ class ChatContactsSidebar extends Component {
             this.hubConnection = props.hubConnection;
         }
         
+        if (props.account != null) {
+            console.log(props.account);
+            this.state.accountVM = props.account;
+        }
+
         if (props.contacts != null) {
             this._allContacts = props.contacts;
             this.state.displayedContacts = props.contacts;
@@ -38,7 +44,7 @@ class ChatContactsSidebar extends Component {
     }
 
     componentDidMount() {
-        this.hubConnection.on(`RequestContactsSuccess${window.randomGen}`, (contacts) => {
+        this.hubConnection.on(`RequestContactsSuccess`, (contacts) => {
             setTimeout(() => {
                 this.props.isStateLoading(false);
                 this.reduxDispatch(setContacts(contacts));
@@ -195,5 +201,5 @@ class ChatContactsSidebar extends Component {
     }
 }
 
-const mapStateToProps = state => ({ contacts: state.contacts });
+const mapStateToProps = state => ({ account: state.account, contacts: state.contacts });
 export default connect(mapStateToProps)(ChatContactsSidebar)
