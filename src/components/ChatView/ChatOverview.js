@@ -22,7 +22,8 @@ class ChatOverview extends Component {
         this.state = {
             loading: false,
             accountVM: null,
-            mainConversationContact: null
+            mainConversationContact: null,
+            emojis: [],
         }
 
         if (props.account != null) {
@@ -40,8 +41,14 @@ class ChatOverview extends Component {
             .then(() => { this.signalRHubOnConnected() })
             .catch(() => console.log('Error establishing connection.'));
 
-        this.hubConnection.on(`ReceiveMessage${this.state.accountVM.phoneNumber}`, (newMessage) => {
+        this.hubConnection.on(`ReceiveMessage`, (newMessage) => {
             this.reduxDispatch(addMessage(this.state.mainConversationContact, newMessage));
+        });
+
+        this.hubConnection.on(`EmojisResponse`, (response) => {
+            //console.log("EmojisResponse received");
+            //console.log(response);
+            this.setState({emojis: response});
         });
 
         this.hubConnection.on(`AddContactResponse`, (contactResponse) => {
@@ -56,7 +63,7 @@ class ChatOverview extends Component {
     onSendMessage = (newMessage) => {
         this.reduxDispatch(addMessage(this.state.mainConversationContact, newMessage));
         this.hubConnection
-            .invoke("SendMessage", this.state.accountVM.phoneNumber, newMessage)
+            .invoke("SendMessage", newMessage)
             .catch(err => {
                 console.error(`Error on: SendMessage`);
                 console.error(err);
@@ -66,6 +73,13 @@ class ChatOverview extends Component {
     // Don't do this everytime the page is refreshed
     signalRHubOnConnected = () => {
         this.setState({ loading: true });
+        this.hubConnection
+            .invoke("GetEmojis")
+            .catch(err => {
+                console.error(`Error on: GetEmojis()`);
+                console.error(err);
+            });
+
         this.hubConnection
             .invoke("RequestContacts")
             .catch(err => {
@@ -116,11 +130,14 @@ class ChatOverview extends Component {
 
     render() {
         let mainContent;
+        //console.log("Render");
+        //console.log(this.state.emojis);
         if (this.state.mainConversationContact) {
             mainContent = <ChatMain contact={this.state.mainConversationContact}
                 onSendMessage={this.onSendMessage}
                 onUpdateContact={this.onUpdateContact}
-                loading={this.state.loading}/>
+                loading={this.state.loading}
+                emojis={this.state.emojis}/>
         } else {
             mainContent = <this.NoContactSelected />
         }

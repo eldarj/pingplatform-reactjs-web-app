@@ -16,10 +16,10 @@ export const addMessage = (contact, newMessage) => {
       }
 }
 
-export const addContact = (contactObj) => {
+export const addContact = (contact) => {
       return {
             type: 'ADD_CONTACT',
-            contact: contactObj
+            contact: contact
       }
 }
 
@@ -28,6 +28,13 @@ export const setContactIsFavorite = (contactPhoneNumber, isFavorite) => {
             type: 'SET_IS_FAVORITE',
             contactPhoneNumber: contactPhoneNumber,
             isFavorite: isFavorite
+      }
+}
+
+export const updateContactMessageTimeLabels = (contact) => {
+      return {
+            type: 'UPDATE_CONTACT_MESSAGES_TIME_LABELS',
+            contact: contact
       }
 }
 

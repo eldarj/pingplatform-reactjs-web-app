@@ -1,5 +1,12 @@
 import DateUtils from '../../helpers/DateUtils'
 
+// Helper functions
+function formatMessageTimeLabels(messages) {
+    return messages.map(m => { 
+        return { ...m, humanTimestamp: DateUtils.dotnetTicksToSmartFormat(m.ticks) }
+    })
+}
+
 // Reducer contacts
 const contacts = (state = null, actionModel) => {
     switch (actionModel.type) {
@@ -8,10 +15,20 @@ const contacts = (state = null, actionModel) => {
                 ...actionModel.contacts.map(contact => {
                     return {
                         ...contact,
-                        messages: [...contact.messages.map(m => {
-                            return { ...m, humanTimestamp: DateUtils.dotnetTicksToSmartFormat(m.ticks) };
-                        })]
+                        messages: formatMessageTimeLabels(contact.messages)
                     };
+                })
+            ];
+
+        case 'UPDATE_CONTACT_MESSAGES_TIME_LABELS':
+        	return [
+                ...state.map(contact => {
+                    if (contact.contactPhoneNumber === actionModel.contact.contactPhoneNumber && 
+                        contact.messages) {
+                        return { ...contact, messages: formatMessageTimeLabels(contact.messages) }
+                    }
+
+                    return { ...contact }
                 })
             ];
 
@@ -19,9 +36,8 @@ const contacts = (state = null, actionModel) => {
             return [
                 ...state.map(contact => {
                     if (contact.contactPhoneNumber === actionModel.contact.contactPhoneNumber) {
-                        return contact.messages ?
-                            { ...contact, messages: [actionModel.message, ...contact.messages] } :
-                            { ...contact, messages: [actionModel.message] }
+                        let messages = contact.messages ? [ actionModel.message, ...contact.messages ] : [ actionModel.message ];
+                        return { ...contact, messages: formatMessageTimeLabels(messages) }
                     } else {
                         return { ...contact }
                     }

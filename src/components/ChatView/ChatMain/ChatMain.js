@@ -4,8 +4,9 @@ import { connect } from 'react-redux'
 import { IconButton, Icon, Spinner } from 'office-ui-fabric-react'
 
 import ImageUtils from '../../../helpers/ImageUtils'
+import DateUtils from '../../../helpers/DateUtils'
 
-import { setContactIsFavorite } from '../../../redux/actions'
+import { setContactIsFavorite, updateContactMessageTimeLabels } from '../../../redux/actions'
 
 import './ChatMain.scss'
 
@@ -19,14 +20,23 @@ class ChatMain extends Component {
             loading: false,
             contact: null,
             newMessageText: '',
+            emojis: []
         }
 
         if (this.props.contact !== null) {
             this.state.contact = this.props.contact;
         }
+        if (this.props.emojis !== null) {
+            this.state.emojis = this.props.emojis;
+        }
+
+        this.reduxDispatch(updateContactMessageTimeLabels(this.state.contact));
     }
 
     componentDidUpdate(prevProps) {
+        if (prevProps.emojis !== this.props.emojis) {
+            this.setState({ emojis: this.props.emojis });
+        }
         if (prevProps.contact !== this.props.contact) {
             this.setState({
                 contact: this.props.contact
@@ -39,7 +49,8 @@ class ChatMain extends Component {
         this.props.onSendMessage({
             text: this.state.newMessageText,
             humanTimestamp: `just now`,
-            receiver: this.state.contact.contactPhoneNumber
+            receiver: this.state.contact.contactPhoneNumber,
+            ticks: DateUtils.dotnetTicksNow()
         });
     }
 
@@ -133,6 +144,10 @@ class ChatMain extends Component {
                 <div className="options-holder">
                     <div className="left-options">
                         <IconButton className="ms-icon-regular icon-grey" iconProps={{ iconName: "Emoji" }} />
+                        {this.state.emojis.map((emojiCategory, i) => 
+                        	emojiCategory.emojis.map((emoji, k) => (
+                            <div key={k}>{String.fromCodePoint(emoji.hex)}</div>
+                        )))}
                     </div>
                     <div className="right-options">
                         <IconButton className="ms-icon-regular icon-grey" iconProps={{ iconName: "PhotoCollection" }} />

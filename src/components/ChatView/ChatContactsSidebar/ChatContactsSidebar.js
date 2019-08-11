@@ -28,7 +28,7 @@ class ChatContactsSidebar extends Component {
         }
         
         if (props.account != null) {
-            console.log(props.account);
+            // console.log(props.account);
             this.state.accountVM = props.account;
         }
 
@@ -56,6 +56,7 @@ class ChatContactsSidebar extends Component {
         // if (this.props.contacts != null && !window.lolodash.isEqual(this.props.contacts, this._allContacts)) {
         if (prevProps.contacts !== this.props.contacts) {
             this._allContacts = this.props.contacts;
+            // TODO: On init. TypeError: Cannot read property 'contactPhoneNumber' of undefined
             this.props.onConversationSelected(this.props.contacts.filter(c => c.contactPhoneNumber === this._selectedContact.contactPhoneNumber)[0]);
             this.setState({ displayedContacts: this.contactsNavFilter(this.state.activeContactList) });
         }
