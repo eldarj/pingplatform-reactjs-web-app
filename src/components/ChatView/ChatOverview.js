@@ -148,14 +148,14 @@ class ChatOverview extends Component {
                     	childAddContactModalHandler={ handler => this.openNewContactModal = handler } />
                     <ProgressIndicator className={"upload-progress-bar " + (this.state.loading ? "visible" : "invisible")} />
                 </div>
-                <div className="row">
-                    <div className="col-md-3 bg-light sidebar pr-0">
+                <div id="chat-holder-row" className="d-flex flex-row">
+                    <div className="sidebar bg-light pr-0 h-100">
                         <ChatContactsSidebar 
                             isStateLoading={this.setStateLoading}
                             hubConnection={this.hubConnection} 
                         	onConversationSelected={this.onConversationSelected}/>
                     </div>
-                    <div className="col-md-9 d-flex flex-column pl-0">
+                    <div className="mainbar d-flex pl-0 h-100 flex-grow-1">
                         {mainContent}
                     </div>
                 </div>

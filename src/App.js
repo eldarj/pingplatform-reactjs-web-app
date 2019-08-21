@@ -3,7 +3,7 @@ import React from 'react';
 import { Route } from 'react-router';
 
 // Custom libs
-import { Scrollbars } from 'react-custom-scrollbars';
+// import { Scrollbars } from 'react-custom-scrollbars';
 
 // View components
 import Layout from './components/Layout';
@@ -23,7 +23,7 @@ window.randomGen = '_' + Math.random().toString(36).substr(2, 16);;
 
 function App() {
   return (
-    <Scrollbars id="scrollbars-container" className="full-window">
+    <div id="div-container" className="full-window">
       <Layout>
         <Route exact path='/' component={IndexView} />
         <Route exact path='/getstarted' component={LoginView} />
@@ -33,7 +33,7 @@ function App() {
         <Route exact path='/profile' component={ProfileView} />
         <Route exact path='/dataspace' component={DataSpaceView} />
       </Layout>
-    </Scrollbars>
+    </div>
   );
 }
 

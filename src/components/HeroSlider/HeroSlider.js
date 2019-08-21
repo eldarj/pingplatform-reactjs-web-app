@@ -13,9 +13,9 @@ export class HeroSlider extends Component {
 
     componentDidMount() {
         // react-custom-scrollbars scrolling div
-        let el = document.getElementById('scrollbars-container').children[0];
-        el.addEventListener('scroll', this.handleScroll);
-        this.setState({ scrollingEl: el }); 
+        // let el = document.getElementById('scrollbars-container').children[0];
+        // el.addEventListener('scroll', this.handleScroll);
+        // this.setState({ scrollingEl: el }); 
 
         // balls
         let colors = ["#3CC157", "#2AA7FF", "#1B1B1B", "#FCBC0F", "#F85F36"];
@@ -51,7 +51,7 @@ export class HeroSlider extends Component {
     }
 
     componentWillUnmount() {
-        this.state.scrollingEl.removeEventListener('scroll', this.handleScroll);
+        // this.state.scrollingEl.removeEventListener('scroll', this.handleScroll);
     }
 
     handleScroll = () => {

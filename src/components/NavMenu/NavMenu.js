@@ -112,7 +112,7 @@ class NavMenu extends Component {
 
   render() {
     return (
-      <div className="bg-white position-relative box-shadow z-index-1">
+      <div id="main-header-nav" className="bg-white position-relative box-shadow z-index-1">
         <nav className="navbar navbar-expand-lg navbar-light bg-white container">
           <BrandLogo />
           <span className="fas fa-bars d-md-none"  onClick={this.onToggleNavCollapse} />

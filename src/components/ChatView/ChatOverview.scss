@@ -1,6 +1,9 @@
 @import '../../resources/styles/shared/color-vars';
 @import '../../resources/styles/shared/typography-vars';
 
+#chat-holder-row {
+    height: calc(100vh - 42px - 96px);
+}
 .contact-holder {
     padding: 20px;
     .contact-left-holder {
@@ -20,6 +23,8 @@
             color: $primary-grey;
             font-size: $subtext-size;
             font-weight: $subtext-weight;
+            line-height: 12px;
+            margin-bottom: 5px;
         }
     }
 }

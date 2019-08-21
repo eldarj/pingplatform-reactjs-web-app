@@ -21,6 +21,7 @@
         flex-direction: column;
 
         .chat-body-wrap {
+            overflow-y: hidden;
             display: flex;
             justify-content: center;
             flex-grow: 1;
@@ -28,11 +29,12 @@
             .chat-body {
                 display: flex;
                 flex-direction: column-reverse;
-                max-width: 600px;
-                width: 60%;
-                padding: 10px 20px 10px 20px;
+                max-width: 100%;
+                width: 100%;
+                padding: 10px 50px;
                 margin-right: 5px;
-                
+                overflow-y: scroll;
+
                 .no-msgs {
                     color: $primary-black-light;
                     text-align: center;
@@ -138,8 +140,26 @@
                 .options-holder {
                     display: flex;
                     flex-direction: row;
+
                     .left-options {
                         flex-grow: 1;
+                    }
+
+                    .emojis-wrapper {
+                        &.visible {
+                            display: flex;
+                        }
+                        &.hidden {
+                            display: none;
+                        }
+
+                        .emoji-item {
+                            cursor: pointer;
+                            opacity: .8;
+                            &:hover {
+                                opacity: 1;
+                            }
+                        }
                     }
                 }
             }
@@ -149,7 +169,7 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            padding: 10px 20px 10px 0;
+            padding: 0 20px 0 0;
             height: 75px;
             border-bottom: 1px solid $primary-grey-semi-light;
             

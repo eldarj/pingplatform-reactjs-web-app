@@ -8,8 +8,6 @@ import DateUtils from '../../../helpers/DateUtils'
 
 import { setContactIsFavorite, updateContactMessageTimeLabels } from '../../../redux/actions'
 
-import './ChatMain.scss'
-
 class ChatMain extends Component {
     reduxDispatch = null;
     constructor(props) {
@@ -20,7 +18,8 @@ class ChatMain extends Component {
             loading: false,
             contact: null,
             newMessageText: '',
-            emojis: []
+            emojis: [],
+            emojisVisible: false
         }
 
         if (this.props.contact !== null) {
@@ -53,6 +52,14 @@ class ChatMain extends Component {
             ticks: DateUtils.dotnetTicksNow()
         });
     }
+
+    onEmojisPopup = () => {
+        this.setState({ emojisVisible: !this.state.emojisVisible });
+    }
+    
+    onEmojiSelected = (emojiHexCodePoint) => this.setState(prevState => ({
+    	newMessageText: prevState.newMessageText + String.fromCodePoint('0x' + emojiHexCodePoint) 
+    }));
 
     _removeFromFavorites = () => {
         let updatedContact = {...this.state.contact, isFavorite: false};
@@ -143,11 +150,24 @@ class ChatMain extends Component {
                 </div>
                 <div className="options-holder">
                     <div className="left-options">
-                        <IconButton className="ms-icon-regular icon-grey" iconProps={{ iconName: "Emoji" }} />
-                        {this.state.emojis.map((emojiCategory, i) => 
-                        	emojiCategory.emojis.map((emoji, k) => (
-                            <div key={k}>{String.fromCodePoint(emoji.hex)}</div>
-                        )))}
+                        <IconButton className="ms-icon-regular icon-grey" 
+                        	iconProps={{ iconName: "Emoji" }}
+                            onClick={this.onEmojisPopup} />
+                        <div className={"emojis-wrapper " + (this.state.emojisVisible ? "visible" : "hidden")} >
+                            {this.state.emojis.map((emojiCategory, k, i) =>
+                                <div key={k} className="emoji-category">
+                                    <div className="emoji-category-name">
+                                        {emojiCategory.name}
+                                    </div>
+                                    <div className="emoji-category-items">
+                                        {emojiCategory.emojis.map((emoji, k) =>
+                                            <div className="emoji-item" onClick={ () => this.onEmojiSelected(emoji.hexCodePoint) }
+                                            	key={k}>{String.fromCodePoint('0x' + emoji.hexCodePoint)}</div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                     <div className="right-options">
                         <IconButton className="ms-icon-regular icon-grey" iconProps={{ iconName: "PhotoCollection" }} />
@@ -175,6 +195,8 @@ class ChatMain extends Component {
     )
 
     render() {
+        import('./ChatMain.scss');
+
         if (this.state.loading) {
             return <this.Loading />
         }
